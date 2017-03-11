@@ -1,0 +1,8 @@
+<app-view name="%{NAME}%" %{EXTENDS}%>
+
+    <h2>This is %{NAME}%View.</h2>
+    <p>
+        Replace this sample text with meaningful data.
+    </p>
+
+</app-view>
