@@ -1,5 +1,7 @@
 .idea
 .DS_Store
+spec/app
+dist
 
 # Logs
 logs
