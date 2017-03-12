@@ -1,0 +1,23 @@
+'use strict';
+
+const fs = require('fs');
+const express = require('express');
+
+const path = `${__dirname}%{JSWORKS_PATH}%`;
+const app = express();
+
+
+app.use('/', express.static(`${__dirname}`));
+
+app.use('/jsworks', express.static(path));
+
+app.get('/', (req,res) => {
+    res.sendFile(__dirname + '/application.html');
+});
+
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`%{TITLE}% server listening on port ${PORT}!`);
+    console.log(`JSWorks is in ${path}`);
+});

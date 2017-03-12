@@ -4,6 +4,8 @@
 const fs = require('fs');
 const mkdirp = require('mkdirp');
 const jsdom = require('jsdom').jsdom;
+const serializeDocument = require('jsdom').serializeDocument;
+const rmdir = require('rmdir');
 
 
 const parseArg = (name, defValue) => {
@@ -34,62 +36,171 @@ const camelToDash = (camelName) => {
 };
 
 
-const addDefinition = (type, name) => {
-    const document = jsdom(markup, {
-
-    });
+const prettyPrint = (html) => {
+    return html;
 };
 
 
-const generateController = (app, path, name) => {
-    let controller = fs.readFileSync('./bin/generators/controller.js.template', 'utf-8');
-
-    controller = controller.replace('%{NAME}%', name);
-
-    mkdirp.sync(`${path}/${app}/controllers/${name}Controller/`);
-    fs.writeFileSync(`${path}/${app}/controllers/${name}Controller/${camelToDash(name)}.js`, controller);
-};
-
-
-const generateView = (app, path, name, viewExtends) => {
+const generateView = (path, name, viewExtends) => {
     let view = fs.readFileSync('./bin/generators/view.html.template', 'utf-8');
 
     view = view.replace('%{NAME}%', name);
     view = view.replace('%{EXTENDS}%', viewExtends);
 
-    mkdirp.sync(`${path}/${app}/views/${name}View/`);
-    fs.writeFileSync(`${path}/${app}/views/${name}View/${camelToDash(name)}.html`, view);
+    let style = fs.readFileSync('./bin/generators/view.scss.template', 'utf-8');
+
+    mkdirp.sync(`${path}/views/${name}View/`);
+    fs.writeFileSync(`${path}/views/${name}View/${camelToDash(name)}-view.html`, view);
+    fs.writeFileSync(`${path}/views/${name}View/${camelToDash(name)}-view.scss`, style);
 };
 
 
-const generateApplication = (app, path, name) => {
+const generateRoute = (path, name, controller, match, parent) => {
+    const document = jsdom(fs.readFileSync(`${path}/application.html`), {});
+    const routeTag = document.createElement('app-route');
+    let routeParent = document.body.querySelector('app-routes');
+
+    if (parent.length > 0) {
+        routeParent = routeParent.querySelector(`#${parent}`);
+    }
+
+    routeTag.setAttribute('id', `${name}Route`);
+    routeTag.setAttribute('controller', controller);
+    routeTag.setAttribute('match', match);
+    routeParent.appendChild(routeTag);
+    fs.writeFileSync(`${path}/application.html`, prettyPrint(serializeDocument(document)));
+};
+
+
+const generateController = (path, name, withView, withRoute) => {
+    let controller = fs.readFileSync('./bin/generators/controller.js.template', 'utf-8');
+
+    controller = controller.replace('%{NAME}%', name);
+
+    mkdirp.sync(`${path}/controllers/${name}Controller/`);
+    fs.writeFileSync(`${path}/controllers/${name}Controller/${camelToDash(name)}-controller.js`, controller);
+
+    const document = jsdom(fs.readFileSync(`${path}/application.html`), {});
+    const controllerTag = document.createElement('app-controller');
+    controllerTag.setAttribute('id', `${name}Controller`);
+
+    if (withView === '*') {
+        controllerTag.setAttribute('view', `${name}View`);
+        generateView(path, name, '');
+    } else if (!(withView === '')) {
+        controllerTag.setAttribute('view', withView);
+    }
+
+    document.body.querySelector('app-info app-controllers').appendChild(controllerTag);
+    fs.writeFileSync(`${path}/application.html`, prettyPrint(serializeDocument(document)));
+    fs.appendFileSync(`${path}/application.js`,
+            `require('./controllers/${name}Controller/${camelToDash(name)}-controller.js');\n`);
+
+    if (withRoute !== 'false') {
+        generateRoute(path, name, `${name}Controller`, camelToDash(name), '');
+    }
+};
+
+
+const generateStaticServer = (path, title, jsWorksPath) => {
+    let server = fs.readFileSync('./bin/generators/server.js.template', 'utf-8');
+
+    server = server.replace('%{TITLE}%', title);
+    server = server.replace('%{JSWORKS_PATH}%', jsWorksPath);
+
+    fs.writeFileSync(`${path}/server.js`, server);
+};
+
+
+const generateApplication = (path, name, title, forTesting) => {
     let application = fs.readFileSync('./bin/generators/application.html.template', 'utf-8');
+    let testing = '';
 
-    application = application.replace('%{NAME}%', name);
+    if (forTesting === 'true') {
+        testing = '<script src="/jasmine.js"></script><script src="/testem.js"></script>';
+    }
 
-    fs.writeFileSync(`${path}/${app}/application.html`, application);
+    application = application.replace('%{TITLE}%', title);
+    application = application.replace('%{TESTING}%', testing);
+
+    fs.writeFileSync(`${path}/application.html`, application);
+    fs.writeFileSync(`${path}/application.js`, '// Require your application JS files here\n\n');
+
+    if (forTesting === 'false') {
+        const nodePackage = {
+            name: name,
+            version: "1.0.0",
+            description: title,
+            main: './server.js',
+            license: 'MIT',
+
+            scripts: {
+                start: 'webpack && node ./server.js'
+            },
+
+            dependencies: {
+                'typescript': 'latest',
+                'webpack': 'latest',
+                'awesome-typescript-loader': 'latest',
+                'source-map-loader': 'latest',
+                'jasmine': 'latest',
+                'testem': 'latest',
+                'sass-loader': 'latest',
+                'node-sass': 'latest',
+                'extract-text-webpack-plugin': 'latest'
+            }
+        };
+
+        fs.writeFileSync(`${path}/package.json`, JSON.stringify(nodePackage, null, 4));
+
+        const tsConfig = {
+            "compilerOptions": {
+                "outDir": "./dist/",
+                "sourceMap": true,
+                "noImplicitAny": true,
+                "module": "commonjs",
+                "target": "es5"
+            },
+            "include": [
+                "./**/*"
+            ]
+        };
+
+        fs.writeFileSync(`${path}/tsconfig.json`, JSON.stringify(nodePackage, null, 4));
+
+        let webPack = fs.readFileSync('./bin/generators/webpack.config.js.template', 'utf-8');
+        fs.writeFileSync(`${path}/webpack.config.js`, webPack);
+    }
 };
 
 
-const cleanApp = () => {
-    const path = parseArg('--path', './');
+const cleanApp = (path) => {
+    rmdir(path);
 };
 
 
-const startApp = () => {
-    const name = parseArg('--name', 'TestApplication');
-    const path = parseArg('--path', './');
-
+const startApp = (name, title, path, forTesting, jsWorksPath) => {
     mkdirp.sync(path);
-    mkdirp.sync(`${path}/${name}/controllers`);
-    mkdirp.sync(`${path}/${name}/views`);
-    mkdirp.sync(`${path}/${name}/components`);
-    mkdirp.sync(`${path}/${name}/models`);
-    mkdirp.sync(`${path}/${name}/helpers`);
+    mkdirp.sync(`${path}/controllers`);
+    mkdirp.sync(`${path}/views`);
+    mkdirp.sync(`${path}/components`);
+    mkdirp.sync(`${path}/models`);
+    mkdirp.sync(`${path}/helpers`);
+    mkdirp.sync(`${path}/spec`);
+    mkdirp.sync(`${path}/dist`);
 
-    generateApplication(path, name);
-    generateView(path, 'Sample');
-    generateController(path, 'Sample');
+    generateApplication(path, name, title, forTesting);
+
+    if (forTesting === 'false') {
+        generateStaticServer(path, title, jsWorksPath);
+    }
+};
+
+
+const sampleApp = (path, forTesting, jsWorksPath) => {
+    startApp('sample', 'Sample Application', path, forTesting, jsWorksPath);
+
+    generateController(path, 'Sample', '*', '*');
 };
 
 
@@ -97,18 +208,89 @@ const startApp = () => {
 
 switch (process.argv[2]) {
 
+    /***
+     * $ jsw startapp --name <test> --title <Test Application> --path <./> --forTesting <false>
+     */
     case 'startapp': {
-        startApp();
+        const name = parseArg('--name', 'test');
+        const title = parseArg('--title', 'Test Application');
+        const path = parseArg('--path', './');
+        const forTesting = parseArg('--forTesting', 'false');
+
+        startApp(name, title, path, forTesting);
     } break;
 
 
-    case 'generate': {
+    /***
+     * $ jsw g model
+     * $ jsw g view --name <Unnamed> --extends <>
+     * $ jsw g controller --name <Unnamed> --withView <*> --withRoute <*>
+     *     --withView * will generate new view corresponding to this controller
+     *     --withView ViewName will bind view 'ViewName' to the newly-generated controller
+     *     --withRoute * will generate new route for this controller
+     *     --withRoute false will not
+     */
+    case 'g': {
+        const path = parseArg('--path', './');
+
+        switch (process.argv[3]) {
+
+            case 'model': {
+                // ToDo: model generator
+            } break;
+
+            case 'view': {
+                const name = parseArg('--name', 'Unnamed');
+                const viewExtends = parseArg('--extends', '');
+
+                generateView(path, name, viewExtends);
+            } break;
+
+            case 'controller': {
+                const name = parseArg('--name', 'Unnamed');
+                const withView = parseArg('--withView', '*');
+                const withRoute = parseArg('--withRoute', '*');
+
+                generateController(path, name);
+            } break;
+
+            case 'helper': {
+                // ToDo: helper generator
+            } break;
+
+            case 'component': {
+                // ToDo: component generator
+            } break;
+
+            case 'spec': {
+                // ToDo: spec generator
+            } break;
+        }
 
     } break;
 
 
-    case 'clear': {
+    case 'testapp': {
+        const path = parseArg('--path', './');
+        const forTesting = parseArg('--forTesting', 'false');
+        const jsWorksPath = parseArg('--JSWorksPath', '/node_modules/jsworks/dist');
+
+        switch (process.argv[3]) {
+
+            case 'sample': {
+                sampleApp(path, forTesting, jsWorksPath);
+            } break;
+
+        }
 
     } break;
+
+
+    case 'clean': {
+        const path = parseArg('--path', './app');
+
+        cleanApp(path);
+    } break;
+
 
 }

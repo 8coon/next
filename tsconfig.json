@@ -1,12 +1,20 @@
 {
-  "compilerOptions": {
-    "outDir": "./dist/",
-    "sourceMap": true,
-    "noImplicitAny": true,
-    "module": "commonjs",
-    "target": "es5"
-  },
-  "include": [
-    "./src/**/*"
-  ]
+    "name": "sample",
+    "version": "1.0.0",
+    "description": "Sample Application",
+    "main": "./server.js",
+    "license": "MIT",
+    "scripts": {
+        "start": "webpack && node ./server.js"
+    },
+    "dependencies": {
+        "typescript": "latest",
+        "webpack": "latest",
+        "awesome-typescript-loader": "latest",
+        "source-map-loader": "latest",
+        "jasmine": "latest",
+        "testem": "latest",
+        "sass-loader": "latest",
+        "node-sass": "latest"
+    }
 }

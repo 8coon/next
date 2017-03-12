@@ -2,15 +2,39 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>%{NAME}%</title>
+    <title>%{TITLE}%</title>
 
     <!-- JSWorks import -->
-    <script src="./jsworks/jsworks.js"></script>
-    <link rel="stylesheet" href="./jsworks/jsworks.js">
+    <script src="/jsworks/jsworks.js"></script>
+    <link rel="stylesheet" href="/jsworks/jsworks.css">
     <!-- JSWorks import end -->
+
+    <script src="/dist/application.js"></script>
+    <link rel="stylesheet" href="/dist/application.css">
+
+    %{TESTING}%
 
 </head>
 <body>
+
+    <app-info>
+        <app-controllers>
+
+            <!-- Define your controllers here -->
+            <!-- <app-controller id="SampleController" view="SampleView"></app-controller> -->
+
+        </app-controllers>
+
+        <app-routes mode="hash">
+
+            <!-- Define your routes here -->
+            <!-- <app-route id="SampleRoute" controller="SampleController" match="route"></app-route>
+            <!-- App routes can be nested -->
+
+        </app-routes>
+    </app-info>
+
+    <app-main></app-main>
 
 </body>
 </html>
