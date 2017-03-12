@@ -131,56 +131,54 @@ const generateApplication = (path, name, title, forTesting) => {
     fs.writeFileSync(`${path}/application.html`, application);
     fs.writeFileSync(`${path}/application.js`, '// Require your application JS files here\n\n');
 
-    if (forTesting === 'false') {
-        const nodePackage = {
-            name: name,
-            version: "1.0.0",
-            description: title,
-            main: './server.js',
-            license: 'MIT',
+    const nodePackage = {
+        name: name,
+        version: "1.0.0",
+        description: title,
+        main: './server.js',
+        license: 'MIT',
 
-            scripts: {
-                start: 'webpack && node ./server.js'
-            },
+        scripts: {
+            start: 'node ./node_modules/webpack/bin/webpack.js && node ./server.js'
+        },
 
-            dependencies: {
-                'typescript': 'latest',
-                'webpack': 'latest',
-                'awesome-typescript-loader': 'latest',
-                'source-map-loader': 'latest',
-                'jasmine': 'latest',
-                'testem': 'latest',
-                'sass-loader': 'latest',
-                'node-sass': 'latest',
-                'style-loader': 'latest',
-                'html-loader': 'latest',
-                'extract-loader': 'latest',
-                'file-loader': 'latest',
-                'css-loader': 'latest',
-                'extract-text-webpack-plugin': 'latest'
-            }
-        };
+        dependencies: {
+            'typescript': 'latest',
+            'webpack': 'latest',
+            'awesome-typescript-loader': 'latest',
+            'source-map-loader': 'latest',
+            'jasmine': 'latest',
+            'testem': 'latest',
+            'sass-loader': 'latest',
+            'node-sass': 'latest',
+            'style-loader': 'latest',
+            'html-loader': 'latest',
+            'extract-loader': 'latest',
+            'file-loader': 'latest',
+            'css-loader': 'latest',
+            'extract-text-webpack-plugin': 'latest'
+        }
+    };
 
-        fs.writeFileSync(`${path}/package.json`, JSON.stringify(nodePackage, null, 4));
+    fs.writeFileSync(`${path}/package.json`, JSON.stringify(nodePackage, null, 4));
 
-        const tsConfig = {
-            "compilerOptions": {
-                "outDir": "./dist/",
-                "sourceMap": true,
-                "noImplicitAny": true,
-                "module": "commonjs",
-                "target": "es5"
-            },
-            "include": [
-                "./**/*"
-            ]
-        };
+    const tsConfig = {
+        "compilerOptions": {
+            "outDir": "./dist/",
+            "sourceMap": true,
+            "noImplicitAny": true,
+            "module": "commonjs",
+            "target": "es5"
+        },
+        "include": [
+            "./**/*"
+        ]
+    };
 
-        fs.writeFileSync(`${path}/tsconfig.json`, JSON.stringify(nodePackage, null, 4));
+    fs.writeFileSync(`${path}/tsconfig.json`, JSON.stringify(nodePackage, null, 4));
 
-        let webPack = fs.readFileSync('./bin/generators/webpack.config.js.template', 'utf-8');
-        fs.writeFileSync(`${path}/webpack.config.js`, webPack);
-    }
+    let webPack = fs.readFileSync('./bin/generators/webpack.config.js.template', 'utf-8');
+    fs.writeFileSync(`${path}/webpack.config.js`, webPack);
 };
 
 
@@ -200,10 +198,7 @@ const startApp = (name, title, path, forTesting, jsWorksPath) => {
     mkdirp.sync(`${path}/dist`);
 
     generateApplication(path, name, title, forTesting);
-
-    if (forTesting === 'false') {
-        generateStaticServer(path, title, jsWorksPath);
-    }
+    generateStaticServer(path, title, jsWorksPath);
 };
 
 
