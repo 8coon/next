@@ -1,6 +1,7 @@
 {
   "framework": "jasmine",
   "src_files": [
-    "./spec/**/*.js"
+    "./spec/unit/**/*.js",
+    "./spec/integration/**/*.js"
   ]
 }

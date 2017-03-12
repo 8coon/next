@@ -52,6 +52,11 @@ const generateView = (path, name, viewExtends) => {
     mkdirp.sync(`${path}/views/${name}View/`);
     fs.writeFileSync(`${path}/views/${name}View/${camelToDash(name)}-view.html`, view);
     fs.writeFileSync(`${path}/views/${name}View/${camelToDash(name)}-view.scss`, style);
+
+    fs.appendFileSync(`${path}/application.js`,
+        `require('./views/${name}View/${camelToDash(name)}-view.scss');\n`);
+    fs.appendFileSync(`${path}/application.js`,
+        `require('./views/${name}View/${camelToDash(name)}-view.html');\n`);
 };
 
 
@@ -147,6 +152,11 @@ const generateApplication = (path, name, title, forTesting) => {
                 'testem': 'latest',
                 'sass-loader': 'latest',
                 'node-sass': 'latest',
+                'style-loader': 'latest',
+                'html-loader': 'latest',
+                'extract-loader': 'latest',
+                'file-loader': 'latest',
+                'css-loader': 'latest',
                 'extract-text-webpack-plugin': 'latest'
             }
         };

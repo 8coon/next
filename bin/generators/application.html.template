@@ -9,8 +9,9 @@
     <link rel="stylesheet" href="/jsworks/jsworks.css">
     <!-- JSWorks import end -->
 
-    <script src="/dist/application.js"></script>
-    <link rel="stylesheet" href="/dist/application.css">
+    <script src="/application.js"></script>
+    <link rel="stylesheet" href="/main.css">
+    <link rel="import" href="/main.html">
 
     %{TESTING}%
 

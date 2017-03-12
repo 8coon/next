@@ -1,5 +1,8 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
+const cssExtractTextPlugin = new ExtractTextPlugin("[name].css");
+const htmlExtractTextPlugin = new ExtractTextPlugin("[name].html");
+
 
 module.exports = {
     entry: './application.js',
@@ -12,7 +15,7 @@ module.exports = {
     devtool: 'source-map',
 
     resolve: {
-        extensions: ['.js']
+        extensions: ['.js', '.css', '.scss', '.html']
     },
 
     module: {
@@ -27,38 +30,25 @@ module.exports = {
                 loader: "source-map-loader",
                 exclude: /(node_modules|bower_components)/
             },
-            {
-                test: /\.html$/,
-                loader: 'html-loader'
-            },
+
             {
                 test: /\.css$/,
-                loader: ExtractTextPlugin.extract({fallback: 'style-loader', use: 'css-loader'})
-            }
-        ],
-
-        plugins: [
-            new ExtractTextPlugin(`${__dirname}/dist/application.css`)
-        ],
-
-        rules: [
+                loader: cssExtractTextPlugin.extract({fallback: "style-loader", use: "css-loader"})
+            },
             {
                 test: /\.scss$/,
-                use: [
-                    {
-                        loader: "style-loader"
-                    },
-                    {
-                        loader: "css-loader"
-                    },
-                    {
-                        loader: "sass-loader",
-                        options: {
-                            includePaths: ["./**"]
-                        }
-                    }
-                ]
-            }
-        ]
-    }
+                loader: cssExtractTextPlugin.extract({fallback: "style-loader", use: "css-loader!sass-loader"})
+            },
+
+            {
+                test: /\.html$/,
+                loader: htmlExtractTextPlugin.extract({fallback: "html-loader", use: "html-loader"})
+            },
+        ],
+
+    },
+
+    plugins: [
+        cssExtractTextPlugin, htmlExtractTextPlugin
+    ],
 };

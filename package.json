@@ -22,7 +22,7 @@
   },
 
   "scripts": {
-    "test": "node ./node_modules/tslint/bin/tslint ./src/**/*.ts --type-check --project ./tsconfig.json && node ./node_modules/webpack/bin/webpack.js && node ./node_modules/testem/testem.js ci"
+    "test": "sh ./bin/make-tests.sh"
   },
 
   "dependencies": {
@@ -30,10 +30,12 @@
     "jsdom": "latest",
     "typescript": "latest",
     "tslint": "latest",
-    "webpack": "latest",
     "extract-text-webpack-plugin": "latest",
+    "webpack": "latest",
     "sass-loader": "latest",
     "node-sass": "latest",
+    "css-loader": "latest",
+    "html-loader": "latest",
     "awesome-typescript-loader": "latest",
     "source-map-loader": "latest",
     "jasmine": "latest",

@@ -7,7 +7,7 @@ const path = `${__dirname}%{JSWORKS_PATH}%`;
 const app = express();
 
 
-app.use('/', express.static(`${__dirname}`));
+app.use('/', express.static(`${__dirname}/dist`));
 
 app.use('/jsworks', express.static(path));
 

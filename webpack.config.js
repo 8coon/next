@@ -1,50 +1,58 @@
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+const cssExtractTextPlugin = new ExtractTextPlugin("jsworks.css");
+const htmlExtractTextPlugin = new ExtractTextPlugin("jsworks.html");
+
+
 module.exports = {
-    entry: './application.js',
+    entry: './src/jsworks.ts',
+
     output: {
-        filename: 'application.js',
+        filename: 'jsworks.js',
         path: `${__dirname}/dist/`
     },
 
     devtool: 'source-map',
 
-    resolve: {
-        extensions: ['.js']
-    },
+    /*resolve: {
+        extensions: ['.js', '.ts', '.css', '.scss', '.html']
+     exclude: /(node_modules|bower_components|spec)/
+    },*/
 
     module: {
         loaders: [
             {
                 test: /\.ts$/,
-                loader: "awesome-typescript-loader"
+                loader: "awesome-typescript-loader",
+                exclude: /(node_modules|bower_components|spec)/
             },
             {
                 test: /\.js$/,
-                loader: "source-map-loader"
+                loader: "source-map-loader",
+                exclude: /(node_modules|bower_components|spec)/
+            },
+
+            {
+                test: /\.css$/,
+                loader: cssExtractTextPlugin.extract({fallback: "style-loader", use: "css-loader"}),
+                exclude: /(node_modules|bower_components|spec)/
             },
             {
+                test: /\.scss$/,
+                loader: cssExtractTextPlugin.extract({fallback: "style-loader", use: "css-loader!sass-loader"}),
+                exclude: /(node_modules|bower_components|spec)/
+            },
+
+            {
                 test: /\.html$/,
-                loader: 'html-loader'
-            }
+                loader: htmlExtractTextPlugin.extract({fallback: "html-loader", use: "html-loader"}),
+                exclude: /(node_modules|bower_components|spec)/
+            },
         ],
 
-        rules: [
-            {
-                test: /\.scss$/,
-                use: [
-                    {
-                        loader: "style-loader"
-                    },
-                    {
-                        loader: "css-loader"
-                    },
-                    {
-                        loader: "sass-loader",
-                        options: {
-                            includePaths: ["./**"]
-                        }
-                    }
-                ]
-            }
-        ]
-    }
+    },
+
+    plugins: [
+        cssExtractTextPlugin, htmlExtractTextPlugin
+    ],
 };
