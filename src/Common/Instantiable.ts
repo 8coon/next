@@ -1,3 +1,7 @@
-/**
- * Created by coon on 13.03.17.
- */
+
+
+export interface Instantiable {
+
+    getInstance(args: Object): Instantiable;
+
+}

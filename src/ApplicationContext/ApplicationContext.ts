@@ -1,3 +1,13 @@
-/**
- * Created by coon on 13.03.17.
- */
+import {ApplicationInfoProvider} from "../ApplicationInfo/ApplicationInfoProvider";
+
+
+export class ApplicationContext {
+
+    readonly infoProvider: ApplicationInfoProvider;
+
+
+    run(): void {
+
+    }
+
+}
