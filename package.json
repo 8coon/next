@@ -39,7 +39,8 @@
     "style-loader": "latest",
     "awesome-typescript-loader": "latest",
     "source-map-loader": "latest",
-    "jasmine": "latest",
-    "testem": "latest"
+    "mocha": "latest",
+    "chai": "latest",
+    "browser-run": "latest"
   }
 }

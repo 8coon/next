@@ -1,0 +1,13 @@
+
+<div id="mocha"><p><a href=".">Index</a></p></div>
+<div id="messages"></div>
+<div id="fixtures"></div>
+
+<script src="/mocha/mocha.js"></script>
+<script src="/chai/chai.js"></script>
+
+<script>mocha.setup('bdd')</script>
+
+%{TESTS}%
+
+<script>mocha.run();</script>

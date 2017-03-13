@@ -107,26 +107,77 @@ const generateController = (path, name, withView, withRoute) => {
 };
 
 
-const generateStaticServer = (path, title, jsWorksPath) => {
+const generateStaticServer = (path, title, jsWorksPath, forTesting) => {
     let server = fs.readFileSync('./bin/generators/server.js.template', 'utf-8');
+    let testsPath = `/spec`;
+
+    if (forTesting === 'true') {
+        testsPath = '/../../spec';
+    }
 
     server = server.replace('%{TITLE}%', title);
     server = server.replace('%{JSWORKS_PATH}%', jsWorksPath);
+    server = server.replace('%{TESTS_PATH}%', testsPath);
 
     fs.writeFileSync(`${path}/server.js`, server);
 };
 
 
-const generateApplication = (path, name, title, forTesting) => {
-    let application = fs.readFileSync('./bin/generators/application.html.template', 'utf-8');
-    let testing = '';
+const getTests = (path, forTesting) => {
+    const files = [];
+    path = `${path}/spec`;
 
     if (forTesting === 'true') {
-        testing = '<script src="/jasmine.js"></script><script src="/testem.js"></script>';
+        path = './spec';
+    }
+
+    const iterate = (root, rootExport) => {
+        fs.readdirSync(root, 'utf-8').forEach((file => {
+            const name = `${root}/${file}`;
+            const exportName = `${rootExport}/${file}`;
+
+            if (fs.statSync(name).isDirectory()) {
+                if (name === 'app') {
+                    return;
+                }
+
+                iterate(name, exportName);
+                return;
+            }
+
+            if (/^.+\.js$/g.test(name)) {
+                files.push(exportName);
+            }
+        }));
+    };
+
+    iterate(path, '');
+
+    return files.map((file) => {
+        return `<script src="/tests/${file}"></script>`;
+    });
+};
+
+
+const generateApplication = (path, name, title, forTesting) => {
+    let application = fs.readFileSync('./bin/generators/application.html.template', 'utf-8');
+    let testingOutput = '';
+    let testing = '';
+    let tests = '';
+
+    if (forTesting === 'true') {
+        testing += '<link rel="stylesheet" media="all" href="/mocha/mocha.css">\n';
+        testing += '<script src="/mocha/mocha.js"></script>\n';
+        testing += '<script src="/chai/chai.js"></script>\n';
+
+        testingOutput += fs.readFileSync('./bin/generators/tests.html.template', 'utf-8');
+        testingOutput = testingOutput.replace('%{TESTS}%', getTests(path, forTesting).join('\n'));
     }
 
     application = application.replace('%{TITLE}%', title);
     application = application.replace('%{TESTING}%', testing);
+    application = application.replace('%{TESTING-OUTPUT}%', testingOutput);
+
 
     fs.writeFileSync(`${path}/application.html`, application);
     fs.writeFileSync(`${path}/application.js`, '// Require your application JS files here\n\n');
@@ -198,7 +249,7 @@ const startApp = (name, title, path, forTesting, jsWorksPath) => {
     mkdirp.sync(`${path}/dist`);
 
     generateApplication(path, name, title, forTesting);
-    generateStaticServer(path, title, jsWorksPath);
+    generateStaticServer(path, title, jsWorksPath, forTesting);
 };
 
 

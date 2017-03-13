@@ -1,20 +1,25 @@
 'use strict';
 
 
+const expect = chai.expect;
+
+
 describe('addSomethingToDOM', () => {
 
     it('should add element with the text specified and return true', () => {
-        expect(addSomethingToDOM('It works!')).toBe(true);
+        expect(JSWorks.addSomethingToDOM('It works!')).to.equal(true);
 
-        expect(() => {
+        expect((() => {
+            let result = false;
+
             [...document.querySelectorAll('div')].forEach((element) => {
-                if (element.innerHTML === 'It works!') {
-                    return true;
+                if (element.innerHTML == 'It works!') {
+                    result = true;
                 }
             });
 
-            return false;
-        }).toBe(true);
+            return result;
+        })()).to.equal(true);
     });
 
 });

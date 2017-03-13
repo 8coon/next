@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <title>%{TITLE}%</title>
 
+    <script>JSWorks = {};</script>
+
     <!-- JSWorks import -->
     <script src="/jsworks/jsworks.js"></script>
     <link rel="stylesheet" href="/jsworks/jsworks.css">
@@ -36,6 +38,8 @@
     </app-info>
 
     <app-main></app-main>
+
+    %{TESTING-OUTPUT}%
 
 </body>
 </html>

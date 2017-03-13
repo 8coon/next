@@ -4,12 +4,16 @@ const fs = require('fs');
 const express = require('express');
 
 const path = `${__dirname}%{JSWORKS_PATH}%`;
+const testsPath = `${__dirname}%{TESTS_PATH}%`;
 const app = express();
 
 
 app.use('/', express.static(`${__dirname}/dist`));
-
 app.use('/jsworks', express.static(path));
+app.use('/mocha', express.static('./node_modules/mocha'));
+app.use('/chai', express.static('./node_modules/chai'));
+app.use('/tests', express.static(testsPath));
+
 
 app.get('/', (req,res) => {
     res.sendFile(__dirname + '/application.html');
