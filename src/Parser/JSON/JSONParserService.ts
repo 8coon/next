@@ -18,6 +18,11 @@ export class JSONParserService extends ParserService {
     public readonly requires: Service[] = [];
 
 
+    constructor() {
+        super();
+    }
+
+
     /**
      * См. Service.getInstance
      * @param args

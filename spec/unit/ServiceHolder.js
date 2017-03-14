@@ -42,12 +42,6 @@ describe('ServiceHolder', () => {
 
 
 
-    it('should have empty constructor', () => {
-        expect(new JSWorks.Internal.ServiceHolder()).to.be.ok;
-    });
-
-
-
     it('should register a service and return it', () => {
         const holder = new JSWorks.Internal.ServiceHolder();
 

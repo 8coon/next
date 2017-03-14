@@ -17,6 +17,7 @@ import {UnknownServiceError} from './Service/Error/UnknownServiceError';
 import {UnknownServiceTypeError} from './Service/Error/UnknownServiceTypeError';
 
 import {ConfigurationService} from './Configuration/ConfigurationService';
+import {JSONParserService} from './Parser/JSON/JSONParserService';
 
 
 declare const JSWorks: any;
@@ -58,6 +59,7 @@ JSWorks.init = () => {
 
     JSWorks.Internal.ParserService = ParserService;
     JSWorks.Internal.HTMLParserService = HTMLParserService;
+    JSWorks.Internal.JSONParserService = JSONParserService;
     JSWorks.Internal.ConfigurationService = ConfigurationService;
 
     JSWorks.Errors = {};
