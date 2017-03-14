@@ -1,5 +1,8 @@
 
 
+import {ApplicationContext} from "./ApplicationContext/ApplicationContext";
+import {HTMLParser} from "./Parser/HTML/HTMLParser";
+import {Parser} from "./Parser/Parser";
 declare const JSWorks: any;
 
 
@@ -9,8 +12,6 @@ declare const JSWorks: any;
  * @returns {boolean}
  */
 export function addSomethingToDOM(text: string): boolean {
-    JSWorks.addSomethindToDOM = addSomethingToDOM;
-
     const div = document.createElement('div');
     div.innerHTML = text;
     document.querySelector('body').appendChild(div);
@@ -19,5 +20,17 @@ export function addSomethingToDOM(text: string): boolean {
 }
 
 
+export function servicesTest(): void {
+    const appContext: ApplicationContext = new ApplicationContext();
+
+    appContext.serviceHolder.registerService(new HTMLParser());
+
+    appContext.run();
+
+    console.log((<Parser> appContext.serviceHolder.getService('Parser')).getParsedData({}));
+}
+
+
 JSWorks.addSomethingToDOM = addSomethingToDOM;
+JSWorks.servicesTest = servicesTest;
 

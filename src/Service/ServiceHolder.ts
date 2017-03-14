@@ -1,13 +1,15 @@
 import {Service} from "./Service";
 import {ServiceAlreadyRegisteredError} from "./Error/ServiceAlreadyRegistered";
 import {ServiceUnresolvableError} from "./Error/ServiceUnresolvable";
-import InterfaceType = ts.InterfaceType;
+import {UnknownServiceTypeError} from "./Error/UnknownServiceType";
+import {UnknownServiceError} from "./Error/UnknownService";
 
 
 export class ServiceHolder {
 
     private services: Object = {};
     private serviceInstances: Object = {};
+    private serviceInstancesByType: Object = {};
     private serviceCount: number = 0;
     private serviceInitCount: number = 0;
 
@@ -43,6 +45,7 @@ export class ServiceHolder {
 
             if (requirementsMet) {
                 this.serviceInstances[name] = service.getInstance(args);
+                this.serviceInstancesByType[service.type] = this.serviceInstances[name];
                 this.serviceInitCount++;
             }
         });
@@ -62,8 +65,21 @@ export class ServiceHolder {
     }
 
 
-    public getService(serviceType: InterfaceType): Service {
-        return null;
+    public getService(serviceType: string): Service {
+        if (this.serviceInstancesByType[serviceType]) {
+            return this.serviceInstancesByType[serviceType];
+        }
+
+        throw new UnknownServiceTypeError(serviceType);
+    }
+
+
+    public getServiceByName(serviceName: string): Service {
+        if (this.serviceInstances[serviceName]) {
+            return this.serviceInstances[serviceName];
+        }
+
+        throw new UnknownServiceError(serviceName);
     }
 
 }

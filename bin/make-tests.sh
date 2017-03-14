@@ -3,6 +3,7 @@
 
 
 node ./node_modules/tslint/bin/tslint ./src/**/*.ts --type-check --project ./tsconfig.json
+node ./node_modules/typescript/bin/tsc
 node ./node_modules/webpack/bin/webpack.js
 
 

@@ -37,7 +37,7 @@
     "css-loader": "latest",
     "html-loader": "latest",
     "style-loader": "latest",
-    "awesome-typescript-loader": "latest",
+    "ts-loader": "latest",
     "source-map-loader": "latest",
     "mocha": "latest",
     "chai": "latest",

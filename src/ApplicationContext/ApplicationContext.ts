@@ -1,13 +1,15 @@
 import {ApplicationInfoProvider} from "../ApplicationInfo/ApplicationInfoProvider";
+import {ServiceHolder} from "../Service/ServiceHolder";
 
 
 export class ApplicationContext {
 
-    readonly infoProvider: ApplicationInfoProvider;
+    public readonly infoProvider: ApplicationInfoProvider;
+    public readonly serviceHolder: ServiceHolder = new ServiceHolder();
 
 
-    run(): void {
-
+    public run(): void {
+        this.serviceHolder.instantiateServices();
     }
 
 }
