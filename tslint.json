@@ -42,6 +42,14 @@
 
       "interfaces": {
         "visibilities": ["all"]
+      },
+
+      "properties": {
+        "privacies": ["public", "protected"]
+      },
+
+      "classes": {
+        "visibilities": "exported"
       }
     }]
   },

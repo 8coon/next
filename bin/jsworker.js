@@ -169,6 +169,7 @@ const generateApplication = (path, name, title, forTesting) => {
         testing += '<link rel="stylesheet" media="all" href="/mocha/mocha.css">\n';
         testing += '<script src="/mocha/mocha.js"></script>\n';
         testing += '<script src="/chai/chai.js"></script>\n';
+        testing += '<script>expect = chai.expect;</script>\n';
 
         testingOutput += fs.readFileSync('./bin/generators/tests.html.template', 'utf-8');
         testingOutput = testingOutput.replace('%{TESTS}%', getTests(path, forTesting).join('\n'));

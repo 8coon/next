@@ -20,7 +20,7 @@ var HTMLParser = (function (_super) {
         return _this;
     }
     HTMLParser.prototype.getInstance = function (args) {
-        return undefined;
+        return this;
     };
     HTMLParser.prototype.getParsedData = function (source) {
         return { message: 'It works!' };

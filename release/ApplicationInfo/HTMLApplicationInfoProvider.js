@@ -9,23 +9,19 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var ApplicationInfoProvider_1 = require("./ApplicationInfoProvider");
 var HTMLApplicationInfoProvider = (function (_super) {
     __extends(HTMLApplicationInfoProvider, _super);
     function HTMLApplicationInfoProvider() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    /**
+     * См. Service.getInstance
+     * @param args
+     * @returns {HTMLApplicationInfoProvider}
+     */
     HTMLApplicationInfoProvider.prototype.getInstance = function (args) {
-        return undefined;
-    };
-    HTMLApplicationInfoProvider.prototype.getControllerData = function () {
-        return undefined;
-    };
-    HTMLApplicationInfoProvider.prototype.getViewData = function () {
-        return undefined;
-    };
-    HTMLApplicationInfoProvider.prototype.getRouteData = function () {
         return undefined;
     };
     return HTMLApplicationInfoProvider;

@@ -1,10 +1,7 @@
 'use strict';
 
 
-const expect = chai.expect;
-
-
-describe('addSomethingToDOM', () => {
+/*describe('addSomethingToDOM', () => {
 
     it('should add element with the text specified and return true', () => {
         expect(JSWorks.addSomethingToDOM('It works!')).to.equal(true);
@@ -22,4 +19,4 @@ describe('addSomethingToDOM', () => {
         })()).to.equal(true);
     });
 
-});
+});*/

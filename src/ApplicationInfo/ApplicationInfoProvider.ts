@@ -1,17 +1,18 @@
-import {Service} from "../Service/Service";
+import {Service} from '../Service/Service';
 
 
 export abstract class ApplicationInfoProvider extends Service {
 
-    abstract getInstance(args: Object): ApplicationInfoProvider;
+
+    // public abstract getInstance(args: Object): ApplicationInfoProvider;
 
 
-    abstract getControllerData(): Object;
+    /* public abstract getControllerData(): Object;
 
 
-    abstract getViewData(): Object;
+    public abstract getViewData(): Object;
 
 
-    abstract getRouteData(): Object;
+    public abstract getRouteData(): Object; */
 
 }

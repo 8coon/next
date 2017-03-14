@@ -41,6 +41,7 @@
     "source-map-loader": "latest",
     "mocha": "latest",
     "chai": "latest",
-    "browser-run": "latest"
+    "browser-run": "latest",
+    "source-map-support": "latest"
   }
 }

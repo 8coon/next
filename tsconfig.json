@@ -3,7 +3,8 @@
         "sourceMap": true,
         "alwaysStrict": true,
         "baseUrl": "./src",
-        "outDir": "./release"
+        "outDir": "./release",
+        "target": "ES5"
     },
 
     "exclude": [

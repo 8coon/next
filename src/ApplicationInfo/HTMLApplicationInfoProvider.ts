@@ -1,22 +1,30 @@
-import {ApplicationInfoProvider} from "./ApplicationInfoProvider";
+import {ApplicationInfoProvider} from './ApplicationInfoProvider';
 
 
 export class HTMLApplicationInfoProvider extends ApplicationInfoProvider {
 
-    getInstance(args: Object): HTMLApplicationInfoProvider {
+
+    /**
+     * См. Service.getInstance
+     * @param args
+     * @returns {HTMLApplicationInfoProvider}
+     */
+    public getInstance(args: Object): HTMLApplicationInfoProvider {
         return undefined;
     }
 
-    getControllerData(): Object {
+    /*
+    public getControllerData(): Object {
         return undefined;
     }
 
-    getViewData(): Object {
+    public getViewData(): Object {
         return undefined;
     }
 
-    getRouteData(): Object {
+    public getRouteData(): Object {
         return undefined;
     }
+    */
 
 }

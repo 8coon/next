@@ -9,7 +9,7 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var Service_1 = require("../Service/Service");
 var ApplicationInfoProvider = (function (_super) {
     __extends(ApplicationInfoProvider, _super);
