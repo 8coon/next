@@ -1,3 +1,4 @@
+import {MethodNotImplementedError} from '../../Service/Error/MethodNotImplementedError';
 import {Service} from '../../Service/Service';
 import {ParserService} from '../ParserService';
 
@@ -27,8 +28,24 @@ export class HTMLParserService extends ParserService {
         return this;
     }
 
-    /*getParsedData(source: Object): Object {
-        return {message: 'It works!'}
-    }*/
+
+    /**
+     * Парсит строку как HTML и возвращает объект.
+     * @param data
+     * @returns {Object}
+     */
+    public parseString(data: string): Object {
+        throw new MethodNotImplementedError('HTMLParserService.parseString');
+    }
+
+
+    /**
+     * Парсит данные DOM-элемента и возвращает объект.
+     * @param element
+     * @returns {Object}
+     */
+    public parseDOM(element: HTMLElement): Object {
+        throw new MethodNotImplementedError('HTMLParserService.parseDOM');
+    }
 
 }

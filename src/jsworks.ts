@@ -11,6 +11,7 @@ import {ParserService} from './Parser/ParserService';
 import {Service} from './Service/Service';
 import {ServiceHolder} from './Service/ServiceHolder';
 
+import {MethodNotImplementedError} from './Service/Error/MethodNotImplementedError';
 import {ServiceAlreadyRegisteredError} from './Service/Error/ServiceAlreadyRegisteredError';
 import {ServiceUnresolvableError} from './Service/Error/ServiceUnresolvableError';
 import {UnknownServiceError} from './Service/Error/UnknownServiceError';
@@ -63,6 +64,7 @@ JSWorks.init = () => {
     JSWorks.Internal.ConfigurationService = ConfigurationService;
 
     JSWorks.Errors = {};
+    JSWorks.Errors.MethodNotImplementedError = MethodNotImplementedError;
     JSWorks.Errors.ServiceAlreadyRegisteredError = ServiceAlreadyRegisteredError;
     JSWorks.Errors.ServiceUnresolvableError = ServiceUnresolvableError;
     JSWorks.Errors.UnknownServiceError = UnknownServiceError;
