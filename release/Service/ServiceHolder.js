@@ -26,7 +26,8 @@ var ServiceHolder = (function () {
             var args = {};
             var requirementsMet = true;
             service.requires.forEach(function (requiredService) {
-                if (!(_this.services[requiredService.name])) {
+                if (!((_this.serviceInstances[requiredService.name]) ||
+                    (_this.serviceInstancesByType[requiredService.name]))) {
                     requirementsMet = false;
                     return;
                 }

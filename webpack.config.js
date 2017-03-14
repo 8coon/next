@@ -8,7 +8,7 @@ const htmlExtractTextPlugin = new ExtractTextPlugin("jsworks.html");
 
 module.exports = {
     context: path.resolve(__dirname, 'src'),
-    entry: './jsworks.ts',
+    entry: '../release/jsworks.js',
 
     output: {
         filename: 'jsworks.js',

@@ -2,7 +2,8 @@
     "compilerOptions": {
         "sourceMap": true,
         "alwaysStrict": true,
-        "baseUrl": "./src"
+        "baseUrl": "./src",
+        "outDir": "./release"
     },
 
     "exclude": [

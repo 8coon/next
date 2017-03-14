@@ -35,7 +35,8 @@ export class ServiceHolder {
             let requirementsMet = true;
 
             service.requires.forEach((requiredService: Service) => {
-                if (!(this.services[requiredService.name])) {
+                if (!((this.serviceInstances[requiredService.name]) ||
+                        (this.serviceInstancesByType[requiredService.name]))) {
                     requirementsMet = false;
                     return;
                 }
