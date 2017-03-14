@@ -2,6 +2,7 @@
 .DS_Store
 spec/app
 dist
+release
 
 # Logs
 logs
