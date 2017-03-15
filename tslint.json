@@ -22,6 +22,7 @@
     "class-name": true,
     "align": false,
     "no-consecutive-blank-lines": false,
+    "ordered-imports": false,
 
     "jsdoc-format": true,
     "completed-docs": [true, {

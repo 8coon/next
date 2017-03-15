@@ -16,7 +16,7 @@ export class JSONParserService extends ParserService {
      * Зависимости сервиса
      * @type {Array}
      */
-    public readonly requires: Service[] = [];
+    // public requires: Service[];
 
 
     constructor() {
@@ -55,11 +55,7 @@ export class JSONParserService extends ParserService {
      * @returns {JSONParserService}
      */
     public getInstance(args: Object): Service {
-        return this;
+        return super.getInstance(args);
     }
-
-    /*getParsedData(source: Object): Object {
-        return undefined;
-    }*/
 
 }

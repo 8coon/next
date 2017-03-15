@@ -16,7 +16,7 @@ export class HTMLParserService extends ParserService {
      * Зависимости сервиса
      * @type {Array}
      */
-    public readonly requires: Service[] = [];
+    // public readonly requires: Service[] = [];
 
 
     /**
@@ -25,7 +25,7 @@ export class HTMLParserService extends ParserService {
      * @returns {HTMLParserService}
      */
     public getInstance(args: Object): Service {
-        return this;
+        return super.getInstance(this);
     }
 
 

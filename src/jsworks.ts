@@ -11,6 +11,7 @@ import {ParserService} from './Parser/ParserService';
 import {Service} from './Service/Service';
 import {ServiceHolder} from './Service/ServiceHolder';
 
+import {HTTPError} from './Service/Error/HTTPError';
 import {MethodNotImplementedError} from './Service/Error/MethodNotImplementedError';
 import {ServiceAlreadyRegisteredError} from './Service/Error/ServiceAlreadyRegisteredError';
 import {ServiceUnresolvableError} from './Service/Error/ServiceUnresolvableError';
@@ -19,6 +20,8 @@ import {UnknownServiceTypeError} from './Service/Error/UnknownServiceTypeError';
 
 import {ConfigurationService} from './Configuration/ConfigurationService';
 import {JSONParserService} from './Parser/JSON/JSONParserService';
+
+import {NetworkService} from './Network/NetworkService';
 
 
 declare const JSWorks: any;
@@ -62,8 +65,10 @@ JSWorks.init = () => {
     JSWorks.Internal.HTMLParserService = HTMLParserService;
     JSWorks.Internal.JSONParserService = JSONParserService;
     JSWorks.Internal.ConfigurationService = ConfigurationService;
+    JSWorks.Internal.NetworkService = NetworkService;
 
     JSWorks.Errors = {};
+    JSWorks.Errors.HTTPError = HTTPError;
     JSWorks.Errors.MethodNotImplementedError = MethodNotImplementedError;
     JSWorks.Errors.ServiceAlreadyRegisteredError = ServiceAlreadyRegisteredError;
     JSWorks.Errors.ServiceUnresolvableError = ServiceUnresolvableError;

@@ -44,6 +44,7 @@
     "browser-run": "latest",
     "source-map-support": "latest",
     "rmdir": "latest",
-    "express": "latest"
+    "express": "latest",
+    "chai-as-promised": "latest"
   }
 }

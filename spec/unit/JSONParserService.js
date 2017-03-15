@@ -22,6 +22,7 @@ describe('JSONParserService', () => {
 
         const holder = new JSWorks.Internal.ServiceHolder();
         holder.registerService(new JSWorks.Internal.JSONParserService());
+        holder.registerService(new JSWorks.Internal.NetworkService());
         holder.instantiateServices();
 
         expect(holder.getService('Parser').name === 'JSONParser');
@@ -42,6 +43,7 @@ describe('JSONParserService', () => {
     it('should parse JSON from string', () => {
         const holder = new JSWorks.Internal.ServiceHolder();
         holder.registerService(new JSWorks.Internal.JSONParserService());
+        holder.registerService(new JSWorks.Internal.NetworkService());
         holder.instantiateServices();
 
         const parser = holder.getServiceByName('JSONParser');
@@ -55,6 +57,7 @@ describe('JSONParserService', () => {
     it('should parse JSON from HTMLElement', () => {
         const holder = new JSWorks.Internal.ServiceHolder();
         holder.registerService(new JSWorks.Internal.JSONParserService());
+        holder.registerService(new JSWorks.Internal.NetworkService());
         holder.instantiateServices();
 
         const parser = holder.getServiceByName('JSONParser');
@@ -68,9 +71,10 @@ describe('JSONParserService', () => {
     });
 
 
-    it('should parse JSON from URL synchronously and asynchronously', (done) => {
+    it('should parse JSON from URL synchronously and asynchronously', () => {
         const holder = new JSWorks.Internal.ServiceHolder();
         holder.registerService(new JSWorks.Internal.JSONParserService());
+        holder.registerService(new JSWorks.Internal.NetworkService());
         holder.instantiateServices();
 
         const parser = holder.getServiceByName('JSONParser');
@@ -78,9 +82,8 @@ describe('JSONParserService', () => {
 
         expect(parsed).to.haveOwnProperty('application');
 
-        parser.parseURLAsync('/static/jsworks.manifest.json', (asyncParsed) => {
+        return parser.parseURLAsync('/static/jsworks.manifest.json').then((asyncParsed) => {
             expect(asyncParsed).to.deep.equal(parsed);
-            done();
         });
     });
 

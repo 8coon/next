@@ -4,7 +4,11 @@
         "alwaysStrict": true,
         "baseUrl": "./src",
         "outDir": "./release",
-        "target": "ES5"
+        "target": "ES5",
+        "lib": [
+            "es2016",
+            "dom"
+        ]
     },
 
     "exclude": [

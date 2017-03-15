@@ -13,6 +13,7 @@ app.use('/static', express.static(`${__dirname}/static`));
 app.use('/jsworks', express.static(path));
 app.use('/mocha', express.static('./node_modules/mocha'));
 app.use('/chai', express.static('./node_modules/chai'));
+app.use('/chai-as-promised', express.static('./node_modules/chai-as-promised/lib'));
 app.use('/tests', express.static(testsPath));
 
 

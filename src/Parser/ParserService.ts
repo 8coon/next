@@ -1,11 +1,24 @@
+import {HTTPMethod} from '../Network/HTTPMethod';
 import {MethodNotImplementedError} from '../Service/Error/MethodNotImplementedError';
+import {NetworkService} from '../Network/NetworkService';
 import {Service} from '../Service/Service';
+import {HTTPResponse} from '../Network/HTTPResponse';
 
 
 export abstract class ParserService implements Service {
 
+
     /**
-     * Тип сервиса -- 'Parserэ
+     * NetworkService
+     * @returns {NetworkService}
+     */
+    protected get network(): NetworkService {
+        return this._network;
+    }
+
+
+    /**
+     * Тип сервиса -- Parser
      * @type {string}
      */
     public readonly type: string = 'Parser';
@@ -20,14 +33,20 @@ export abstract class ParserService implements Service {
      * Зависимости сервиса
      * @type {Array}
      */
-    public readonly requires: Service[] = [];
+    public readonly requires: Service[] = [new NetworkService()];
+
+
+    private _network: NetworkService;
 
 
     /**
      * См. Service.getInstance
      * @param args
      */
-    public abstract getInstance(args: Object): Service;
+    public getInstance(args: Object): Service {
+        this._network = args['Network'];
+        return this;
+    }
 
 
     /**
@@ -47,10 +66,11 @@ export abstract class ParserService implements Service {
     /**
      * Загружает данные по удалённому адресу.
      * @param url
+     * @param method
      * @returns {undefined}
      */
-    public parseURL(url: string): Object {
-        throw new MethodNotImplementedError('ParserService.parseURL');
+    public parseURL(url: string, method: HTTPMethod = HTTPMethod.GET): Object {
+        return this.parseString(this.network.fetch(url, method).data);
     }
 
 
@@ -58,9 +78,27 @@ export abstract class ParserService implements Service {
      * Загружает данные по удалённому адресу асинхронно и вызывает callback.
      * @param url
      * @param callback
+     * @param method
      */
-    public parseURLAsync(url: string, callback: (parsed: Object) => void): Object {
-        throw new MethodNotImplementedError('ParserService.parseURLAsync');
+    public parseURLCallback(url: string, callback: (parsed: Object) => void,
+                            method: HTTPMethod = HTTPMethod.GET): void {
+        this.network.fetchAsync(url, method).then((response: HTTPResponse) => {
+            callback(this.parseString(response.data));
+        });
+    }
+
+
+    /**
+     * Возвращает Promise, который разрешается данными, загруженными с сервера.
+     * @param url
+     * @param method
+     */
+    public parseURLAsync(url: string, method: HTTPMethod = HTTPMethod.GET): Promise<Object> {
+        return new Promise((resolve, reject) => {
+            this.parseURLCallback(url, (parsed: Object) => {
+                resolve(parsed);
+            }, method);
+        });
     }
 
 }
