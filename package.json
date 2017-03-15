@@ -42,6 +42,8 @@
     "mocha": "latest",
     "chai": "latest",
     "browser-run": "latest",
-    "source-map-support": "latest"
+    "source-map-support": "latest",
+    "rmdir": "latest",
+    "express": "latest"
   }
 }
