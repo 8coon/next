@@ -1,6 +1,19 @@
 'use strict';
 
 
+const getTestObject = () => {
+    return {
+        data: "kek",
+        array: [
+            {
+                "key a": 13,
+                "false": true
+            }
+        ]
+    };
+};
+
+
 describe('JSONParserService', () => {
 
 
@@ -32,18 +45,43 @@ describe('JSONParserService', () => {
         holder.instantiateServices();
 
         const parser = holder.getServiceByName('JSONParser');
-        const required = {
-            data: "kek",
-            array: [
-                {
-                    "key a": 13,
-                    "false": true
-                }
-            ]
-        };
+        const required = getTestObject();
 
         const parsed = parser.parseString(JSON.stringify(required));
         expect(parsed).to.deep.equal(required);
+    });
+
+
+    it('should parse JSON from HTMLElement', () => {
+        const holder = new JSWorks.Internal.ServiceHolder();
+        holder.registerService(new JSWorks.Internal.JSONParserService());
+        holder.instantiateServices();
+
+        const parser = holder.getServiceByName('JSONParser');
+        const required = getTestObject();
+
+        const element = document.createElement('DIV');
+        element.appendChild(document.createTextNode(JSON.stringify(required)));
+
+        const parsed = parser.parseDOM(element);
+        expect(parsed).to.deep.equal(required);
+    });
+
+
+    it('should parse JSON from URL synchronously and asynchronously', (done) => {
+        const holder = new JSWorks.Internal.ServiceHolder();
+        holder.registerService(new JSWorks.Internal.JSONParserService());
+        holder.instantiateServices();
+
+        const parser = holder.getServiceByName('JSONParser');
+        const parsed = parser.parseURL('/static/jsworks.manifest.json');
+
+        expect(parsed).to.haveOwnProperty('application');
+
+        parser.parseURLAsync('/static/jsworks.manifest.json', (asyncParsed) => {
+            expect(asyncParsed).to.deep.equal(parsed);
+            done();
+        });
     });
 
 

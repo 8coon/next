@@ -9,6 +9,7 @@ const app = express();
 
 
 app.use('/', express.static(`${__dirname}/dist`));
+app.use('/static', express.static(`${__dirname}/static`));
 app.use('/jsworks', express.static(path));
 app.use('/mocha', express.static('./node_modules/mocha'));
 app.use('/chai', express.static('./node_modules/chai'));

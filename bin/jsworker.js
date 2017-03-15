@@ -229,6 +229,22 @@ const generateApplication = (path, name, title, forTesting) => {
 
     fs.writeFileSync(`${path}/tsconfig.json`, JSON.stringify(nodePackage, null, 4));
 
+    const jsWorksManifest = {
+        application: {
+            title: title,
+            version: '1.0.0',
+            author: 'mrHuman'
+        },
+
+        configuration: {
+            viewParser: 'HTMLParser',
+            viewFile: '/main.html',
+            virtualDOMProvider: 'VDSimple'
+        }
+    };
+
+    fs.writeFileSync(`${path}/static/jsworks.manifest.json`, JSON.stringify(jsWorksManifest, null, 4));
+
     let webPack = fs.readFileSync('./bin/generators/webpack.config.js.template', 'utf-8');
     fs.writeFileSync(`${path}/webpack.config.js`, webPack);
 };
@@ -248,6 +264,7 @@ const startApp = (name, title, path, forTesting, jsWorksPath) => {
     mkdirp.sync(`${path}/helpers`);
     mkdirp.sync(`${path}/spec`);
     mkdirp.sync(`${path}/dist`);
+    mkdirp.sync(`${path}/static`);
 
     generateApplication(path, name, title, forTesting);
     generateStaticServer(path, title, jsWorksPath, forTesting);
