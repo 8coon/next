@@ -7,9 +7,7 @@ describe('NetworkService', () => {
     it('should exist and be registrable', () => {
         expect(JSWorks.Internal.NetworkService);
 
-        const holder = new JSWorks.Internal.ServiceHolder();
-        holder.registerService(new JSWorks.Internal.NetworkService());
-        holder.instantiateServices();
+        const holder = getTestServiceHolder(['Network']);
 
         expect(holder.getService('Network').name === 'Network');
         expect(holder.getServiceByName('Network').name === 'Network');
@@ -25,10 +23,7 @@ describe('NetworkService', () => {
 
 
     it('should fetch file content immediately or fire HTTPError', () => {
-        const holder = new JSWorks.Internal.ServiceHolder();
-        holder.registerService(new JSWorks.Internal.NetworkService());
-        holder.instantiateServices();
-
+        const holder = getTestServiceHolder(['Network']);
         const network = holder.getServiceByName('Network');
         const manifest = network.fetch('/static/jsworks.manifest.json');
 
@@ -45,10 +40,7 @@ describe('NetworkService', () => {
 
 
     it('should return a promise on fetchAsync and resolve it', () => {
-        const holder = new JSWorks.Internal.ServiceHolder();
-        holder.registerService(new JSWorks.Internal.NetworkService());
-        holder.instantiateServices();
-
+        const holder = getTestServiceHolder(['Network']);
         const network = holder.getServiceByName('Network');
 
         return network.fetchAsync('/static/jsworks.manifest.json').then((result) => {
@@ -58,10 +50,7 @@ describe('NetworkService', () => {
 
 
     it('should return a promise on fetchAsync and reject it if the error code is 400+', () => {
-        const holder = new JSWorks.Internal.ServiceHolder();
-        holder.registerService(new JSWorks.Internal.NetworkService());
-        holder.instantiateServices();
-
+        const holder = getTestServiceHolder(['Network']);
         const network = holder.getServiceByName('Network');
 
         return network.fetchAsync('/static/no-such-file.json').then(null, (error) => {

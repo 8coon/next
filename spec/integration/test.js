@@ -1,22 +1,19 @@
-'use strict';
 
 
-/*describe('addSomethingToDOM', () => {
+getTestServiceHolder = (services) => {
+    'use strict';
 
-    it('should add element with the text specified and return true', () => {
-        expect(JSWorks.addSomethingToDOM('It works!')).to.equal(true);
+    const holder = new JSWorks.Internal.ServiceHolder();
 
-        expect((() => {
-            let result = false;
+    services.forEach((service) => {
+        if (typeof service === 'string') {
+            holder.registerService(new JSWorks.Internal[`${service}Service`]());
+            return;
+        }
 
-            [...document.querySelectorAll('div')].forEach((element) => {
-                if (element.innerHTML == 'It works!') {
-                    result = true;
-                }
-            });
-
-            return result;
-        })()).to.equal(true);
+        holder.registerService(service);
     });
 
-});*/
+    holder.instantiateServices();
+    return holder;
+};

@@ -239,7 +239,7 @@ const generateApplication = (path, name, title, forTesting) => {
         configuration: {
             viewParser: 'HTMLParser',
             viewFile: '/main.html',
-            virtualDOMProvider: 'VDSimple'
+            virtualDOMProvider: 'SimpleVirtualDOM'
         }
     };
 

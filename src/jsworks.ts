@@ -22,6 +22,8 @@ import {ConfigurationService} from './Configuration/ConfigurationService';
 import {JSONParserService} from './Parser/JSON/JSONParserService';
 
 import {NetworkService} from './Network/NetworkService';
+import {EventManager} from './EventManager/EventManager';
+import {EventType} from './EventManager/EventType';
 
 
 declare const JSWorks: any;
@@ -52,7 +54,24 @@ export function addSomethingToDOM(text: string): boolean {
 } */
 
 
-JSWorks.init = () => {
+JSWorks.__registerServices__ = () => {
+    const holder = new JSWorks.Internal.ServiceHolder();
+
+    Object.keys(JSWorks.Internal).forEach((name) => {
+        if (name.indexOf('Service') > 0) {
+            const service = new JSWorks.Internal[name]();
+
+            if (typeof service.getInstance === 'function') {
+                holder.registerService(service);
+            }
+        }
+    });
+
+    return holder;
+};
+
+
+JSWorks.__init__ = () => {
     JSWorks.Internal = {};
     JSWorks.Internal.ApplicationContext = ApplicationContext;
     JSWorks.Internal.ApplicationInfoProvider = ApplicationInfoProvider;
@@ -66,6 +85,8 @@ JSWorks.init = () => {
     JSWorks.Internal.JSONParserService = JSONParserService;
     JSWorks.Internal.ConfigurationService = ConfigurationService;
     JSWorks.Internal.NetworkService = NetworkService;
+    JSWorks.Internal.EventManager = EventManager;
+    JSWorks.Internal.EventType = EventType;
 
     JSWorks.Errors = {};
     JSWorks.Errors.HTTPError = HTTPError;
@@ -74,10 +95,14 @@ JSWorks.init = () => {
     JSWorks.Errors.ServiceUnresolvableError = ServiceUnresolvableError;
     JSWorks.Errors.UnknownServiceError = UnknownServiceError;
     JSWorks.Errors.UnknownServiceTypeError = UnknownServiceTypeError;
+
+    JSWorks.EventManager = JSWorks.Internal.EventManager;
+    JSWorks.EventType = JSWorks.Internal.EventType;
 };
 
 
 window.addEventListener('load', () => {
-    JSWorks.init();
+    JSWorks.__init__();
+    JSWorks.applicationContext = JSWorks.__registerServices__();
 });
 

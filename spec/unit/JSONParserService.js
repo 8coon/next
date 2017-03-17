@@ -20,10 +20,7 @@ describe('JSONParserService', () => {
     it('should exist and be registrable', () => {
         expect(JSWorks.Internal.JSONParserService);
 
-        const holder = new JSWorks.Internal.ServiceHolder();
-        holder.registerService(new JSWorks.Internal.JSONParserService());
-        holder.registerService(new JSWorks.Internal.NetworkService());
-        holder.instantiateServices();
+        const holder = getTestServiceHolder(['JSONParser', 'Network']);
 
         expect(holder.getService('Parser').name === 'JSONParser');
         expect(holder.getServiceByName('JSONParser').name === 'JSONParser');
@@ -41,10 +38,7 @@ describe('JSONParserService', () => {
 
 
     it('should parse JSON from string', () => {
-        const holder = new JSWorks.Internal.ServiceHolder();
-        holder.registerService(new JSWorks.Internal.JSONParserService());
-        holder.registerService(new JSWorks.Internal.NetworkService());
-        holder.instantiateServices();
+        const holder = getTestServiceHolder(['JSONParser', 'Network']);
 
         const parser = holder.getServiceByName('JSONParser');
         const required = getTestObject();
@@ -55,10 +49,7 @@ describe('JSONParserService', () => {
 
 
     it('should parse JSON from HTMLElement', () => {
-        const holder = new JSWorks.Internal.ServiceHolder();
-        holder.registerService(new JSWorks.Internal.JSONParserService());
-        holder.registerService(new JSWorks.Internal.NetworkService());
-        holder.instantiateServices();
+        const holder = getTestServiceHolder(['JSONParser', 'Network']);
 
         const parser = holder.getServiceByName('JSONParser');
         const required = getTestObject();
@@ -72,11 +63,7 @@ describe('JSONParserService', () => {
 
 
     it('should parse JSON from URL synchronously and asynchronously', () => {
-        const holder = new JSWorks.Internal.ServiceHolder();
-        holder.registerService(new JSWorks.Internal.JSONParserService());
-        holder.registerService(new JSWorks.Internal.NetworkService());
-        holder.instantiateServices();
-
+        const holder = getTestServiceHolder(['JSONParser', 'Network']);
         const parser = holder.getServiceByName('JSONParser');
         const parsed = parser.parseURL('/static/jsworks.manifest.json');
 
