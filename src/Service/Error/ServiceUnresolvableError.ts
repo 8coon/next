@@ -1,5 +1,7 @@
+import {JSWorksError} from './ErrorDecorator';
 
 
+@JSWorksError
 export class ServiceUnresolvableError extends Error {
 
     constructor(servicesPresent: Object, servicesResolved: Object) {

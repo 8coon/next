@@ -1,5 +1,7 @@
+import {JSWorksInternal} from '../Common/InternalDecorator';
 
 
+@JSWorksInternal
 export class HTTPResponse {
 
     private _data: string;

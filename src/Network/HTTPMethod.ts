@@ -14,3 +14,7 @@ export const HTTPMethod = {  // tslint:disable-line
     PUT: 'PUT' as HTTPMethod,
 
 };
+
+
+declare const JSWorks: any;
+JSWorks.HTTPMethod = HTTPMethod;

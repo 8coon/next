@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>%{TITLE}%</title>
 
-    <script>JSWorks = {};</script>
+    <script>JSWorks = {}; __JSWorks_services__ = [];</script>
 
     <!-- JSWorks import -->
     <script src="/jsworks/jsworks.js"></script>

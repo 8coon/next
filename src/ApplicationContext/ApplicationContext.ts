@@ -1,29 +1,28 @@
-import {ApplicationInfoProvider} from '../ApplicationInfo/ApplicationInfoProvider';
-import {ConfigurationService} from '../Configuration/ConfigurationService';
 import {ServiceHolder} from '../Service/ServiceHolder';
+import {JSWorksInternal} from '../Common/InternalDecorator';
 
 
+@JSWorksInternal
 export class ApplicationContext {
-
-
-    /**
-     * Все view, models, routes и controllers хранятся тут
-     * @type {ApplicationInfoProvider}
-     */
-    public readonly infoProvider: ApplicationInfoProvider;
-
 
     /**
      * Все сервисы хранятся тут
      * @type {ServiceHolder}
      */
-    public readonly serviceHolder: ServiceHolder = new ServiceHolder();
+    public get serviceHolder(): ServiceHolder {
+        return this._serviceHolder;
+    }
 
-    private configuration: ConfigurationService;
+
+    private _serviceHolder: ServiceHolder;
 
 
-    public get config() {
-        return this.configuration;
+    /**
+     *
+     * @param services
+     */
+    constructor(services: ServiceHolder) {
+        this._serviceHolder = services;
     }
 
 
@@ -32,7 +31,7 @@ export class ApplicationContext {
      */
     public run(): void {
         this.serviceHolder.instantiateServices();
-        this.configuration = <ConfigurationService> this.serviceHolder.getService('Configuration');
+        // this.configuration = <ConfigurationService> this.serviceHolder.getService('Configuration');
     }
 
 }

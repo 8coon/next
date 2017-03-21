@@ -1,12 +1,12 @@
-import {Service} from './Service';
-
 import {ServiceAlreadyRegisteredError} from './Error/ServiceAlreadyRegisteredError';
 import {ServiceUnresolvableError} from './Error/ServiceUnresolvableError';
 
 import {UnknownServiceError} from './Error/UnknownServiceError';
 import {UnknownServiceTypeError} from './Error/UnknownServiceTypeError';
+import {JSWorksInternal} from '../Common/InternalDecorator';
 
 
+@JSWorksInternal
 export class ServiceHolder {
 
     private services: Object = {};
@@ -29,7 +29,7 @@ export class ServiceHolder {
      * является необизательным. В случае, когда это поле будет undefined, регистрируемый сервис
      * будет проинициализирован первым попавшимся сервисом подходящего типа.
      */
-    public registerService(service: Service): void {
+    public registerService(service: any): void {
         if (this.services[service.name || service.type]) {
             throw new ServiceAlreadyRegisteredError(service.name || service.type);
         }
@@ -57,9 +57,9 @@ export class ServiceHolder {
      * Получить сервис по имени типа. Выбрасывает UnknownServiceTypeError в случае, если подходящий
      * сервис не найден.
      * @param serviceType тип сервиса
-     * @returns {Service}
+     * @returns {any}
      */
-    public getService(serviceType: string): Service {
+    public getService(serviceType: string): any {
         if (this.serviceInstancesByType[serviceType]) {
             return this.serviceInstancesByType[serviceType][0];
         }
@@ -72,9 +72,9 @@ export class ServiceHolder {
      * Получить сервис по имени. Выбрасывает UnknownServiceError в случае, если сервис с таким
      * типом не был зарегистрирован.
      * @param serviceName имя сервиса
-     * @returns {Service}
+     * @returns {anu}
      */
-    public getServiceByName(serviceName: string): Service {
+    public getServiceByName(serviceName: string): any {
         if (this.serviceInstances[serviceName]) {
             return this.serviceInstances[serviceName];
         }
@@ -85,7 +85,7 @@ export class ServiceHolder {
 
     private instantiateRequirementsMet(): boolean {
         Object.keys(this.services).forEach((nameOrType: string) => {
-            const service: Service = this.services[nameOrType];
+            const service: any = this.services[nameOrType];
 
             if (service['__loaded__']) {
                 return;
@@ -94,7 +94,14 @@ export class ServiceHolder {
             const args: Object = {};
             let requirementsMet = true;
 
-            service.requires.forEach((requiredService: Service) => {
+            service.requires.forEach((requiredService: any) => {
+                if (typeof requiredService === 'string') {
+                    requiredService = {
+                        name: requiredService,
+                        type: requiredService,
+                    };
+                }
+
                 try {
                     if (requiredService.name) {
                         args[requiredService.name] = this.getServiceByName(requiredService.name);
@@ -108,7 +115,12 @@ export class ServiceHolder {
             });
 
             if (requirementsMet) {
-                const instance = service.getInstance(args);
+                const instance = service; // .getInstance(args);
+
+                Object.keys(args).forEach((dependencyName: string) => {
+                    const name = dependencyName.slice(0, 1).toLowerCase() + dependencyName.slice(1);
+                    instance[name] = args[dependencyName];
+                });
 
                 if (service.name) {
                     this.serviceInstances[service.name] = instance;

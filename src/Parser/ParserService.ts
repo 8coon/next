@@ -1,52 +1,14 @@
 import {HTTPMethod} from '../Network/HTTPMethod';
-import {MethodNotImplementedError} from '../Service/Error/MethodNotImplementedError';
 import {NetworkService} from '../Network/NetworkService';
-import {Service} from '../Service/Service';
 import {HTTPResponse} from '../Network/HTTPResponse';
 
 
-export abstract class ParserService implements Service {
-
-
-    /**
-     * NetworkService
-     * @returns {NetworkService}
-     */
-    protected get network(): NetworkService {
-        return this._network;
-    }
-
+export abstract class ParserService {
 
     /**
-     * Тип сервиса -- Parser
-     * @type {string}
+     * Network Service
      */
-    public readonly type: string = 'Parser';
-
-
-    /**
-     * Имя сервиса
-     */
-    public readonly name: string;
-
-    /**
-     * Зависимости сервиса
-     * @type {Array}
-     */
-    public readonly requires: Service[] = [new NetworkService()];
-
-
-    private _network: NetworkService;
-
-
-    /**
-     * См. Service.getInstance
-     * @param args
-     */
-    public getInstance(args: Object): Service {
-        this._network = args['Network'];
-        return this;
-    }
+    public network: NetworkService;
 
 
     /**

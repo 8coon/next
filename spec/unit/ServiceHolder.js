@@ -2,9 +2,8 @@
 
 
 const createMuppet = (name, type, requires) => {
-    return class extends JSWorks.Internal.Service {
+    return class {
         constructor() {
-            super();
             this._args = {};
         }
 
@@ -76,6 +75,11 @@ describe('ServiceHolder', () => {
 
 
 
+    /*
+        Из-за использования DI на декораторах тест стал лишним.
+     */
+
+    /*
     it('should resolve service references by name and by type correctly', () => {
         const holder = new JSWorks.Internal.ServiceHolder();
 
@@ -99,5 +103,6 @@ describe('ServiceHolder', () => {
         expect(holder.getService('Root').args['SecondPuppet'] === second);
         expect(holder.getService('Root').args['SecondPuppet'].args['Puppet'] === first);
     });
+    */
 
 });

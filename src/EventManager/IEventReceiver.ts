@@ -1,4 +1,5 @@
 import {IEvent} from './IEvent';
+import {IEventEmitter} from './IEventEmitter';
 
 
 /**
@@ -8,6 +9,6 @@ import {IEvent} from './IEvent';
 export interface IEventReceiver {
 
 
-    receiveEvent(event: IEvent);
+    receiveEvent(event: IEvent, emitter: IEventEmitter);
 
 }

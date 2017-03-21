@@ -1,5 +1,7 @@
+import {JSWorksError} from './ErrorDecorator';
 
 
+@JSWorksError
 export class HTTPError extends Error {
 
     /**

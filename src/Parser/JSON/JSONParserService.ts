@@ -1,28 +1,11 @@
-import {Service} from '../../Service/Service';
 import {ParserService} from '../ParserService';
+import {JSWorksService} from '../../Service/ServiceDecorator';
+import {JSWorksInternal} from '../../Common/InternalDecorator';
 
 
+@JSWorksInternal
+@JSWorksService('JSONParser', 'Parser', ['Network'])
 export class JSONParserService extends ParserService {
-
-
-    /**
-     * Имя сервиса -- JSONParser
-     * @type {string}
-     */
-    public readonly name: string = 'JSONParser';
-
-
-    /**
-     * Зависимости сервиса
-     * @type {Array}
-     */
-    // public requires: Service[];
-
-
-    constructor() {
-        super();
-    }
-
 
     /**
      * Парсит JSON-строку и возвращает объект. В случае неуспеха возвращает undefined.
@@ -46,16 +29,6 @@ export class JSONParserService extends ParserService {
      */
     public parseDOM(element: HTMLElement): Object {
         return this.parseString(element.innerText);
-    }
-
-
-    /**
-     * См. Service.getInstance
-     * @param args
-     * @returns {JSONParserService}
-     */
-    public getInstance(args: Object): Service {
-        return super.getInstance(args);
     }
 
 }

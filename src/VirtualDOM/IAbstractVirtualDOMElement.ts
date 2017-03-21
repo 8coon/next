@@ -1,17 +1,20 @@
+import {VirtualDOMElementArray} from './VirtualDOMElementArray';
+import {IEventEmitter} from '../EventManager/IEventEmitter';
+import {IEventReceiver} from '../EventManager/IEventReceiver';
 
 
 /**
  * Базовый узел VirtualDOM. Может быть как текстовым, так и отражать HTMLElement.
  */
-export interface IAbstractVirtualDOMElement {
+export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceiver {
 
-    readonly tagName: string;
-    readonly innerHTML: string;
-    readonly id: string;
-    readonly className: string;
-    readonly parentNode: IAbstractVirtualDOMElement;
-    readonly children: IAbstractVirtualDOMElement[];
-    readonly text: string;
+    tagName: string;
+    innerHTML: string;
+    id: string;
+    className: string;
+    parentNode: IAbstractVirtualDOMElement;
+    children: VirtualDOMElementArray;
+    text: string;
 
 
     getAttribute(name: string): any;
@@ -21,5 +24,17 @@ export interface IAbstractVirtualDOMElement {
 
 
     hasAttribute(name: string): boolean;
+
+
+    toggleClass(name: string, on: boolean): void;
+
+
+    appendChild(child: IAbstractVirtualDOMElement): void;
+
+
+    removeChild(child: IAbstractVirtualDOMElement): void;
+
+
+    remove(): void;
 
 }

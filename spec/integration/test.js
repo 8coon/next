@@ -3,7 +3,7 @@
 getTestServiceHolder = (services) => {
     'use strict';
 
-    const holder = new JSWorks.Internal.ServiceHolder();
+    /* const holder = new JSWorks.Internal.ServiceHolder();
 
     services.forEach((service) => {
         if (typeof service === 'string') {
@@ -15,5 +15,7 @@ getTestServiceHolder = (services) => {
     });
 
     holder.instantiateServices();
-    return holder;
+    return holder; */
+
+    return JSWorks.applicationContext.serviceHolder;
 };

@@ -1,33 +1,12 @@
 import {MethodNotImplementedError} from '../../Service/Error/MethodNotImplementedError';
-import {Service} from '../../Service/Service';
 import {ParserService} from '../ParserService';
+import {JSWorksService} from '../../Service/ServiceDecorator';
+import {JSWorksInternal} from '../../Common/InternalDecorator';
 
 
+@JSWorksInternal
+@JSWorksService('HTMLParser', 'Parser', ['Network'])
 export class HTMLParserService extends ParserService {
-
-    /**
-     * Имя сервиса -- HTMLParser
-     * @type {string}
-     */
-    public readonly name: string = 'HTMLParser';
-
-
-    /**
-     * Зависимости сервиса
-     * @type {Array}
-     */
-    // public readonly requires: Service[] = [];
-
-
-    /**
-     * См. Service.getInstance
-     * @param args
-     * @returns {HTMLParserService}
-     */
-    public getInstance(args: Object): Service {
-        return super.getInstance(this);
-    }
-
 
     /**
      * Парсит строку как HTML и возвращает объект.

@@ -2,8 +2,10 @@ import {IEventEmitter} from './IEventEmitter';
 import {IEventReceiver} from './IEventReceiver';
 import {IEvent} from './IEvent';
 import {EventType} from './EventType';
+import {JSWorksInternal} from '../Common/InternalDecorator';
 
 
+@JSWorksInternal
 export class EventManager {
 
 

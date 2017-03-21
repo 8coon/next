@@ -2,41 +2,13 @@ import {HTTPError} from '../Service/Error/HTTPError';
 import {HTTPMethod} from './HTTPMethod';
 import {HTTPResponse} from './HTTPResponse';
 
-import {Service} from '../Service/Service';
+import {JSWorksService} from '../Service/ServiceDecorator';
+import {JSWorksInternal} from '../Common/InternalDecorator';
 
 
-export class NetworkService implements Service {
-
-    /**
-     * Имя сервиса -- Network
-     * @type {string}
-     */
-    public readonly name: string = 'Network';
-
-
-    /**
-     * Тип сервиса -- Network
-     * @type {string}
-     */
-    public readonly type: string = 'Network';
-
-
-    /**
-     * Зависимости сервиса
-     * @type {Array}
-     */
-    public readonly requires: Service[] = [];
-
-
-    /**
-     * См. Service.getInstance
-     * @param args
-     * @returns {NetworkService}
-     */
-    public getInstance(args: Object): Service {
-        return this;
-    }
-
+@JSWorksInternal
+@JSWorksService('Network', 'Network')
+export class NetworkService {
 
     /**
      * Выполняет синхроный запрос к серверу и возвращает результат.
