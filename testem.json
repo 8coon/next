@@ -1,8 +1,0 @@
-{
-  "framework": "jasmine",
-  "src_files": [
-    "./spec/unit/**/*.js",
-    "./spec/integration/**/*.js"
-  ],
-  "test_page": "./spec/app/application.html"
-}
