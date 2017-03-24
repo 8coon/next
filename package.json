@@ -26,9 +26,9 @@
     "install": "sh ./bin/build.sh"
   },
 
-  "files": [
-    "./bin", "./spec"
-  ],
+  "directories": {
+    "bin": "bin"
+  },
 
   "dependencies": {
     "mkdirp": "latest",
