@@ -27,7 +27,8 @@
   },
 
   "directories": {
-    "bin": "bin"
+    "bin": "bin",
+    "src": "src"
   },
 
   "dependencies": {
