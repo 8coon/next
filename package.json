@@ -22,7 +22,8 @@
   },
 
   "scripts": {
-    "test": "sh ./bin/make-tests.sh"
+    "test": "sh ./bin/make-tests.sh",
+    "install": "sh ./bin/build.sh"
   },
 
   "dependencies": {
@@ -45,6 +46,7 @@
     "source-map-support": "latest",
     "rmdir": "latest",
     "express": "latest",
-    "chai-as-promised": "latest"
+    "chai-as-promised": "latest",
+    "reflect-metadata": "latest"
   }
 }

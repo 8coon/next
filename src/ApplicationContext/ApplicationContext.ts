@@ -2,6 +2,9 @@ import {ServiceHolder} from '../Service/ServiceHolder';
 import {JSWorksInternal} from '../Common/InternalDecorator';
 
 
+declare const JSWorks: any;
+
+
 @JSWorksInternal
 export class ApplicationContext {
 
@@ -15,6 +18,7 @@ export class ApplicationContext {
 
 
     private _serviceHolder: ServiceHolder;
+    private _views;
 
 
     /**
@@ -31,7 +35,6 @@ export class ApplicationContext {
      */
     public run(): void {
         this.serviceHolder.instantiateServices();
-        // this.configuration = <ConfigurationService> this.serviceHolder.getService('Configuration');
     }
 
 }

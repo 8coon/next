@@ -6,6 +6,7 @@
         "outDir": "./release",
         "target": "ES5",
         "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
 
         "lib": [
             "es2016",
