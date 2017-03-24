@@ -26,6 +26,10 @@
     "install": "sh ./bin/build.sh"
   },
 
+  "files": [
+    "./bin", "./spec"
+  ],
+
   "dependencies": {
     "mkdirp": "latest",
     "jsdom": "latest",
