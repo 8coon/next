@@ -2,6 +2,7 @@ import {MethodNotImplementedError} from '../../Service/Error/MethodNotImplemente
 import {ParserService} from '../ParserService';
 import {JSWorksService} from '../../Service/ServiceDecorator';
 import {JSWorksInternal} from '../../Common/InternalDecorator';
+import {IDOMParsed} from './IDOMParsed';
 
 
 @JSWorksInternal
@@ -23,8 +24,22 @@ export class HTMLParserService extends ParserService {
      * @param element
      * @returns {Object}
      */
-    public parseDOM(element: HTMLElement): Object {
-        throw new MethodNotImplementedError('HTMLParserService.parseDOM');
+    public parseDOM(element: HTMLElement): IDOMParsed {
+        const data = {
+            tagName: String(element.tagName),
+            id: String(element.id),
+            text: '', // ToDo: real text of a text node
+            className: String(element.className),
+            attributes: {},
+        };
+
+        Array.from(element.attributes).forEach((attr) => {
+            if (attr.specified) {
+                data.attributes[attr.name] = attr.value;
+            }
+        });
+
+        return data;
     }
 
 }

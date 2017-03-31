@@ -15,6 +15,7 @@ export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceive
     parentNode: IAbstractVirtualDOMElement;
     children: VirtualDOMElementArray;
     text: string;
+    readonly style: Object;
 
 
     getAttribute(name: string): any;
@@ -36,5 +37,8 @@ export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceive
 
 
     remove(): void;
+
+
+    getOuterHTML(): string;
 
 }

@@ -23,6 +23,7 @@
     "align": false,
     "no-consecutive-blank-lines": false,
     "ordered-imports": false,
+    "object-literal-sort-keys": false,
     "object-literal-shorthand": false,
 
     "jsdoc-format": true,
