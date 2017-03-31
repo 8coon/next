@@ -46,6 +46,16 @@ describe('SimpleVirtualDOM', () => {
         expect(dst.style.width).to.equal(src.style.width);
         expect(dst.getAttribute('x-kek')).to.equal(src.getAttribute('x-kek'));
         expect(dst.getAttribute('style')).to.equal(src.getAttribute('style'));
+
+        let test = document.createElement('SPAN');
+        test.innerHTML = dst.getOuterHTML();
+        test = test.querySelector('div');
+
+        Array.from(test.attributes).forEach((attribute) => {
+            if (attribute.specified) {
+                expect(attribute.value).to.equal(src.getAttribute(attribute.name));
+            }
+        });
     });
 
 
