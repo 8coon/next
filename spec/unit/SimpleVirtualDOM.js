@@ -150,6 +150,7 @@ describe('SimpleVirtualDOM', () => {
         dst.rendered = src;
         dst.render();
 
+        expect(src).to.equal(dst.rendered);
         expect(dst.getOuterHTML()).to.equal(dst.rendered.outerHTML);
         expect(dst.rendered.outerHTML).to.not.equal(srcHTML);
     })
