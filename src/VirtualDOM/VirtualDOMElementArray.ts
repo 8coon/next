@@ -6,6 +6,8 @@ export class VirtualDOMElementArray {
     private elements: IAbstractVirtualDOMElement[];
     private lastIndex: number = 0;
 
+    public length: number = 0;
+
 
     /**
      *
@@ -13,6 +15,7 @@ export class VirtualDOMElementArray {
      */
     constructor(elements: IAbstractVirtualDOMElement[]) {
         this.elements = elements;
+        this.length = elements.length;
     }
 
 

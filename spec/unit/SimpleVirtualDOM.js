@@ -178,9 +178,11 @@ describe('SimpleVirtualDOM', () => {
             src.appendChild(temp_el);
         }
 
-
+        expect(src.childNodes.length).to.equal(5);
 
         const dst = virtualDOM.createFromDOM(src);
+
+        expect(dst.children.)
 
     })
 
