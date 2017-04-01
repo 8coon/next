@@ -3,10 +3,14 @@ import {IAbstractVirtualDOMElement} from './IAbstractVirtualDOMElement';
 
 export class VirtualDOMElementArray {
 
+    /**
+     * длина массива
+     * @type {number}
+     */
+    public length: number = 0;
+
     private elements: IAbstractVirtualDOMElement[];
     private lastIndex: number = 0;
-
-    public length: number = 0;
 
 
     /**

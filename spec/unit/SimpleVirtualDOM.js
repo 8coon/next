@@ -168,7 +168,7 @@ describe('SimpleVirtualDOM', () => {
         expect(dst.getAttribute('id')).to.equal('id1');
     });
 
-    it('should create elements with children', () => {
+    it('should create elements with children from DOM', () => {
         const holder = getTestServiceHolder('SimpleVirtualDOM');
         const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
 
@@ -182,9 +182,8 @@ describe('SimpleVirtualDOM', () => {
 
         const dst = virtualDOM.createFromDOM(src);
 
-        expect(dst.children.)
-
-    })
+        expect(dst.children.length).to.equal(5);
+    });
 
 
 });
