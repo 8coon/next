@@ -36,12 +36,21 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
 
 
     public get innerHTML(): string {
+        if (this.isText()) {
+            return this.text;
+        }
+
         return '';
     }
 
 
     public set innerHTML(value: string) {
-        value = '';
+        if (this.isText()) {
+            this._text = value;
+            return;
+        }
+
+        // ToDo: InnerHTML DOM Parse
     }
 
 
@@ -258,7 +267,21 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
         });
 
         const content = this.innerHTML;
-        return `<${this.tagName} ${attrSerialized.join(' ')}>${content}</${this.tagName}>`;
+
+        if (this.tagName) {
+            return `<${this.tagName} ${attrSerialized.join(' ')}>${content}</${this.tagName}>`;
+        }
+
+        return content;
+    }
+
+
+    /**
+     * Возвращает true, если данный узел виртуального DOM является простым текстом.
+     * @returns {boolean}
+     */
+    public isText(): boolean {
+        return this.tagName === undefined;
     }
 
 }

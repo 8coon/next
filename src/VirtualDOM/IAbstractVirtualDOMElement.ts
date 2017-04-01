@@ -41,4 +41,7 @@ export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceive
 
     getOuterHTML(): string;
 
+
+    isText(): boolean;
+
 }

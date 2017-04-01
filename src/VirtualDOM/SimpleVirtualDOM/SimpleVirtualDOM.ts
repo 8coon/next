@@ -26,24 +26,42 @@ export class SimpleVirtualDOM {
 
 
     /**
+     * Создаёт текстовый узел виртуального DOM
+     * @param text
+     * @returns {IAbstractVirtualDOMElement}
+     */
+    public createTextElement(text: string): IAbstractVirtualDOMElement {
+        const data = {
+            tagName: undefined,
+            id: undefined,
+            text: text,
+            className: undefined,
+            attributes: {},
+        };
+
+        return this.createElement(data);
+    }
+
+
+    /**
      * Создать виртуальный DOM элемент
      * @param data IDOMParsed либо tagName элемента
      * @returns {SimpleVirtualDOMElement}
      */
-    public createElement(data: IDOMParsed | string): IAbstractVirtualDOMElement {
+    public createElement(data: IDOMParsed | string = 'DIV'): IAbstractVirtualDOMElement {
         const element = new SimpleVirtualDOMElement();
 
-        if (!data || typeof data === 'string') {
-            element.tagName = 'DIV' || (<string> data).toUpperCase();
+        if (typeof data === 'string') {
+            element.tagName = (<string> data).toUpperCase();
             return element;
         }
 
-        element.tagName = data.tagName || 'DIV';
+        element.tagName = data.tagName;
         element.id = data.id;
         element.text = data.text;
         element.className = data.className || '';
 
-        Object.keys(data.attributes).forEach((attribute) => {
+        Object.keys(data.attributes || {}).forEach((attribute) => {
             element.setAttribute(attribute, data.attributes[attribute]);
         });
 

@@ -24,14 +24,19 @@ export class HTMLParserService extends ParserService {
      * @param element
      * @returns {Object}
      */
-    public parseDOM(element: HTMLElement): IDOMParsed {
+    public parseDOM(element: HTMLElement | Element): IDOMParsed {
         const data = {
-            tagName: String(element.tagName),
-            id: String(element.id),
-            text: '', // ToDo: real text of a text node
-            className: String(element.className),
+            tagName: element.tagName,
+            id: element.id,
+            text: element.textContent,
+            className: element.className,
             attributes: {},
         };
+
+        if (!element['style']) {
+            data.tagName = undefined;
+            return data;
+        }
 
         Array.from(element.attributes).forEach((attr) => {
             if (attr.specified) {
