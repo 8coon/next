@@ -123,8 +123,8 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
             });
 
             if (this.rendered.childNodes.length > this._children.length) {
-                for (let i = this.rendered.childNodes.length; i !== this._children.length; i--) {
-                    this.rendered.removeChild(this.rendered.childNodes[i]);
+                while (this._children.length !== this.rendered.childNodes.length) {
+                    this.rendered.removeChild(this.rendered.lastChild);
                 }
             }
 

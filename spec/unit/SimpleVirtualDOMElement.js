@@ -57,6 +57,53 @@ describe('SimpleVirtualDOMElement', () => {
         Array.from(element.children).forEach(child => {
             expect([1, 3].includes(child.getAttribute('id')));
         })
-    })
+    });
+
+    it('should render dom element', done => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const element = virtualDOM.createElement('div');
+        element.setAttribute('id', '1');
+
+        element.render();
+        expect(element.rendered.getAttribute('id')).to.equal('1');
+        done();
+    });
+
+    it('should render dom element after adding children',() => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const element = virtualDOM.createElement('div');
+        for (let i = 0; i < 5; i++) {
+            const child = virtualDOM.createElement('div');
+            element.appendChild(child);
+        }
+        element.render();
+
+        expect(element.rendered.childNodes.length).to.equal(5);
+    });
+
+    it('should render DOM element after deleting children', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const element = virtualDOM.createElement('div');
+        for (let i = 0; i < 5; i++) {
+            const child = virtualDOM.createElement('div');
+            element.appendChild(child);
+        }
+        element.render();
+        expect(element.rendered.childNodes.length).to.equal(5);
+        expect(element.children.length).to.equal(5);
+
+        [0, 2, 4].forEach(index => {
+            element.removeChild(element.children[index]);
+        });
+
+        element.render();
+        expect(element.rendered.childNodes.length).to.equal(2);
+    });
 
 });

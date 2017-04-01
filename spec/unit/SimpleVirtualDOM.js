@@ -185,5 +185,4 @@ describe('SimpleVirtualDOM', () => {
         expect(dst.children.length).to.equal(5);
     });
 
-
 });
