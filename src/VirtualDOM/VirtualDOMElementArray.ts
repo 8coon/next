@@ -18,7 +18,7 @@ export class VirtualDOMElementArray {
 
     /**
      *
-     * @returns {{next: (()=>({value: IAbstractVirtualDOMElement, done: boolean}|{done: boolean}))}}
+     * @returns {next: (()=>({value: IAbstractVirtualDOMElement, done: boolean}|{done: boolean}))}
      */
     public [Symbol.iterator]() {
         return {
@@ -32,6 +32,16 @@ export class VirtualDOMElementArray {
                 return { done: true };
             },
         };
+    }
+
+
+    /**
+     * Возвращает элемент по данному индексу
+     * @param index
+     * @returns {IAbstractVirtualDOMElement}
+     */
+    public item(index: number) {
+        return this.elements[index];
     }
 
 }

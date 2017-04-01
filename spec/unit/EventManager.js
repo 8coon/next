@@ -37,7 +37,6 @@ describe('EventManager', () => {
         const receiver = {
             receiveEvent: function(event, eventEmitter) {
                 received++;
-                console.log('received');
             }
         };
 

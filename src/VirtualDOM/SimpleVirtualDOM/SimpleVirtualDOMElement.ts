@@ -16,6 +16,20 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      */
     public lowerTagNames: boolean = true;
 
+
+    /**
+     * Флаг, указывающий на то, что данную ноду надо переписовать при рендеринге
+     * @type {boolean}
+     */
+    public dirty: boolean = true;
+
+
+    /**
+     * Ссылка на отрисованный узел DOM, соответствующий данному узлу виртуального DOM
+     */
+    public rendered: Node;
+
+
     private _tagName: string;
     private _id: string;
     private _parentNode: SimpleVirtualDOMElement;
@@ -23,6 +37,112 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     private _text: string;
     private classes: Object = {};
     private attributes: Object = { style: {} };
+
+
+    /**
+     * Отрисовка изменений текущей ноды в поле rendered
+     */
+    public render(): void {
+        if (!this.rendered) {
+            this.dirty = false;
+
+            if (!this.tagName) {
+                this.rendered = document.createTextNode(this.text);
+                return;
+            }
+
+            this.rendered = document.createElement('DIV');
+            (<HTMLElement> this.rendered).innerHTML = this.getOuterHTML();
+            this.rendered = this.rendered.childNodes[0];
+            return;
+        }
+
+        if (this.dirty) {
+            if (this.tagName !== (<HTMLElement> this.rendered).tagName) {
+                this.rendered = undefined;
+                this.render();
+                return;
+            }
+
+            if (!this.tagName) {
+                if (this.text !== this.rendered.textContent) {
+                    this.rendered.textContent = this.text;
+                }
+
+                this.dirty = false;
+                return;
+            }
+
+            if (this.id !== (<HTMLElement> this.rendered).id) {
+                (<HTMLElement> this.rendered).id = this.id;
+            }
+
+            if (this.className !== (<HTMLElement> this.rendered).className) {
+                (<HTMLElement> this.rendered).className = this.className;
+            }
+
+            Object.keys(this.attributes).forEach((attr: string) => {
+                if (attr === 'id' || attr === 'class') {
+                    return;
+                }
+
+                if (!((<HTMLElement> this.rendered).hasAttribute(attr))) {
+                    const attribute = this.getAttribute(attr);
+
+                    if (attribute) {
+                        (<HTMLElement> this.rendered).setAttribute(attr, attribute);
+                    }
+
+                    return;
+                }
+
+                const value = this.getAttribute(attr);
+                if ((<HTMLElement> this.rendered).getAttribute(attr) !== value) {
+                    (<HTMLElement> this.rendered).setAttribute(attr, value);
+                }
+            });
+
+            Array.from((<HTMLElement> this.rendered).attributes).forEach((attrPair) => {
+                if (!this.hasAttribute(attrPair.name)) {
+                    (<HTMLElement> this.rendered).removeAttribute(attrPair.name);
+                }
+            });
+
+            this.dirty = false;
+
+            this._children.forEach((child, index) => {
+                child.render();
+
+                if (index <= this.rendered.childNodes.length) {
+                    this.rendered.appendChild(child.rendered);
+                }
+
+                if (this.rendered.childNodes[index] !== child.rendered) {
+                    this.rendered.replaceChild(child.rendered, this.rendered.childNodes[index]);
+                }
+            });
+
+            if (this.rendered.childNodes.length > this._children.length) {
+                const deleting: Node[] = [];
+
+                for (let i = this._children.length; i < this.rendered.childNodes.length; i++) {
+                    deleting.push(this.rendered.childNodes[i]);
+                }
+
+                deleting.forEach((node) => {
+                    this.rendered.removeChild(node);
+                });
+            }
+
+            return;
+        }
+
+        this._children.forEach((child) => {
+            const oldRendered = child.rendered;
+            child.render();
+            this.rendered.replaceChild(oldRendered, child.rendered);
+        });
+    }
 
 
     public get style(): Object {
@@ -37,7 +157,7 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
 
     public set tagName(value: string) {
         this._tagName = value;
-        this.emitEvent({ type: EventType.DOMPropertyChange, data: this });
+        this.emitMutilationEvent({ type: EventType.DOMPropertyChange, data: this });
     }
 
 
@@ -110,7 +230,7 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
             node.appendChild(this);
         }
 
-        this.emitEvent({ type: EventType.DOMPropertyChange, data: this });
+        this.emitMutilationEvent({ type: EventType.DOMPropertyChange, data: this });
     }
 
 
@@ -126,7 +246,7 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
 
     public set text(value: string) {
         this._text = value;
-        this.emitEvent({ type: EventType.DOMPropertyChange, data: this });
+        this.emitMutilationEvent({ type: EventType.DOMPropertyChange, data: this });
     }
 
 
@@ -175,12 +295,12 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
                 this.attributes['style'][css[0]] = css[1];
             });
 
-            this.emitEvent({ type: EventType.DOMPropertyChange, data: this });
+            this.emitMutilationEvent({ type: EventType.DOMPropertyChange, data: this });
             return;
         }
 
         this.attributes[name] = value;
-        this.emitEvent({ type: EventType.DOMPropertyChange, data: this });
+        this.emitMutilationEvent({ type: EventType.DOMPropertyChange, data: this });
     }
 
 
@@ -191,6 +311,16 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      */
     public hasAttribute(name: string): boolean {
         return this.attributes[name] !== undefined;
+    }
+
+
+    /**
+     * Удалить данный атрибут. Если такого не существует, то не произойдёт ничего.
+     * @param name
+     */
+    public removeAttribute(name: string): void {
+        delete this.attributes[name];
+        this.emitMutilationEvent({ type: EventType.DOMPropertyChange, data: this });
     }
 
 
@@ -206,7 +336,9 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      * @param event
      * @param emitter
      */
-    public receiveEvent(event: IEvent, emitter: IEventEmitter): void {}  // tslint:disable-line
+    public receiveEvent(event: IEvent, emitter: IEventEmitter): void {
+        this.dirty = true;
+    }
 
 
     /**
@@ -240,7 +372,7 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      */
     public appendChild(child: SimpleVirtualDOMElement): void {
         this._children.push(child);
-        this.emitEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
+        this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
         EventManager.subscribe(this, child);
     }
 
@@ -251,7 +383,7 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      */
     public removeChild(child: SimpleVirtualDOMElement): void {
         this._children.splice(this._children.lastIndexOf(child, 0), 1);
-        this.emitEvent({ type: EventType.DOMChildRemove, data: { parent: this, child: child } });
+        this.emitMutilationEvent({ type: EventType.DOMChildRemove, data: { parent: this, child: child } });
     }
 
 
@@ -259,7 +391,7 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      * Удалить узел
      */
     public remove(): void {
-        this.emitEvent({ type: EventType.DOMRemove, data: this });
+        this.emitMutilationEvent({ type: EventType.DOMRemove, data: this });
     }
 
 
@@ -313,6 +445,12 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      */
     public isText(): boolean {
         return this.tagName === undefined;
+    }
+
+
+    private emitMutilationEvent(data: IEvent) {
+        this.dirty = true;
+        this.emitEvent(data);
     }
 
 }

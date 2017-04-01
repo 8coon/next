@@ -23,6 +23,10 @@ export class EventManager {
                     handler = listener.receiver[listener.handler];
                 }
 
+                if (handler.bind) {
+                    handler = handler.bind(listener.receiver);
+                }
+
                 handler(event, emitter);
             }
         });

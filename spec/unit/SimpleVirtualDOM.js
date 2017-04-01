@@ -98,4 +98,61 @@ describe('SimpleVirtualDOM', () => {
     });
 
 
+    it('should render and reverse-render virtual DOM hierarchy', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const src = document.createElement('DIV');
+        src.innerHTML = `
+            lol kek
+            <ul class="links">
+                <li>cheburek 1</li>
+                <li>cheburek 2</li>
+                <li>cheburek 2</li>
+            </ul>
+            <div align="center">
+                Maximum Power!!!
+                <x-custom id="powerline" value="0">
+                    Change me!
+                </x-custom>
+            </div>
+        `.split('\n').map((l) => { return l.trim(); }).join('');
+        const srcHTML = src.outerHTML;
+
+        const dst = virtualDOM.createFromDOM(src);
+        expect(dst.getOuterHTML()).to.equal(srcHTML);
+
+        dst.rendered = null;
+        dst.render();
+        expect(dst.rendered.outerHTML).to.equal(srcHTML);
+
+
+        const ul = dst.children.item(1);
+        ul.toggleClass('chebureks', true);
+        ul.toggleClass('links', false);
+        ul.toggleClass('keks', true);
+
+        const secondLi = ul.children.item(1);
+        secondLi.id = 'second';
+
+        const node = virtualDOM.createElement('A');
+        node.setAttribute('href', 'https://google.com/');
+        node.innerHTML = 'Please visit Google to find some hot lol kek chebureks';
+
+        secondLi.appendChild(node);
+
+        const custom = dst.children.item(2);
+        custom.removeAttribute('powerline');
+        custom.setAttribute('value', 'MAXIMUM POWER');
+        custom.removeChild(custom.children.item(0));
+
+
+        dst.rendered = src;
+        dst.render();
+
+        expect(dst.getOuterHTML()).to.equal(dst.rendered.outerHTML);
+        expect(dst.rendered.outerHTML).to.not.equal(srcHTML);
+    })
+
+
 });

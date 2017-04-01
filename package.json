@@ -52,6 +52,7 @@
     "rmdir": "latest",
     "express": "latest",
     "chai-as-promised": "latest",
-    "reflect-metadata": "latest"
+    "reflect-metadata": "latest",
+    "cssauron": "latest"
   }
 }
