@@ -92,18 +92,23 @@ describe('SimpleVirtualDOMElement', () => {
         const element = virtualDOM.createElement('div');
         for (let i = 0; i < 5; i++) {
             const child = virtualDOM.createElement('div');
+            child.setAttribute('id', 'id' + i);
             element.appendChild(child);
         }
         element.render();
         expect(element.rendered.childNodes.length).to.equal(5);
         expect(element.children.length).to.equal(5);
-
+        console.log(element);
         [0, 2, 4].forEach(index => {
             element.removeChild(element.children[index]);
         });
 
         element.render();
         expect(element.rendered.childNodes.length).to.equal(2);
+
+        Array.from(element.children).forEach(child => {
+            expect(['id1', 'id3'].includes(child.getAttribute('id'))).to.equal(true);
+        });
     });
 
 });
