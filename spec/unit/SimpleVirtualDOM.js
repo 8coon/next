@@ -153,6 +153,35 @@ describe('SimpleVirtualDOM', () => {
         expect(src).to.equal(dst.rendered);
         expect(dst.getOuterHTML()).to.equal(dst.rendered.outerHTML);
         expect(dst.rendered.outerHTML).to.not.equal(srcHTML);
+    });
+
+    it('should create empty element from DOM ', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const src = document.createElement('div');
+        src.setAttribute('id', 'id1');
+        const dst = virtualDOM.createFromDOM(src);
+
+        expect(dst.tagName).to.equal('DIV');
+        expect(dst.isText()).to.be.equal(false);
+        expect(dst.getAttribute('id')).to.equal('id1');
+    });
+
+    it('should create elements with children', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const src = document.createElement('div');
+        for (let i = 0; i < 5; i++) {
+            const temp_el = document.createElement('div');
+            src.appendChild(temp_el);
+        }
+
+
+
+        const dst = virtualDOM.createFromDOM(src);
+
     })
 
 
