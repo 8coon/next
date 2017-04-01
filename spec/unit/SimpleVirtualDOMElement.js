@@ -50,9 +50,12 @@ describe('SimpleVirtualDOMElement', () => {
 
         expect(element.children.length).to.equal(2);
 
-        // element.children
-        element.children.forEach(child => {
-            expect([0,2,4].includes(child.getAttribute('id'))).to.equal(false);
+        Array.from(element.children).forEach(child => {
+            expect([0, 2, 4].includes(child.getAttribute('id'))).to.equal(false);
+        });
+
+        Array.from(element.children).forEach(child => {
+            expect([1, 3].includes(child.getAttribute('id')));
         })
     })
 
