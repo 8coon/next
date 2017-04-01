@@ -37,6 +37,7 @@ export class SimpleVirtualDOM {
             text: text,
             className: undefined,
             attributes: {},
+            children: [],
         };
 
         return this.createElement(data);
@@ -63,6 +64,10 @@ export class SimpleVirtualDOM {
 
         Object.keys(data.attributes || {}).forEach((attribute) => {
             element.setAttribute(attribute, data.attributes[attribute]);
+        });
+
+        data.children.forEach((childData) => {
+            element.appendChild(<SimpleVirtualDOMElement> this.createElement(childData));
         });
 
         return element;

@@ -24,13 +24,14 @@ export class HTMLParserService extends ParserService {
      * @param element
      * @returns {Object}
      */
-    public parseDOM(element: HTMLElement | Element): IDOMParsed {
+    public parseDOM(element: HTMLElement | Node): IDOMParsed {
         const data = {
-            tagName: element.tagName,
-            id: element.id,
+            tagName: (<HTMLElement> element).tagName,
+            id: (<HTMLElement> element).id,
             text: element.textContent,
-            className: element.className,
+            className: (<HTMLElement> element).className,
             attributes: {},
+            children: [],
         };
 
         if (!element['style']) {
@@ -42,6 +43,10 @@ export class HTMLParserService extends ParserService {
             if (attr.specified) {
                 data.attributes[attr.name] = attr.value;
             }
+        });
+
+        Array.from(element.childNodes).forEach((childNode) => {
+            data.children.push(this.parseDOM(childNode));
         });
 
         return data;

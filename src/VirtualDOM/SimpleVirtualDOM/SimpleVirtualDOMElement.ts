@@ -10,10 +10,16 @@ import {JSWorksInternal} from '../../Common/InternalDecorator';
 @JSWorksInternal
 export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
 
+    /**
+     * Переводит имена тэгов в нижний регистр в свойстве innerHTML и методе getOuterHTML
+     * @type {boolean}
+     */
+    public lowerTagNames: boolean = true;
+
     private _tagName: string;
     private _id: string;
     private _parentNode: SimpleVirtualDOMElement;
-    private _children: SimpleVirtualDOMElement[];
+    private _children: SimpleVirtualDOMElement[] = [];
     private _text: string;
     private classes: Object = {};
     private attributes: Object = { style: {} };
@@ -40,7 +46,13 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
             return this.text;
         }
 
-        return '';
+        const html: string[] = [];
+
+        this._children.forEach((child) => {
+            html.push(child.getOuterHTML());
+        });
+
+        return html.join('');
     }
 
 
@@ -263,13 +275,32 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
 
             if (attr) {
                 attrSerialized.push(`${name}="${attr}"`);
+                return;
             }
+
+            if (name === 'style' || name === 'id' || name === 'class') {
+                return;
+            }
+
+            attrSerialized.push(`${name}="${attr}"`);
         });
 
         const content = this.innerHTML;
 
         if (this.tagName) {
-            return `<${this.tagName} ${attrSerialized.join(' ')}>${content}</${this.tagName}>`;
+            let spacer = '';
+
+            if (attrSerialized.length > 0) {
+                spacer = ' ';
+            }
+
+            let tagName = this.tagName;
+
+            if (this.lowerTagNames) {
+                tagName = tagName.toLowerCase();
+            }
+
+            return `<${tagName}${spacer}${attrSerialized.join(' ')}>${content}</${tagName}>`;
         }
 
         return content;

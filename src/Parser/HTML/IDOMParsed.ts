@@ -10,5 +10,6 @@ export interface IDOMParsed {
     text: string;
     className: string;
     attributes: Object;
+    children: IDOMParsed[];
 
 }

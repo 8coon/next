@@ -23,7 +23,7 @@ describe('SimpleVirtualDOM', () => {
         expect(div1.tagName).to.equal('SPAN');
         expect(div2.tagName).to.equal('DIV');
         expect(div1.id).to.equal(undefined);
-        expect(div2.getOuterHTML()).to.equal('<DIV ></DIV>');
+        expect(div2.getOuterHTML()).to.equal('<div></div>');
     });
 
 
@@ -82,6 +82,19 @@ describe('SimpleVirtualDOM', () => {
         expect(dst.isText());
         expect(dst.getOuterHTML()).to.equal(dst.innerHTML);
         expect(dst.text).to.equal(src.textContent);
+    });
+
+
+    it('should parse DOM hierarchy', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const src = document.createElement('DIV');
+        src.innerHTML = 'lol <b>kek<i style="border: dashed; color: aquamarine;"></i></b>' +
+            ' <span class="kek" x-kek="true" x-lol cheburek="yes">cheburek</span>';
+
+        const dst = virtualDOM.createFromDOM(src);
+        expect(dst.getOuterHTML()).to.equal(src.outerHTML);
     });
 
 
