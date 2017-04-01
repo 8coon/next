@@ -1,7 +1,8 @@
 import {IAbstractVirtualDOMElement} from './IAbstractVirtualDOMElement';
+import {SimpleVirtualDOMElement} from './SimpleVirtualDOM/SimpleVirtualDOMElement';
 
 
-export class VirtualDOMElementArray {
+export class VirtualDOMElementArray implements Iterable<SimpleVirtualDOMElement> {
 
     /**
      * длина массива
@@ -27,19 +28,20 @@ export class VirtualDOMElementArray {
      *
      * @returns {next: (()=>({value: IAbstractVirtualDOMElement, done: boolean}|{done: boolean}))}
      */
-    public [Symbol.iterator]() {
+
+    public [Symbol.iterator](): Iterator<SimpleVirtualDOMElement> {
         return {
-            next: () => {
+            next() {
                 if (this.lastIndex < this.elements.length) {
                     this.lastIndex++;
                     return { value: this.elements[this.lastIndex - 1], done: false };
                 }
 
                 this.lastIndex = 0;
-                return { done: true };
+                return {value: undefined, done: true};
             },
         };
-    }
+    };
 
 
     /**
