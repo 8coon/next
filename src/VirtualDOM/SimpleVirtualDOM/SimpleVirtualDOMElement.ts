@@ -37,10 +37,14 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     private _text: string;
     private classes: Object = {};
     private attributes: Object = { style: {} };
+    private handlers: Object = {};
 
 
     /**
      * Отрисовка изменений текущей ноды в поле rendered
+     * Если rendered не было ранее присвоено или не совпадает с текущей нодой
+     * по типу (например, там текст, а мы рендерим DIV), то rendered будет заменена,
+     * в противном случае она будет должным образом модифицирована.
      */
     public render(): void {
         if (!this.rendered) {
@@ -54,6 +58,8 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
             this.rendered = document.createElement('DIV');
             (<HTMLElement> this.rendered).innerHTML = this.getOuterHTML();
             this.rendered = this.rendered.childNodes[0];
+            this.renderHandlers();
+
             return;
         }
 
@@ -61,6 +67,8 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
             if (this.tagName !== (<HTMLElement> this.rendered).tagName) {
                 this.rendered = undefined;
                 this.render();
+                this.renderHandlers();
+
                 return;
             }
 
@@ -448,9 +456,71 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     }
 
 
+    /**
+     * Повесить слушатель определённого события на данный элемент
+     * @param type
+     * @param callback
+     * @param useCapture
+     */
+    public addEventListener(type: string, callback: (event: Event) => void, useCapture?: boolean) {
+        this.handlers[type] = this.handlers[type] || [];
+        this.handlers[type].push({ callback: callback, useCapture: useCapture });
+
+        if (this.rendered) {
+            this.rendered['__jsworks_handlers__'] = this.rendered['__jsworks_handlers__'] || [];
+            this.rendered['__jsworks_handlers__'].push({ type, callback, useCapture });
+            this.rendered.addEventListener(type, callback, useCapture);
+        }
+    }
+
+
+    /**
+     * Снять слушателя определённого события с данного элемента
+     * @param type
+     * @param callback
+     */
+    public removeEventListener(type: string, callback: (event: Event) => void) {
+        if (this.rendered) {
+            this.rendered['__jsworks_handlers__'] = this.rendered['__jsworks_handlers__'] || [];
+
+            this.rendered['__jsworks_handlers__'].forEach((handler, index) => {
+                if (handler.type === type && handler.callback === callback) {
+                    delete this.rendered['__jsworks_handlers__'][index];
+                }
+            });
+
+            this.rendered.removeEventListener(type, callback);
+        }
+
+        (this.handlers[type] || []).forEach((evtCallback, index) => {
+            if (evtCallback === callback) {
+                delete this.handlers[type][index];
+            }
+        });
+    }
+
+
     private emitMutilationEvent(data: IEvent) {
         this.dirty = true;
         this.emitEvent(data);
+    }
+
+
+    private renderHandlers() {
+        this.rendered['__jsworks_handlers__'] = this.rendered['__jsworks_handlers__'] || [];
+
+        this.rendered['__jsworks_handlers__'].forEach((handler) => {
+            this.rendered.removeEventListener(handler.type, handler.callback);
+        });
+
+        const handlers = this.handlers;
+        this.handlers = {};
+
+        Object.keys(handlers).forEach((type) => {
+            handlers[type].forEach((handler) => {
+                this.addEventListener(type, handler.callback, handler.useCapture);
+            });
+        });
     }
 
 }
