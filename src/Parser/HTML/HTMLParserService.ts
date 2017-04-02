@@ -28,11 +28,15 @@ export class HTMLParserService extends ParserService {
         const data = {
             tagName: (<HTMLElement> element).tagName,
             id: (<HTMLElement> element).id,
-            text: element.textContent,
+            text: '',
             className: (<HTMLElement> element).className,
             attributes: {},
             children: [],
         };
+
+        if (!((<HTMLElement> element).tagName)) {
+            data.text = element.textContent;
+        }
 
         if (!element['style']) {
             data.tagName = undefined;

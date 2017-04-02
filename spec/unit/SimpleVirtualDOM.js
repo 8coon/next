@@ -155,6 +155,53 @@ describe('SimpleVirtualDOM', () => {
         expect(dst.rendered.outerHTML).to.not.equal(srcHTML);
     });
 
+  
+    it('should handle DOM event listeners', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const src = document.createElement('DIV');
+        src.innerHTML = `
+            <ul>
+                <li>lol</li>
+                <li>kek</li>
+                <li>cheburek</li>
+            </ul>
+        `.split('\n').map((l) => { return l.trim(); }).join('');
+
+        const dst = virtualDOM.createFromDOM(src);
+        const ul = dst.children.item(0);
+
+        const li1 = ul.children.item(0);
+        const li2 = ul.children.item(1);
+        const li3 = ul.children.item(2);
+        let fired = 0;
+
+        const listener = (event) => { fired++; };
+        const errorListener = (event) => { throw new Error('I should not be thrown') };
+
+        dst.render();
+        li1.addEventListener('click', listener);
+        li2.addEventListener('click', listener);
+        li2.addEventListener('custom_click', listener);
+        li3.addEventListener('click', errorListener);
+
+        li2.removeEventListener('custom_click', listener);
+
+        dst.render();
+
+        li3.removeEventListener('click', errorListener);
+        dst.render();
+
+        [...dst.rendered.querySelectorAll('li')].forEach((li) => {
+            li.dispatchEvent(new Event('click'));
+            li.dispatchEvent(new Event('custom_click'));
+        });
+
+        expect(fired).to.equal(2);
+    });
+
+  
     it('should create empty element from DOM ', () => {
         const holder = getTestServiceHolder('SimpleVirtualDOM');
         const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
@@ -168,6 +215,7 @@ describe('SimpleVirtualDOM', () => {
         expect(dst.getAttribute('id')).to.equal('id1');
     });
 
+  
     it('should create elements with children from DOM', () => {
         const holder = getTestServiceHolder('SimpleVirtualDOM');
         const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');

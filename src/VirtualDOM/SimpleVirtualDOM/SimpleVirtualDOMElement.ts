@@ -5,6 +5,7 @@ import {IEventEmitter} from '../../EventManager/IEventEmitter';
 import {EventType} from '../../EventManager/EventType';
 import {EventManager} from '../../EventManager/EventManager';
 import {JSWorksInternal} from '../../Common/InternalDecorator';
+import {SimpleVirtualDOM} from './SimpleVirtualDOM';
 
 
 @JSWorksInternal
@@ -37,30 +38,52 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     private _text: string;
     private classes: Object = {};
     private attributes: Object = { style: {} };
+    private handlers: Object = {};
+
+    private readonly HASH_KEY: string = '__jsworks_hash__';
+    private readonly HANDLERS_KEY: string = '__jsworks_handlers__';
 
 
     /**
      * Отрисовка изменений текущей ноды в поле rendered
+     * Если rendered не было ранее присвоено или не совпадает с текущей нодой
+     * по типу (например, там текст, а мы рендерим DIV), то rendered будет заменена,
+     * в противном случае она будет должным образом модифицирована.
      */
     public render(): void {
+        this._children.forEach((child) => {
+            child.render();
+        });
+
         if (!this.rendered) {
             this.dirty = false;
 
             if (!this.tagName) {
                 this.rendered = document.createTextNode(this.text);
+                this.rendered[this.HASH_KEY] = SimpleVirtualDOM.NextHash();
+                this.renderHandlers();
+
                 return;
             }
 
-            this.rendered = document.createElement('DIV');
-            (<HTMLElement> this.rendered).innerHTML = this.getOuterHTML();
-            this.rendered = this.rendered.childNodes[0];
+            this.rendered = document.createElement(this.tagName);
+            this.rendered[this.HASH_KEY] = SimpleVirtualDOM.NextHash();
+
+            this.mergeAttributes();
+            this.mergeChildren();
+            this.renderHandlers();
+
             return;
         }
 
         if (this.dirty) {
+            this.dirty = false;
+
             if (this.tagName !== (<HTMLElement> this.rendered).tagName) {
-                this.rendered = undefined;
-                this.render();
+                this.rendered = this.rendered = document.createTextNode(this.text);
+                this.rendered[this.HASH_KEY] = SimpleVirtualDOM.NextHash();
+                this.renderHandlers();
+
                 return;
             }
 
@@ -69,73 +92,13 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
                     this.rendered.textContent = this.text;
                 }
 
-                this.dirty = false;
+                this.renderHandlers();
                 return;
             }
 
-            if (this.id !== (<HTMLElement> this.rendered).id) {
-                (<HTMLElement> this.rendered).id = this.id;
-            }
-
-            if (this.className !== (<HTMLElement> this.rendered).className) {
-                (<HTMLElement> this.rendered).className = this.className;
-            }
-
-            Object.keys(this.attributes).forEach((attr: string) => {
-                if (attr === 'id' || attr === 'class') {
-                    return;
-                }
-
-                if (!((<HTMLElement> this.rendered).hasAttribute(attr))) {
-                    const attribute = this.getAttribute(attr);
-
-                    if (attribute) {
-                        (<HTMLElement> this.rendered).setAttribute(attr, attribute);
-                    }
-
-                    return;
-                }
-
-                const value = this.getAttribute(attr);
-                if ((<HTMLElement> this.rendered).getAttribute(attr) !== value) {
-                    (<HTMLElement> this.rendered).setAttribute(attr, value);
-                }
-            });
-
-            Array.from((<HTMLElement> this.rendered).attributes).forEach((attrPair) => {
-                if (!this.hasAttribute(attrPair.name)) {
-                    (<HTMLElement> this.rendered).removeAttribute(attrPair.name);
-                }
-            });
-
-            this.dirty = false;
-
-            this._children.forEach((child, index) => {
-                child.render();
-
-                if (index <= this.rendered.childNodes.length) {
-                    this.rendered.appendChild(child.rendered);
-                }
-
-                if (this.rendered.childNodes[index] !== child.rendered) {
-                    this.rendered.replaceChild(child.rendered, this.rendered.childNodes[index]);
-                }
-            });
-
-            if (this.rendered.childNodes.length > this._children.length) {
-                while (this._children.length !== this.rendered.childNodes.length) {
-                    this.rendered.removeChild(this.rendered.lastChild);
-                }
-            }
-
-            return;
+            this.mergeAttributes();
+            this.mergeChildren();
         }
-
-        this._children.forEach((child) => {
-            const oldRendered = child.rendered;
-            child.render();
-            this.rendered.replaceChild(oldRendered, child.rendered);
-        });
     }
 
 
@@ -366,6 +329,8 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      */
     public appendChild(child: SimpleVirtualDOMElement): void {
         this._children.push(child);
+        (<any> child)._parentNode = this;
+
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
         EventManager.subscribe(this, child);
     }
@@ -442,9 +407,149 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     }
 
 
+    /**
+     * Повесить слушатель определённого события на данный элемент
+     * @param type
+     * @param callback
+     * @param useCapture
+     */
+    public addEventListener(type: string, callback: (event: Event) => void, useCapture?: boolean) {
+        this.handlers[type] = this.handlers[type] || [];
+        this.handlers[type].push({ callback: callback, useCapture: useCapture });
+
+        if (this.rendered) {
+            this.rendered[this.HANDLERS_KEY] = this.rendered[this.HANDLERS_KEY] || [];
+            this.rendered[this.HANDLERS_KEY].push({ type, callback, useCapture });
+            this.rendered.addEventListener(type, callback, useCapture);
+        }
+    }
+
+
+    /**
+     * Снять слушателя определённого события с данного элемента
+     * @param type
+     * @param callback
+     */
+    public removeEventListener(type: string, callback: (event: Event) => void) {
+        if (this.rendered) {
+            this.rendered[this.HANDLERS_KEY] = this.rendered[this.HANDLERS_KEY] || [];
+
+            this.rendered[this.HANDLERS_KEY].forEach((handler, index) => {
+                if (handler.type === type && handler.callback === callback) {
+                    delete this.rendered[this.HANDLERS_KEY][index];
+                }
+            });
+
+            this.rendered.removeEventListener(type, callback);
+        }
+
+        (this.handlers[type] || []).forEach((evtCallback, index) => {
+            if (evtCallback === callback) {
+                delete this.handlers[type][index];
+            }
+        });
+    }
+
+
     private emitMutilationEvent(data: IEvent) {
         this.dirty = true;
         this.emitEvent(data);
     }
+
+
+    private renderHandlers() {
+        this.rendered[this.HANDLERS_KEY] = this.rendered[this.HANDLERS_KEY] || [];
+
+        this.rendered[this.HANDLERS_KEY].forEach((handler) => {
+            this.rendered.removeEventListener(handler.type, handler.callback);
+        });
+
+        const handlers = this.handlers;
+        this.handlers = {};
+
+        Object.keys(handlers).forEach((type) => {
+            handlers[type].forEach((handler) => {
+                this.addEventListener(type, handler.callback, handler.useCapture);
+            });
+        });
+    }
+
+
+    private mergeAttributes() {
+        if (this.id !== (<HTMLElement> this.rendered).id) {
+            (<HTMLElement> this.rendered).id = this.id;
+        }
+
+        if (this.className !== (<HTMLElement> this.rendered).className) {
+            (<HTMLElement> this.rendered).className = this.className;
+        }
+
+        Object.keys(this.attributes).forEach((attr: string) => {
+            if (attr === 'id' || attr === 'class') {
+                return;
+            }
+
+            if (!((<HTMLElement> this.rendered).hasAttribute(attr))) {
+                const attribute = this.getAttribute(attr);
+
+                if (attribute) {
+                    (<HTMLElement> this.rendered).setAttribute(attr, attribute);
+                }
+
+                return;
+            }
+
+            const value = this.getAttribute(attr);
+            if ((<HTMLElement> this.rendered).getAttribute(attr) !== value) {
+                (<HTMLElement> this.rendered).setAttribute(attr, value);
+            }
+        });
+
+        Array.from((<HTMLElement> this.rendered).attributes).forEach((attrPair) => {
+            if (!this.hasAttribute(attrPair.name)) {
+                (<HTMLElement> this.rendered).removeAttribute(attrPair.name);
+            }
+        });
+    }
+
+
+    private appendChildren() {
+        this._children.forEach((child, index) => {
+            child.render();
+            this.rendered.appendChild(child.rendered);
+        });
+    }
+
+
+    private mergeChildren() {
+        if (this.rendered.childNodes.length === 0 && this._children.length > 0) {
+            this.appendChildren();
+            return;
+        }
+
+        this._children.forEach((child, index) => {
+            if (this.rendered.childNodes[index] !== child.rendered) {
+                if (index < this.rendered.childNodes.length - 1) {
+                    this.rendered.insertBefore(child.rendered, this.rendered.childNodes[index + 1]);
+                    return;
+                }
+
+                if (index === this.rendered.childNodes.length - 1) {
+                    this.rendered.replaceChild(child.rendered, this.rendered.lastChild);
+                    return;
+                }
+
+                this.rendered.appendChild(child.rendered);
+            }
+        });
+
+        for (let i = 0; i < this.rendered.childNodes.length; i++) {
+            if (!this._children[i] || this.rendered.childNodes[i] !== this._children[i].rendered) {
+                this.rendered.removeChild(this.rendered.childNodes[i]);
+                i--;
+            }
+        }
+    }
+
 
 }
