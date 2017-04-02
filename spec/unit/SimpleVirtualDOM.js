@@ -155,7 +155,7 @@ describe('SimpleVirtualDOM', () => {
         expect(dst.rendered.outerHTML).to.not.equal(srcHTML);
     });
 
-
+  
     it('should handle DOM event listeners', () => {
         const holder = getTestServiceHolder('SimpleVirtualDOM');
         const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
@@ -201,5 +201,36 @@ describe('SimpleVirtualDOM', () => {
         expect(fired).to.equal(2);
     });
 
+  
+    it('should create empty element from DOM ', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const src = document.createElement('div');
+        src.setAttribute('id', 'id1');
+        const dst = virtualDOM.createFromDOM(src);
+
+        expect(dst.tagName).to.equal('DIV');
+        expect(dst.isText()).to.be.equal(false);
+        expect(dst.getAttribute('id')).to.equal('id1');
+    });
+
+  
+    it('should create elements with children from DOM', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const src = document.createElement('div');
+        for (let i = 0; i < 5; i++) {
+            const temp_el = document.createElement('div');
+            src.appendChild(temp_el);
+        }
+
+        expect(src.childNodes.length).to.equal(5);
+
+        const dst = virtualDOM.createFromDOM(src);
+
+        expect(dst.children.length).to.equal(5);
+    });
 
 });

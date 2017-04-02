@@ -95,5 +95,4 @@ export class SimpleVirtualDOM {
         return elementProto.createElement(args);
     }
 
-
 }
