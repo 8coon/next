@@ -11,13 +11,13 @@ describe('ViewHolder', () => {
 
 
     it('should load sample view', (/*done*/) => {
-        /*const appContext = JSWorks.applicationContext;
+        const appContext = JSWorks.applicationContext;
 
         JSWorks.EventManager.subscribe(null, appContext.viewHolder, JSWorks.EventType.LOAD, (event) => {
             expect(appContext.viewHolder.views['Sample']).to.be.ok;
 
             done();
-        });*/
+        });
     });
 
 

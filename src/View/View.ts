@@ -16,7 +16,7 @@ declare const JSWorks: any;
 export class View implements IEventEmitter, IEventReceiver {
 
     private _id: string;
-    private template: HTMLElement;
+    private template: IAbstractVirtualDOMElement;
     private _DOMRoot: IAbstractVirtualDOMElement;
 
     private appContext: ApplicationContext;
@@ -42,6 +42,16 @@ export class View implements IEventEmitter, IEventReceiver {
      */
     public get id(): string {
         return this._id;
+    }
+
+
+    /**
+     * Корневой элемент DOM данной View.
+     * @returns {IAbstractVirtualDOMElement}
+     * @constructor
+     */
+    public get DOMRoot(): IAbstractVirtualDOMElement {
+        return this._DOMRoot;
     }
 
 

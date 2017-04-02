@@ -1,3 +1,4 @@
+import {IAbstractVirtualDOMElement} from '../VirtualDOM/IAbstractVirtualDOMElement';
 
 
 /**
@@ -6,6 +7,6 @@
 export interface IViewParsed {
 
     id: string;
-    template: HTMLElement;
+    template: IAbstractVirtualDOMElement;
 
 }
