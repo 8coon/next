@@ -11,6 +11,7 @@ export enum EventType {
     DOMChildAppend,
     DOMChildRemove,
     DOMRemove,
+    DOMContentChange,
 }
 
 

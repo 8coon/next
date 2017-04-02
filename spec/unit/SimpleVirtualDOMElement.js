@@ -124,4 +124,26 @@ describe('SimpleVirtualDOMElement', () => {
     });
 
 
+    it('should change itself according to innerHTML property', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const element = virtualDOM.createElement('div');
+
+        const html = `
+            <ul>
+                <li class="alpha">lol</li>
+                <li class="beta">kek</li>
+                <li class="gamma">cheburek</li>
+            </ul>
+        `.split('\n').map((l) => { return l.trim(); }).join('');
+
+        element.innerHTML = html;
+
+        expect(element.children.item(0).tagName).to.equal('UL');
+        expect(element.children.item(0).children.item(2).tagName).to.equal('LI');
+        expect(element.innerHTML).to.equal(html);
+    });
+
+
 });

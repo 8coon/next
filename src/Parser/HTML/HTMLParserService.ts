@@ -12,17 +12,25 @@ export class HTMLParserService extends ParserService {
     /**
      * Парсит строку как HTML и возвращает объект.
      * @param data
-     * @returns {Object}
+     * @returns IDOMParsed[]
      */
-    public parseString(data: string): Object {
-        throw new MethodNotImplementedError('HTMLParserService.parseString');
+    public parseString(data: string): IDOMParsed[] {
+        const element = document.createElement('DIV');
+        const parsed: IDOMParsed[] = [];
+        element.innerHTML = data;
+
+        Array.from(element.childNodes).forEach((node) => {
+            parsed.push(this.parseDOM(node));
+        });
+
+        return parsed;
     }
 
 
     /**
      * Парсит данные DOM-элемента и возвращает объект.
      * @param element
-     * @returns {Object}
+     * @returns IDOMParsed
      */
     public parseDOM(element: HTMLElement | Node): IDOMParsed {
         const data = {

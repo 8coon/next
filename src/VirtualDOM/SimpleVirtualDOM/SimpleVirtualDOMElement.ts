@@ -6,6 +6,9 @@ import {EventType} from '../../EventManager/EventType';
 import {EventManager} from '../../EventManager/EventManager';
 import {JSWorksInternal} from '../../Common/InternalDecorator';
 import {SimpleVirtualDOM} from './SimpleVirtualDOM';
+import {IDOMParsed} from '../../Parser/HTML/IDOMParsed';
+import {HTMLParserService} from '../../Parser/HTML/HTMLParserService';
+import {ApplicationContext} from '../../ApplicationContext/ApplicationContext';
 
 
 @JSWorksInternal
@@ -138,7 +141,18 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
             return;
         }
 
-        // ToDo: InnerHTML DOM Parse
+        const appContext: ApplicationContext = JSWorks.applicationContext;
+        const htmlParser: HTMLParserService = appContext.serviceHolder.getServiceByName('HTMLParser');
+        const virtualDOM: SimpleVirtualDOM = appContext.serviceHolder.getServiceByName('SimpleVirtualDOM');
+
+        const nodes: IDOMParsed[] = htmlParser.parseString(value);
+        this._children = [];
+
+        nodes.forEach((parsed) => {
+            this._children.push(<SimpleVirtualDOMElement> virtualDOM.createElement(parsed));
+        });
+
+        this.emitMutilationEvent({ type: EventType.DOMContentChange, data: this });
     }
 
 
