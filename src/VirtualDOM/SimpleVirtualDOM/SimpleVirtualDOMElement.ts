@@ -6,7 +6,6 @@ import {EventType} from '../../EventManager/EventType';
 import {EventManager} from '../../EventManager/EventManager';
 import {JSWorksInternal} from '../../Common/InternalDecorator';
 import {SimpleVirtualDOM} from './SimpleVirtualDOM';
-import {LCSAlgorithm} from '../../Algorithm/LCS';
 
 
 @JSWorksInternal
@@ -522,15 +521,6 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     }
 
 
-    private mergeChildrenSimple() {
-        Array.from(this.rendered.childNodes).forEach((child) => {
-            this.rendered.removeChild(child);
-        });
-
-        this.appendChildren();
-    }
-
-
     private mergeChildren() {
         if (this.rendered.childNodes.length === 0 && this._children.length > 0) {
             this.appendChildren();
@@ -561,89 +551,5 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
         }
     }
 
-
-    private mergeChildren4() {
-        if (this.rendered.childNodes.length === 0 && this._children.length > 0) {
-            this.appendChildren();
-            return;
-        }
-
-        const existing = this.rendered.childNodes;
-        const children = this._children;
-        let i: number = 0;
-        let j: number = 0;
-
-        while (existing[i][this.HASH_KEY] === children[j].rendered[this.HASH_KEY]) {
-            i++;
-            j++;
-        }
-
-        // while ()
-    }
-
-
-    private mergeChildren3() {
-        if (this.rendered.childNodes.length === 0 && this._children.length > 0) {
-            this.appendChildren();
-            return;
-        }
-
-        const comparator = (a: Node, b: Node): boolean => {
-            console.log(this, this.HASH_KEY, a, b);
-            return a[this.HASH_KEY] === b[this.HASH_KEY];
-        };
-
-        const indices: number[] = (new LCSAlgorithm()).countLength(
-            <any> this.rendered.childNodes,
-            <any> this.children,
-            comparator,
-        );
-
-        let current = 0;
-
-        this._children.forEach((child, index) => {
-            if (index !== (indices[current] || -1)) {
-                let referenceNode = this.rendered.lastChild;
-
-                if (index < this.rendered.childNodes.length) {
-                    referenceNode = this.rendered.childNodes[index];
-                }
-
-                this.rendered.insertBefore(child.rendered, referenceNode);
-                index++;
-
-                return;
-            }
-
-            current++;
-        });
-    }
-
-
-    private mergeChildren2() {
-        this._children.forEach((child, index) => {
-            child.render();
-
-            if (index <= this.rendered.childNodes.length) {
-                this.rendered.appendChild(child.rendered);
-            }
-
-            if (this.rendered.childNodes[index] !== child.rendered) {
-                this.rendered.replaceChild(child.rendered, this.rendered.childNodes[index]);
-            }
-        });
-
-        if (this.rendered.childNodes.length > this._children.length) {
-            const deleting: Node[] = [];
-
-            for (let i = this._children.length; i < this.rendered.childNodes.length; i++) {
-                deleting.push(this.rendered.childNodes[i]);
-            }
-
-            deleting.forEach((node) => {
-                this.rendered.removeChild(node);
-            });
-        }
-    }
 
 }
