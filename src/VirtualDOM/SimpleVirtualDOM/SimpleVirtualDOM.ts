@@ -11,6 +11,17 @@ import {SimpleVirtualDOMElementExt} from './SimpleVirtualDOMElementExt.js';
 @JSWorksService('SimpleVirtualDOM', 'VirtualDOM', ['HTMLParser'])
 export class SimpleVirtualDOM {
 
+    /**
+     * Получить следующий уникальный номер и последовательности уникальных номеров нод
+     * @returns {number}
+     * @constructor
+     */
+    public static NextHash(): number {
+        return SimpleVirtualDOM.lastNodeHash++;
+    }
+
+    private static lastNodeHash: number = 0;
+
     private hTMLParser: HTMLParserService;
 
 

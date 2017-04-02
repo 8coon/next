@@ -5,6 +5,8 @@ import {IEventEmitter} from '../../EventManager/IEventEmitter';
 import {EventType} from '../../EventManager/EventType';
 import {EventManager} from '../../EventManager/EventManager';
 import {JSWorksInternal} from '../../Common/InternalDecorator';
+import {SimpleVirtualDOM} from './SimpleVirtualDOM';
+import {LCSAlgorithm} from '../../Algorithm/LCS';
 
 
 @JSWorksInternal
@@ -39,6 +41,9 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     private attributes: Object = { style: {} };
     private handlers: Object = {};
 
+    private readonly HASH_KEY: string = '__jsworks_hash__';
+    private readonly HANDLERS_KEY: string = '__jsworks_handlers__';
+
 
     /**
      * Отрисовка изменений текущей ноды в поле rendered
@@ -47,26 +52,37 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      * в противном случае она будет должным образом модифицирована.
      */
     public render(): void {
+        this._children.forEach((child) => {
+            child.render();
+        });
+
         if (!this.rendered) {
             this.dirty = false;
 
             if (!this.tagName) {
                 this.rendered = document.createTextNode(this.text);
+                this.rendered[this.HASH_KEY] = SimpleVirtualDOM.NextHash();
+                this.renderHandlers();
+
                 return;
             }
 
-            this.rendered = document.createElement('DIV');
-            (<HTMLElement> this.rendered).innerHTML = this.getOuterHTML();
-            this.rendered = this.rendered.childNodes[0];
+            this.rendered = document.createElement(this.tagName);
+            this.rendered[this.HASH_KEY] = SimpleVirtualDOM.NextHash();
+
+            this.mergeAttributes();
+            this.mergeChildren();
             this.renderHandlers();
 
             return;
         }
 
         if (this.dirty) {
+            this.dirty = false;
+
             if (this.tagName !== (<HTMLElement> this.rendered).tagName) {
-                this.rendered = undefined;
-                this.render();
+                this.rendered = this.rendered = document.createTextNode(this.text);
+                this.rendered[this.HASH_KEY] = SimpleVirtualDOM.NextHash();
                 this.renderHandlers();
 
                 return;
@@ -77,79 +93,13 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
                     this.rendered.textContent = this.text;
                 }
 
-                this.dirty = false;
+                this.renderHandlers();
                 return;
             }
 
-            if (this.id !== (<HTMLElement> this.rendered).id) {
-                (<HTMLElement> this.rendered).id = this.id;
-            }
-
-            if (this.className !== (<HTMLElement> this.rendered).className) {
-                (<HTMLElement> this.rendered).className = this.className;
-            }
-
-            Object.keys(this.attributes).forEach((attr: string) => {
-                if (attr === 'id' || attr === 'class') {
-                    return;
-                }
-
-                if (!((<HTMLElement> this.rendered).hasAttribute(attr))) {
-                    const attribute = this.getAttribute(attr);
-
-                    if (attribute) {
-                        (<HTMLElement> this.rendered).setAttribute(attr, attribute);
-                    }
-
-                    return;
-                }
-
-                const value = this.getAttribute(attr);
-                if ((<HTMLElement> this.rendered).getAttribute(attr) !== value) {
-                    (<HTMLElement> this.rendered).setAttribute(attr, value);
-                }
-            });
-
-            Array.from((<HTMLElement> this.rendered).attributes).forEach((attrPair) => {
-                if (!this.hasAttribute(attrPair.name)) {
-                    (<HTMLElement> this.rendered).removeAttribute(attrPair.name);
-                }
-            });
-
-            this.dirty = false;
-
-            this._children.forEach((child, index) => {
-                child.render();
-
-                if (index <= this.rendered.childNodes.length) {
-                    this.rendered.appendChild(child.rendered);
-                }
-
-                if (this.rendered.childNodes[index] !== child.rendered) {
-                    this.rendered.replaceChild(child.rendered, this.rendered.childNodes[index]);
-                }
-            });
-
-            if (this.rendered.childNodes.length > this._children.length) {
-                const deleting: Node[] = [];
-
-                for (let i = this._children.length; i < this.rendered.childNodes.length; i++) {
-                    deleting.push(this.rendered.childNodes[i]);
-                }
-
-                deleting.forEach((node) => {
-                    this.rendered.removeChild(node);
-                });
-            }
-
-            return;
+            this.mergeAttributes();
+            this.mergeChildren();
         }
-
-        this._children.forEach((child) => {
-            const oldRendered = child.rendered;
-            child.render();
-            this.rendered.replaceChild(oldRendered, child.rendered);
-        });
     }
 
 
@@ -380,6 +330,8 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      */
     public appendChild(child: SimpleVirtualDOMElement): void {
         this._children.push(child);
+        (<any> child)._parentNode = this;
+
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
         EventManager.subscribe(this, child);
     }
@@ -467,8 +419,8 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
         this.handlers[type].push({ callback: callback, useCapture: useCapture });
 
         if (this.rendered) {
-            this.rendered['__jsworks_handlers__'] = this.rendered['__jsworks_handlers__'] || [];
-            this.rendered['__jsworks_handlers__'].push({ type, callback, useCapture });
+            this.rendered[this.HANDLERS_KEY] = this.rendered[this.HANDLERS_KEY] || [];
+            this.rendered[this.HANDLERS_KEY].push({ type, callback, useCapture });
             this.rendered.addEventListener(type, callback, useCapture);
         }
     }
@@ -481,11 +433,11 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      */
     public removeEventListener(type: string, callback: (event: Event) => void) {
         if (this.rendered) {
-            this.rendered['__jsworks_handlers__'] = this.rendered['__jsworks_handlers__'] || [];
+            this.rendered[this.HANDLERS_KEY] = this.rendered[this.HANDLERS_KEY] || [];
 
-            this.rendered['__jsworks_handlers__'].forEach((handler, index) => {
+            this.rendered[this.HANDLERS_KEY].forEach((handler, index) => {
                 if (handler.type === type && handler.callback === callback) {
-                    delete this.rendered['__jsworks_handlers__'][index];
+                    delete this.rendered[this.HANDLERS_KEY][index];
                 }
             });
 
@@ -507,9 +459,9 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
 
 
     private renderHandlers() {
-        this.rendered['__jsworks_handlers__'] = this.rendered['__jsworks_handlers__'] || [];
+        this.rendered[this.HANDLERS_KEY] = this.rendered[this.HANDLERS_KEY] || [];
 
-        this.rendered['__jsworks_handlers__'].forEach((handler) => {
+        this.rendered[this.HANDLERS_KEY].forEach((handler) => {
             this.rendered.removeEventListener(handler.type, handler.callback);
         });
 
@@ -521,6 +473,177 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
                 this.addEventListener(type, handler.callback, handler.useCapture);
             });
         });
+    }
+
+
+    private mergeAttributes() {
+        if (this.id !== (<HTMLElement> this.rendered).id) {
+            (<HTMLElement> this.rendered).id = this.id;
+        }
+
+        if (this.className !== (<HTMLElement> this.rendered).className) {
+            (<HTMLElement> this.rendered).className = this.className;
+        }
+
+        Object.keys(this.attributes).forEach((attr: string) => {
+            if (attr === 'id' || attr === 'class') {
+                return;
+            }
+
+            if (!((<HTMLElement> this.rendered).hasAttribute(attr))) {
+                const attribute = this.getAttribute(attr);
+
+                if (attribute) {
+                    (<HTMLElement> this.rendered).setAttribute(attr, attribute);
+                }
+
+                return;
+            }
+
+            const value = this.getAttribute(attr);
+            if ((<HTMLElement> this.rendered).getAttribute(attr) !== value) {
+                (<HTMLElement> this.rendered).setAttribute(attr, value);
+            }
+        });
+
+        Array.from((<HTMLElement> this.rendered).attributes).forEach((attrPair) => {
+            if (!this.hasAttribute(attrPair.name)) {
+                (<HTMLElement> this.rendered).removeAttribute(attrPair.name);
+            }
+        });
+    }
+
+
+    private appendChildren() {
+        this._children.forEach((child, index) => {
+            child.render();
+            this.rendered.appendChild(child.rendered);
+        });
+    }
+
+
+    private mergeChildrenSimple() {
+        Array.from(this.rendered.childNodes).forEach((child) => {
+            this.rendered.removeChild(child);
+        });
+
+        this.appendChildren();
+    }
+
+
+    private mergeChildren() {
+        if (this.rendered.childNodes.length === 0 && this._children.length > 0) {
+            this.appendChildren();
+            return;
+        }
+
+        this._children.forEach((child, index) => {
+            if (this.rendered.childNodes[index] !== child.rendered) {
+                if (index < this.rendered.childNodes.length - 1) {
+                    this.rendered.insertBefore(child.rendered, this.rendered.childNodes[index + 1]);
+                    return;
+                }
+
+                if (index === this.rendered.childNodes.length - 1) {
+                    this.rendered.replaceChild(child.rendered, this.rendered.lastChild);
+                    return;
+                }
+
+                this.rendered.appendChild(child.rendered);
+            }
+        });
+
+        for (let i = 0; i < this.rendered.childNodes.length; i++) {
+            if (!this._children[i] || this.rendered.childNodes[i] !== this._children[i].rendered) {
+                this.rendered.removeChild(this.rendered.childNodes[i]);
+                i--;
+            }
+        }
+    }
+
+
+    private mergeChildren4() {
+        if (this.rendered.childNodes.length === 0 && this._children.length > 0) {
+            this.appendChildren();
+            return;
+        }
+
+        const existing = this.rendered.childNodes;
+        const children = this._children;
+        let i: number = 0;
+        let j: number = 0;
+
+        while (existing[i][this.HASH_KEY] === children[j].rendered[this.HASH_KEY]) {
+            i++;
+            j++;
+        }
+
+        // while ()
+    }
+
+
+    private mergeChildren3() {
+        if (this.rendered.childNodes.length === 0 && this._children.length > 0) {
+            this.appendChildren();
+            return;
+        }
+
+        const comparator = (a: Node, b: Node): boolean => {
+            console.log(this, this.HASH_KEY, a, b);
+            return a[this.HASH_KEY] === b[this.HASH_KEY];
+        };
+
+        const indices: number[] = (new LCSAlgorithm()).countLength(
+            <any> this.rendered.childNodes,
+            <any> this.children,
+            comparator,
+        );
+
+        let current = 0;
+
+        this._children.forEach((child, index) => {
+            if (index !== (indices[current] || -1)) {
+                let referenceNode = this.rendered.lastChild;
+
+                if (index < this.rendered.childNodes.length) {
+                    referenceNode = this.rendered.childNodes[index];
+                }
+
+                this.rendered.insertBefore(child.rendered, referenceNode);
+                index++;
+
+                return;
+            }
+
+            current++;
+        });
+    }
+
+
+    private mergeChildren2() {
+        this._children.forEach((child, index) => {
+            child.render();
+
+            if (index <= this.rendered.childNodes.length) {
+                this.rendered.appendChild(child.rendered);
+            }
+
+            if (this.rendered.childNodes[index] !== child.rendered) {
+                this.rendered.replaceChild(child.rendered, this.rendered.childNodes[index]);
+            }
+        });
+
+        if (this.rendered.childNodes.length > this._children.length) {
+            const deleting: Node[] = [];
+
+            for (let i = this._children.length; i < this.rendered.childNodes.length; i++) {
+                deleting.push(this.rendered.childNodes[i]);
+            }
+
+            deleting.forEach((node) => {
+                this.rendered.removeChild(node);
+            });
+        }
     }
 
 }

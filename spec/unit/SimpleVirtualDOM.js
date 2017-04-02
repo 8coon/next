@@ -175,11 +175,12 @@ describe('SimpleVirtualDOM', () => {
         const li1 = ul.children.item(0);
         const li2 = ul.children.item(1);
         const li3 = ul.children.item(2);
+        let fired = 0;
 
-        const listener = (event) => { fired++ };
+        const listener = (event) => { fired++; };
         const errorListener = (event) => { throw new Error('I should not be thrown') };
 
-        let fired = 0;
+        dst.render();
         li1.addEventListener('click', listener);
         li2.addEventListener('click', listener);
         li2.addEventListener('custom_click', listener);
@@ -192,11 +193,12 @@ describe('SimpleVirtualDOM', () => {
         li3.removeEventListener('click', errorListener);
         dst.render();
 
-        /*[...dst.rendered.querySelectorAll('li')].forEach((li) => {
+        [...dst.rendered.querySelectorAll('li')].forEach((li) => {
             li.dispatchEvent(new Event('click'));
+            li.dispatchEvent(new Event('custom_click'));
         });
 
-        expect(fired).to.equal(2);*/
+        expect(fired).to.equal(2);
     });
 
 
