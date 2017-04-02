@@ -1,9 +1,11 @@
 import {SimpleVirtualDOMElement} from './SimpleVirtualDOMElement';
 import {JSWorksInternal} from '../../Common/InternalDecorator';
+import {IVirtualDOMElementFactory} from '../IVirtualDOMElementFactory';
 
 
 @JSWorksInternal
-export abstract class SimpleVirtualDOMElementExt extends SimpleVirtualDOMElement {
+export abstract class SimpleVirtualDOMElementExt extends SimpleVirtualDOMElement
+        implements IVirtualDOMElementFactory {
 
     /**
      * Создать новый инстанс данного элемента

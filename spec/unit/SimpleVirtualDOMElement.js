@@ -146,4 +146,39 @@ describe('SimpleVirtualDOMElement', () => {
     });
 
 
+    it('should be able to insert element before another element', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const element = virtualDOM.createElement('div');
+        element.innerHTML = `
+            <li id="0">lol</li>
+            <li id="2">cheburek</li>
+        `.split('\n').map((l) => { return l.trim(); }).join('');
+
+        const kek = virtualDOM.createElement('li');
+        kek.id = '1';
+        kek.innerHTML = 'kek';
+
+        const end = virtualDOM.createElement('li');
+        end.id = '3';
+        end.innerHTML = 'end';
+
+        element.insertBefore(kek, element.children.item(1));
+        element.insertBefore(end, null);
+        element.render();
+
+        expect(element.children.length).to.equal(4);
+
+        const html = `
+            <li id="0">lol</li>
+            <li id="1">kek</li>
+            <li id="2">cheburek</li>
+            <li id="3">end</li>
+        `.split('\n').map((l) => { return l.trim(); }).join('');
+
+        expect(element.innerHTML).to.equal(html);
+    });
+
+
 });

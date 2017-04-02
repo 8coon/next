@@ -1,29 +1,38 @@
 import {IAbstractVirtualDOMElement} from './IAbstractVirtualDOMElement';
+import {IDOMParsed} from '../Parser/HTML/IDOMParsed';
+import {IVirtualDOMElementFactory} from './IVirtualDOMElementFactory';
 
 
 export abstract class VirtualDOM {
 
+    /**
+     * Создаёт элемент виртуального DOM по образу реального.
+     * @param element
+     */
+    public abstract createFromDOM(element: HTMLElement): IAbstractVirtualDOMElement;
+
 
     /**
-     * Возвращает корневой элемент
+     * Создаёт текстовый узел виртуального DOM.
+     * @param text
      */
-    public abstract get root(): IAbstractVirtualDOMElement;
+    public abstract createTextElement(text: string): IAbstractVirtualDOMElement;
 
 
     /**
-     * Сравнивает дерево, чьим корневым элементом является root и дерево, реализуемое VirtualDOM, при обнаружении
-     * переносит изменения в root.
-     *
-     * Применяется одновременный обход двух деревьев в ширину (возможно, через цикл for).
-     *
-     * В случае обнаружения несоответствия имени тега, данная нода и связанное с ней поддерево перерисовываются
-     * (создаются соответствующие узлы с помощью HTMLElement и записываются на место такой ноды) и обход
-     * продолжается дальше.
-     *
-     * Дальше ещё напишу.
-     *
-     * @param root
+     * Создаёт виртуальный DOM элемент. В случае передачи параметром строки создастся элемент
+     * с именем тэга, соответствующему этой строке.
+     * @param data {IDOMParsed | string}
      */
-    public abstract render(root: HTMLElement): void;
+    public abstract createElement(data: IDOMParsed | string): IAbstractVirtualDOMElement;
+
+
+    /**
+     * Создаёт виртуальный DOM элемент из фабрики, реализующей интерфейс {IVirtualDOMElementFactory}
+     * @param factory
+     * @param args
+     */
+    public abstract createCustomElement(factory: IVirtualDOMElementFactory, args: Object):
+        IAbstractVirtualDOMElement;
 
 }

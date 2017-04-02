@@ -349,6 +349,27 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
 
 
     /**
+     * Вставить потомка перед указанным. Если указанный потомок не будет найден, child вставится последним.
+     * @param child
+     * @param reference
+     */
+    public insertBefore(child: SimpleVirtualDOMElement, reference: SimpleVirtualDOMElement): void {
+        const index = this._children.indexOf(reference);
+
+        if (index < 0) {
+            this.appendChild(child);
+            return;
+        }
+
+        this._children.splice(index, 0, child);
+        (<any> child)._parentNode = this;
+
+        this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
+        EventManager.subscribe(this, child);
+    }
+
+
+    /**
      * Удалить потомка
      * @param child
      */

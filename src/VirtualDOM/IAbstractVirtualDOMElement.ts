@@ -33,6 +33,9 @@ export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceive
     appendChild(child: IAbstractVirtualDOMElement): void;
 
 
+    insertBefore(child: IAbstractVirtualDOMElement, reference: IAbstractVirtualDOMElement): void;
+
+
     removeChild(child: IAbstractVirtualDOMElement): void;
 
 

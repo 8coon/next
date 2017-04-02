@@ -5,11 +5,12 @@ import {HTMLParserService} from '../../Parser/HTML/HTMLParserService';
 import {IDOMParsed} from '../../Parser/HTML/IDOMParsed';
 import {SimpleVirtualDOMElement} from './SimpleVirtualDOMElement';
 import {SimpleVirtualDOMElementExt} from './SimpleVirtualDOMElementExt.js';
+import {VirtualDOM} from '../VirtualDOM';
 
 
 @JSWorksInternal
 @JSWorksService('SimpleVirtualDOM', 'VirtualDOM', ['HTMLParser'])
-export class SimpleVirtualDOM {
+export class SimpleVirtualDOM implements VirtualDOM {
 
     /**
      * Получить следующий уникальный номер и последовательности уникальных номеров нод
@@ -26,7 +27,7 @@ export class SimpleVirtualDOM {
 
 
     /**
-     * Создать элемент виртуального DOM по образу реального
+     * Создаёт элемент виртуального DOM по образу реального
      * @param element
      * @returns {IAbstractVirtualDOMElement}
      */
