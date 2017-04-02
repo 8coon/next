@@ -6,7 +6,7 @@ import {EventType} from '../EventManager/EventType';
 import {View} from './View';
 import {DuplicateViewIdError} from '../Service/Error/DuplicateViewIdError';
 import {JSWorksInternal} from '../Common/InternalDecorator';
-import {IAbstractVirtualDOMElement} from "../VirtualDOM/IAbstractVirtualDOMElement";
+import {IAbstractVirtualDOMElement} from '../VirtualDOM/IAbstractVirtualDOMElement';
 
 
 @JSWorksInternal
