@@ -42,19 +42,30 @@ describe('SimpleVirtualDOMElement', () => {
         const element = virtualDOM.createElement('div');
         for (let i = 0; i < 5; i++) {
             const child = virtualDOM.createElement('div');
-            child.setAttribute('id', '' + i);
+            child.setAttribute('id', 'id' + i);
             element.appendChild(child);
         }
 
-        [0,2,4].forEach(id => {
-            element.removeChild(element.children[id]);
+        Array.from(element.children).forEach((child) => {
+            [0, 2, 4].forEach((index) => {
+                if (child.id === `id${index}`) {
+                    element.removeChild(child);
+                }
+            });
         });
 
         expect(element.children.length).to.equal(2);
+        let count = 0;
 
         Array.from(element.children).forEach(child => {
-            expect([0, 2, 4].includes(child.getAttribute('id'))).to.equal(false);
+            [0, 2, 4].forEach(id => {
+                if (child.id === `id${id}`) {
+                    count++;
+                }
+            });
         });
+
+        expect(count).to.equal(0);
 
         Array.from(element.children).forEach(child => {
             expect([1, 3].includes(child.getAttribute('id')));
@@ -178,6 +189,38 @@ describe('SimpleVirtualDOMElement', () => {
         `.split('\n').map((l) => { return l.trim(); }).join('');
 
         expect(element.innerHTML).to.equal(html);
+    });
+
+
+    it('should return children on selector', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const element = virtualDOM.createElement('div');
+        element.innerHTML = `
+            <div align="center">
+                <a href="https://google.com">Please visit Google to find some hot lol kek chebureks</a><br>
+                <ul id="classification">
+                    <li class="meme">lol</li>
+                    <li class="meme">kek</li>
+                    <li class="food">cheburek</li>
+                </ul>
+            </div>
+        `.split('\n').map((l) => { return l.trim(); }).join('');
+
+        expect(element.querySelectorAll('div a').length).to.equal(1);
+        expect(element.querySelectorAll('#classification > li').length).to.equal(3);
+        expect(element.querySelectorAll('div[align="left"]').length).to.equal(0);
+        // expect(element.querySelectorAll('#classification::first-child').length).to.equal(1);
+
+        const ul = element.querySelector('ul');
+
+        element.querySelectorAll('.meme').forEach((meme) => {
+            expect(meme.className).to.equal('meme');
+            ul.removeChild(meme);
+        });
+
+        expect(element.querySelectorAll('.meme').length).to.equal(0);
     });
 
 

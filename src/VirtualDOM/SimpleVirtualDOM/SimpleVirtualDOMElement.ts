@@ -41,9 +41,16 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     private classes: Object = {};
     private attributes: Object = { style: {} };
     private handlers: Object = {};
+    private selectorCache: Object = {};
+    private _hash: any;
 
     private readonly HASH_KEY: string = '__jsworks_hash__';
     private readonly HANDLERS_KEY: string = '__jsworks_handlers__';
+
+
+    constructor(hash) {
+        this._hash = hash;
+    }
 
 
     /**
@@ -163,6 +170,11 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
 
     public set id(value: string) {
         this.setAttribute('id', value);
+    }
+
+
+    public get hash() {
+        return this._hash;
     }
 
 
@@ -374,7 +386,16 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      * @param child
      */
     public removeChild(child: SimpleVirtualDOMElement): void {
+        if (!child) {
+            return;
+        }
+
         this._children.splice(this._children.indexOf(child, 0), 1);
+
+        if (child) {
+            child._parentNode = undefined;
+        }
+
         this.emitMutilationEvent({ type: EventType.DOMChildRemove, data: { parent: this, child: child } });
     }
 
@@ -484,8 +505,60 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     }
 
 
+    /**
+     * Выбрать все элементы по селектору
+     * @param query
+     * @returns {SimpleVirtualDOMElement[]}
+     */
+    public querySelectorAll(query: string): SimpleVirtualDOMElement[] {
+        /* if (this.selectorCache[query]) {
+            return this.selectorCache[query];
+        }*/
+
+        const selector = SimpleVirtualDOM.prepareSelector(query);
+        const result = [];
+        const resultHas = {};
+
+        const concat = (array) => {
+            if (!(array instanceof Array)) {
+                array = [array];
+            }
+
+            array.forEach((node: SimpleVirtualDOMElement) => {
+                if (!resultHas[node.hash]) {
+                    resultHas[node.hash] = true;
+                    result.push(node);
+                }
+            });
+        };
+
+        const queryResult = selector(this);
+        if (queryResult) {
+            concat(queryResult);
+        }
+
+        this._children.forEach((child) => {
+            concat(child.querySelectorAll(query));
+        });
+
+        // this.selectorCache[query] = result;
+        return result;
+    }
+
+
+    /**
+     * Выбрать первый элемент по селектору
+     * @param query
+     * @returns {SimpleVirtualDOMElement}
+     */
+    public querySelector(query: string): SimpleVirtualDOMElement {
+        return this.querySelectorAll(query)[0];
+    }
+
+
     private emitMutilationEvent(data: IEvent) {
         this.dirty = true;
+        this.selectorCache = {};
         this.emitEvent(data);
     }
 

@@ -8,6 +8,13 @@ import {SimpleVirtualDOMElementExt} from './SimpleVirtualDOMElementExt.js';
 import {VirtualDOM} from '../VirtualDOM';
 
 
+type Selector = (IAbstractVirtualDOMElement) => boolean |   // tslint:disable-line
+    IAbstractVirtualDOMElement |
+    IAbstractVirtualDOMElement[];
+
+declare const CSSauron: any;
+
+
 @JSWorksInternal
 @JSWorksService('SimpleVirtualDOM', 'VirtualDOM', ['HTMLParser'])
 export class SimpleVirtualDOM implements VirtualDOM {
@@ -21,7 +28,43 @@ export class SimpleVirtualDOM implements VirtualDOM {
         return SimpleVirtualDOM.lastNodeHash++;
     }
 
+
+    /**
+     * Возвращает функцию-селектор для данного запроса
+     * @param selector
+     * @returns {any}
+     */
+    public static prepareSelector(selector: string): Selector {
+        if (SimpleVirtualDOM.preparedSelectors[selector]) {
+            return SimpleVirtualDOM.preparedSelectors[selector];
+        }
+
+        if (!SimpleVirtualDOM.selectorFactory) {
+            SimpleVirtualDOM.selectorFactory = CSSauron({
+                tag: 'tagName || ""',
+                contents: 'text',
+                id: 'id',
+                'class' : 'className',  // tslint:disable-line
+                parent: 'parentNode',
+                children: '_children',
+                attr: 'getAttribute(attr)',
+            }, (type, pattern, data) => {
+                if (type === 'tag') {
+                    return pattern.toLowerCase() === data.toLowerCase();
+                }
+
+                return pattern == data;  // tslint:disable-line
+            });
+        }
+
+        SimpleVirtualDOM.preparedSelectors[selector] = SimpleVirtualDOM.selectorFactory(selector);
+        return SimpleVirtualDOM.preparedSelectors[selector];
+    }
+
+
     private static lastNodeHash: number = 0;
+    private static preparedSelectors = {};
+    private static selectorFactory: (selector: string) => Selector;
 
     private hTMLParser: HTMLParserService;
 
@@ -62,7 +105,7 @@ export class SimpleVirtualDOM implements VirtualDOM {
      * @returns {SimpleVirtualDOMElement}
      */
     public createElement(data: IDOMParsed | string = 'DIV'): IAbstractVirtualDOMElement {
-        const element = new SimpleVirtualDOMElement();
+        const element = new SimpleVirtualDOMElement(SimpleVirtualDOM.NextHash());
 
         if (typeof data === 'string') {
             element.tagName = (<string> data).toUpperCase();
@@ -93,7 +136,7 @@ export class SimpleVirtualDOM implements VirtualDOM {
      */
     public createCustomElement(elementProto: SimpleVirtualDOMElementExt, args: Object = {}):
             IAbstractVirtualDOMElement {
-        return elementProto.createElement(args);
+        return elementProto.createElement(args, SimpleVirtualDOM.NextHash());
     }
 
 }

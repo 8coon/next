@@ -47,4 +47,10 @@ export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceive
 
     isText(): boolean;
 
+
+    querySelector(query: string): IAbstractVirtualDOMElement;
+
+
+    querySelectorAll(query: string): IAbstractVirtualDOMElement[];
+
 }

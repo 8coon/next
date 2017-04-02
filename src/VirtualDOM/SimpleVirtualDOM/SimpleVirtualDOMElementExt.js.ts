@@ -12,6 +12,6 @@ export abstract class SimpleVirtualDOMElementExt extends SimpleVirtualDOMElement
      * Фактически, каждый пользовательский элемент виртуального DOM выступает, как фабрика элементов данного типа
      * @param args
      */
-    public abstract createElement(args: {}): SimpleVirtualDOMElementExt;
+    public abstract createElement(args: {}, hash): SimpleVirtualDOMElementExt;
 
 }

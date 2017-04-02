@@ -10,6 +10,6 @@ export interface IVirtualDOMElementFactory {
      * Создать новый инстанс данного элемента по заданым в args параметрам.
      * @param args
      */
-    createElement(args: {}): IAbstractVirtualDOMElement;
+    createElement(args: {}, hash): IAbstractVirtualDOMElement;
 
 }
