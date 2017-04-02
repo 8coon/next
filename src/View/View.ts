@@ -8,6 +8,7 @@ import {VirtualDOM} from '../VirtualDOM/VirtualDOM';
 import {ViewConfig} from './ViewConfig';
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {ElementNotPoliteError} from '../Service/Error/ElementNotPoliteError';
+import {EventType} from '../EventManager/EventType';
 
 
 declare const JSWorks: any;
@@ -34,6 +35,7 @@ export class View implements IEventEmitter, IEventReceiver {
 
         this._DOMRoot = this.virtualDOM.createElement(ViewConfig.VIEW_TAG);
         this._DOMRoot.id = this._id;
+        this._DOMRoot.view = this;
         this._DOMRoot.innerHTML = this.template.innerHTML;
     }
 
@@ -74,9 +76,19 @@ export class View implements IEventEmitter, IEventReceiver {
             this.renderQueued = true;
 
             window.setTimeout(() => {
-                this.DOMRoot.render();
+                this.renderQueued = false;
+                this.render();
             }, 1);
         }
+    }
+
+
+    /**
+     * Обновляет виртуальный DOM этой View.
+     */
+    public render(): void {
+        this.DOMRoot.render();
+        this.emitEvent({ type: EventType.UPDATE, data: this });
     }
 
 

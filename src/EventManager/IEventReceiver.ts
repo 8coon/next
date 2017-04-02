@@ -9,6 +9,6 @@ import {IEventEmitter} from './IEventEmitter';
 export interface IEventReceiver {
 
 
-    receiveEvent(event: IEvent, emitter: IEventEmitter);
+    receiveEvent?(event: IEvent, emitter: IEventEmitter);
 
 }

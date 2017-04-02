@@ -38,6 +38,8 @@ export class ViewHolder implements IEventEmitter {
                 node.querySelectorAll(ViewConfig.VIEW_TEMPLATE_TAG).forEach((tag) => {
                     const view = new View({ id: tag.id, template: tag });
                     this.views[view.id] = view;
+
+                    view.render();
                 });
             });
 
