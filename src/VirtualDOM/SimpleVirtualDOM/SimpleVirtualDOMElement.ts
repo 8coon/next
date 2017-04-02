@@ -32,7 +32,6 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
 
 
     private _tagName: string;
-    private _id: string;
     private _parentNode: SimpleVirtualDOMElement;
     private _children: SimpleVirtualDOMElement[] = [];
     private _text: string;
@@ -144,12 +143,11 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
 
 
     public get id(): string {
-        return this._id;
+        return this.getAttribute('id');
     }
 
 
     public set id(value: string) {
-        this._id = value;
         this.setAttribute('id', value);
     }
 
@@ -341,7 +339,7 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      * @param child
      */
     public removeChild(child: SimpleVirtualDOMElement): void {
-        this._children.splice(this._children.lastIndexOf(child, 0), 1);
+        this._children.splice(this._children.indexOf(child, 0), 1);
         this.emitMutilationEvent({ type: EventType.DOMChildRemove, data: { parent: this, child: child } });
     }
 

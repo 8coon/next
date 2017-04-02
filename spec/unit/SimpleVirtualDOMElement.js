@@ -8,6 +8,7 @@ describe('SimpleVirtualDOMElement', () => {
         expect(JSWorks.Internal.SimpleVirtualDOMElement).to.be.ok;
     });
 
+
     it('should set attribute', () => {
         const holder = getTestServiceHolder('SimpleVirtualDOM');
         const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
@@ -18,6 +19,7 @@ describe('SimpleVirtualDOMElement', () => {
         element.setAttribute('id', 'id1');
         expect(element.getAttribute('id')).to.equal('id1');
     });
+
 
     it('should append child', () => {
         const holder = getTestServiceHolder('SimpleVirtualDOM');
@@ -59,7 +61,8 @@ describe('SimpleVirtualDOMElement', () => {
         })
     });
 
-    it('should render dom element', done => {
+
+    it('should render dom element', () => {
         const holder = getTestServiceHolder('SimpleVirtualDOM');
         const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
 
@@ -68,8 +71,8 @@ describe('SimpleVirtualDOMElement', () => {
 
         element.render();
         expect(element.rendered.getAttribute('id')).to.equal('1');
-        done();
     });
+
 
     it('should render dom element after adding children',() => {
         const holder = getTestServiceHolder('SimpleVirtualDOM');
@@ -85,22 +88,31 @@ describe('SimpleVirtualDOMElement', () => {
         expect(element.rendered.childNodes.length).to.equal(5);
     });
 
+
     it('should render DOM element after deleting children', () => {
         const holder = getTestServiceHolder('SimpleVirtualDOM');
         const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
 
         const element = virtualDOM.createElement('div');
+
         for (let i = 0; i < 5; i++) {
             const child = virtualDOM.createElement('div');
             child.setAttribute('id', 'id' + i);
+
             element.appendChild(child);
         }
+
         element.render();
+
         expect(element.rendered.childNodes.length).to.equal(5);
         expect(element.children.length).to.equal(5);
-        console.log(element);
-        [0, 2, 4].forEach(index => {
-            element.removeChild(element.children[index]);
+
+        Array.from(element.children).forEach((child) => {
+            [0, 2, 4].forEach((index) => {
+                if (child.id === `id${index}`) {
+                    element.removeChild(child);
+                }
+            });
         });
 
         element.render();
@@ -110,5 +122,6 @@ describe('SimpleVirtualDOMElement', () => {
             expect(['id1', 'id3'].includes(child.getAttribute('id'))).to.equal(true);
         });
     });
+
 
 });
