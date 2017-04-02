@@ -18,7 +18,7 @@ describe('ViewHolder', () => {
             return;
         }
 
-        JSWorks.EventManager.subscribe(null, appContext.viewHolder, JSWorks.EventType.LOAD, (event) => {
+        JSWorks.EventManager.subscribe({}, appContext.viewHolder, JSWorks.EventType.LOAD, (event) => {
             expect(appContext.viewHolder.views['Sample']).to.be.ok;
             done();
         });

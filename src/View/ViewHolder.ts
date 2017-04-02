@@ -57,7 +57,7 @@ export class ViewHolder implements IEventEmitter {
 
         imports.forEach((tag) => {
             if ((<any> tag).import) {
-                this._templates.push((<any> tag).import);
+                this._templates.push(htmlParser.parseDOM((<any> tag).import.firstChild));
                 templatePromises.push(Promise.resolve(true));
 
                 return;
