@@ -1,4 +1,4 @@
-<app-view name="%{NAME}%" %{EXTENDS}%>
+<app-view id="%{NAME}%" %{EXTENDS}%>
 
     <h2>This is %{NAME}%View.</h2>
     <p>
