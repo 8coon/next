@@ -1,6 +1,7 @@
 import {VirtualDOMElementArray} from './VirtualDOMElementArray';
 import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {IEventReceiver} from '../EventManager/IEventReceiver';
+import {View} from '../View/View';
 
 
 /**
@@ -16,6 +17,7 @@ export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceive
     children: VirtualDOMElementArray;
     text: string;
     readonly style: Object;
+    view?: View;
 
 
     getAttribute(name: string): any;
@@ -52,5 +54,8 @@ export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceive
 
 
     querySelectorAll(query: string): IAbstractVirtualDOMElement[];
+
+
+    render(): void;
 
 }

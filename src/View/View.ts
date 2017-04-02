@@ -7,6 +7,7 @@ import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 import {VirtualDOM} from '../VirtualDOM/VirtualDOM';
 import {ViewConfig} from './ViewConfig';
 import {JSWorksInternal} from '../Common/InternalDecorator';
+import {ElementNotPoliteError} from '../Service/Error/ElementNotPoliteError';
 
 
 declare const JSWorks: any;
@@ -21,6 +22,7 @@ export class View implements IEventEmitter, IEventReceiver {
 
     private appContext: ApplicationContext;
     private virtualDOM: VirtualDOM;
+    private renderQueued: boolean = false;
 
 
     constructor(data: IViewParsed) {
@@ -52,6 +54,29 @@ export class View implements IEventEmitter, IEventReceiver {
      */
     public get DOMRoot(): IAbstractVirtualDOMElement {
         return this._DOMRoot;
+    }
+
+
+    /**
+     * :P
+     */
+    public askToRender(): void {
+        throw new ElementNotPoliteError(this);
+    }
+
+
+    /**
+     * Сообрает View, что в виртуальном DOM произошли изменения, и было бы неплохо когда-нибудь их
+     * отразить в реальном DOM.
+     */
+    public askToRenderPolitely(): void {
+        if (!this.renderQueued) {
+            this.renderQueued = true;
+
+            window.setTimeout(() => {
+                this.DOMRoot.render();
+            }, 1);
+        }
     }
 
 

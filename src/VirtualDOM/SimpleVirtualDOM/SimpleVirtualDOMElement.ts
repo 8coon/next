@@ -9,6 +9,7 @@ import {SimpleVirtualDOM} from './SimpleVirtualDOM';
 import {IDOMParsed} from '../../Parser/HTML/IDOMParsed';
 import {HTMLParserService} from '../../Parser/HTML/HTMLParserService';
 import {ApplicationContext} from '../../ApplicationContext/ApplicationContext';
+import {View} from '../../View/View';
 
 
 @JSWorksInternal
@@ -32,6 +33,12 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      * Ссылка на отрисованный узел DOM, соответствующий данному узлу виртуального DOM
      */
     public rendered: Node;
+
+
+    /**
+     * View, которой принаджедит данный элемент
+     */
+    public view: View;
 
 
     private _tagName: string;
@@ -156,7 +163,7 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
         this._children = [];
 
         nodes.forEach((parsed) => {
-            this._children.push(<SimpleVirtualDOMElement> virtualDOM.createElement(parsed));
+            this.appendChild(<SimpleVirtualDOMElement> virtualDOM.createElement(parsed));
         });
 
         this.emitMutilationEvent({ type: EventType.DOMContentChange, data: this });
@@ -353,7 +360,9 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      */
     public appendChild(child: SimpleVirtualDOMElement): void {
         this._children.push(child);
+
         (<any> child)._parentNode = this;
+        (<any> child).view = this.view;
 
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
         EventManager.subscribe(this, child);
@@ -374,7 +383,9 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
         }
 
         this._children.splice(index, 0, child);
+
         (<any> child)._parentNode = this;
+        (<any> child).view = this;
 
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
         EventManager.subscribe(this, child);
@@ -560,6 +571,10 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
         this.dirty = true;
         this.selectorCache = {};
         this.emitEvent(data);
+
+        if (this.view) {
+            this.view.askToRenderPolitely();
+        }
     }
 
 
