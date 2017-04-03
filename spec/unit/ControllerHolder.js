@@ -1,6 +1,6 @@
 'use strict';
 
-const createMuppet = name => {
+const createControllerMuppet = name => {
     return class {
         constructor() {
             this._args = {};
@@ -32,7 +32,7 @@ describe('ControllerHolder', () => {
        const controllerHolder = new JSWorks.Internal.ControllerHolder();
        expect(controllerHolder).to.not.equal(undefined);
 
-       const controllerPrototype = createMuppet('Muppet');
+       const controllerPrototype = createControllerMuppet('Muppet');
        const controller = new controllerPrototype();
 
        controllerHolder.registerController(controller);

@@ -78,28 +78,27 @@ const generateRoute = (path, name, controller, match, parent) => {
 
 
 const generateController = (path, name, withView, withRoute) => {
-    let controller = fs.readFileSync('./bin/generators/controller.js.template', 'utf-8');
+    let controller = fs.readFileSync('./bin/generators/controller.ts.template', 'utf-8');
 
     controller = controller.replace('%{NAME}%', name);
 
     mkdirp.sync(`${path}/controllers/${name}Controller/`);
-    fs.writeFileSync(`${path}/controllers/${name}Controller/${camelToDash(name)}-controller.js`, controller);
+    fs.writeFileSync(`${path}/controllers/${name}Controller/${camelToDash(name)}-controller.ts`, controller);
 
-    const document = jsdom(fs.readFileSync(`${path}/application.html`), {});
-    const controllerTag = document.createElement('app-controller');
-    controllerTag.setAttribute('id', `${name}Controller`);
+    // const document = jsdom(fs.readFileSync(`${path}/application.html`), {});
+    // const controllerTag = document.createElement('app-controller');
+    // controllerTag.setAttribute('id', `${name}Controller`);
 
     if (withView === '*') {
-        controllerTag.setAttribute('view', `${name}View`);
         generateView(path, name, '');
-    } else if (!(withView === '')) {
-        controllerTag.setAttribute('view', withView);
-    }
+    } // else if (!(withView === '')) {
+    //    controllerTag.setAttribute('view', withView);
+    // }
 
-    document.body.querySelector('app-info app-controllers').appendChild(controllerTag);
-    fs.writeFileSync(`${path}/application.html`, prettyPrint(serializeDocument(document)));
+    // document.body.querySelector('app-info app-controllers').appendChild(controllerTag);
+    // fs.writeFileSync(`${path}/application.html`, prettyPrint(serializeDocument(document)));
     fs.appendFileSync(`${path}/application.js`,
-            `require('./controllers/${name}Controller/${camelToDash(name)}-controller.js');\n`);
+            `require('./dist/compiled/${camelToDash(name)}-controller.js');\n`);
 
     if (withRoute !== 'false') {
         generateRoute(path, name, `${name}Controller`, camelToDash(name), '');
@@ -191,7 +190,11 @@ const generateApplication = (path, name, title, forTesting) => {
         license: 'MIT',
 
         scripts: {
-            start: 'node ./node_modules/webpack/bin/webpack.js && node ./server.js'
+            start: `
+                node ./node_modules/typescript/bin/tsc && 
+                node ./node_modules/webpack/bin/webpack.js &&
+                node ./server.js
+            `.replace('\n', '')
         },
 
         dependencies: {
@@ -216,18 +219,26 @@ const generateApplication = (path, name, title, forTesting) => {
 
     const tsConfig = {
         "compilerOptions": {
-            "outDir": "./dist/",
+            "outDir": "./dist/compiled/",
             "sourceMap": true,
-            "noImplicitAny": true,
-            "module": "commonjs",
-            "target": "es5"
+            "alwaysStrict": true,
+            "target": "es5",
+            "experimentalDecorators": true,
+            "emitDecoratorMetadata": true,
         },
+
         "include": [
             "./**/*"
+        ],
+
+        "exclude": [
+            "node_modules",
+            "spec",
+            "dist"
         ]
     };
 
-    fs.writeFileSync(`${path}/tsconfig.json`, JSON.stringify(nodePackage, null, 4));
+    fs.writeFileSync(`${path}/tsconfig.json`, JSON.stringify(tsConfig, null, 4));
 
     const jsWorksManifest = {
         application: {

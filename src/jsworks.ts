@@ -1,3 +1,6 @@
+import {JSWorksController} from './Controller/ControllerDecorator';
+
+
 declare const JSWorks: any;
 declare const __JSWorks_services__: any;
 declare const __JSWorks_controllers__: any;
@@ -24,6 +27,8 @@ JSWorks.__registerControllers__ = () => {
 
 JSWorks.__init__ = () => {
     JSWorks.EventManager = JSWorks.Internal.EventManager;
+    JSWorks.Controller = JSWorksController;
+    JSWorks.CustomController = JSWorks.Internal.Controller;
 };
 
 

@@ -6,10 +6,12 @@ import {EventType} from '../EventManager/EventType';
 import {View} from './View';
 import {DuplicateViewIdError} from '../Service/Error/DuplicateViewIdError';
 import {JSWorksInternal} from '../Common/InternalDecorator';
-import {IAbstractVirtualDOMElement} from '../VirtualDOM/IAbstractVirtualDOMElement';
 import {ViewConfig} from './ViewConfig';
 import {IDOMParsed} from '../Parser/HTML/IDOMParsed';
 import {VirtualDOM} from '../VirtualDOM/VirtualDOM';
+
+
+declare const JSWorks: any;
 
 
 @JSWorksInternal
@@ -37,8 +39,12 @@ export class ViewHolder implements IEventEmitter {
 
                 node.querySelectorAll(ViewConfig.VIEW_TEMPLATE_TAG).forEach((tag) => {
                     const view = new View({ id: tag.id, template: tag });
-                    this.views[view.id] = view;
 
+                    if (this.views[view.id]) {
+                        throw new DuplicateViewIdError(view.id);
+                    }
+
+                    this.views[view.id] = view;
                     view.render();
                 });
             });

@@ -12,6 +12,9 @@ import {ApplicationContext} from '../../ApplicationContext/ApplicationContext';
 import {View} from '../../View/View';
 
 
+declare const JSWorks: any;
+
+
 @JSWorksInternal
 export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
 
