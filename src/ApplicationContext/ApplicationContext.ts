@@ -45,12 +45,11 @@ export class ApplicationContext {
     /**
      *
      * @param services
-     * @param controllers
      */
-    constructor(services: ServiceHolder, controllers: ControllerHolder) {
+    constructor(services: ServiceHolder) {
         this._serviceHolder = services;
         this._viewHolder = new ViewHolder();
-        this._controllerHolder = controllers;
+        this._controllerHolder = new ControllerHolder();
     }
 
 
@@ -60,6 +59,7 @@ export class ApplicationContext {
     public run(): void {
         this.serviceHolder.instantiateServices();
         this._viewHolder.load();
+        this._controllerHolder.load();
     }
 
 }

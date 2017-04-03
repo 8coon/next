@@ -1,7 +1,10 @@
 import {JSWorksInternal} from '../Common/InternalDecorator';
-import {ControllerAlreadyRegisteredError} from './Error/ControllerAlreadyRegisteredError';
+import {ControllerAlreadyRegisteredError} from '../Error/ControllerAlreadyRegisteredError';
 import {Controller} from './Controller';
-import {UnknownControllerError} from './Error/UnknownControllerError';
+import {UnknownControllerError} from '../Error/UnknownControllerError';
+
+
+declare const __JSWorks_controllers__: any;
 
 
 @JSWorksInternal
@@ -12,15 +15,25 @@ export class ControllerHolder {
 
 
     /**
-     * Зарегистрировать контроллер
-     * @param controller экземпляр контролера имеет поле namе, оно же тип класса контроллера
+     * Загрузить все существующие контроллеры
      */
-    public registerController(controller: any): void {
-        if (this.controllers[controller.name]) {
-            throw new ControllerAlreadyRegisteredError(controller.name);
+    public load(): void {
+        __JSWorks_controllers__.forEach((controller) => {
+            this.registerController(controller);
+        });
+    }
+
+
+    /**
+     * Зарегистрировать контроллер
+     * @param controllerProto экземпляр контролера имеет поле namе, оно же тип класса контроллера
+     */
+    public registerController(controllerProto): void {
+        if (this.controllers[controllerProto.name]) {
+            throw new ControllerAlreadyRegisteredError(controllerProto.name);
         }
 
-        this.controllers[controller.name] = controller;
+        this.controllers[controllerProto.name] = new controllerProto();
         this.controllerCount++;
     }
 

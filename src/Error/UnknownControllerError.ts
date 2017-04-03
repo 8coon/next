@@ -1,4 +1,5 @@
-import {JSWorksError} from '../../Error/ErrorDecorator';
+import {JSWorksError} from './ErrorDecorator';
+
 
 @JSWorksError
 export class UnknownControllerError extends Error {
