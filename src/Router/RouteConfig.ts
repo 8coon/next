@@ -6,13 +6,6 @@ import {JSWorksInternal} from '../Common/InternalDecorator';
 export class RouteConfig {
 
     /**
-     * Тэг шаблона Route
-     * @type {string}
-     */
-    public static readonly ROUTE_TEMPLATE_TAG: string = 'APP_ROUTE';
-
-
-    /**
      * Тэг Route
      * @type {string}
      */

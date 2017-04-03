@@ -6,8 +6,9 @@ import {JSWorksInternal} from '../Common/InternalDecorator';
 
 @JSWorksInternal
 export class Route {
-    private controller: Controller;
-    private view: View;
+    private pageName: string;
+    private children: Route[];
+
 
 
 }
