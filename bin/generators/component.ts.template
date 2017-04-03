@@ -8,7 +8,7 @@ declare const JSWorks: any;
 export class %{NAME}%%{CLASS}% {
 
 
-    @JSWorks.ComponentProperty
+    @JSWorks.ComponentProperty()
     public testA: string;
 
 

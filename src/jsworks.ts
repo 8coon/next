@@ -1,9 +1,12 @@
 import {JSWorksController} from './Controller/ControllerDecorator';
+import {JSWorksComponent} from './Component/ComponentDecorator';
+import {JSWorksPage} from './Component/PageDecorator';
+import {JSWorksService} from './Service/ServiceDecorator';
+import {JSWorksComponentProperty} from './Component/ComponentPropertyDecorator';
 
 
 declare const JSWorks: any;
 declare const __JSWorks_services__: any;
-declare const __JSWorks_controllers__: any;
 
 
 JSWorks.__registerServices__ = () => {
@@ -19,8 +22,12 @@ JSWorks.__registerServices__ = () => {
 
 JSWorks.__init__ = () => {
     JSWorks.EventManager = JSWorks.Internal.EventManager;
+
+    JSWorks.Service = JSWorksService;
     JSWorks.Controller = JSWorksController;
-    JSWorks.CustomController = JSWorks.Internal.Controller;
+    JSWorks.Component = JSWorksComponent;
+    JSWorks.Page = JSWorksPage;
+    JSWorks.ComponentProperty = JSWorksComponentProperty;
 };
 
 
