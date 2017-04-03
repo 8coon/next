@@ -9,9 +9,9 @@ import {JSWorksInternal} from '../Common/InternalDecorator';
 @JSWorksInternal
 export class ServiceHolder {
 
-    private services: Object = {};
-    private serviceInstances: Object = {};
-    private serviceInstancesByType: Object = {};
+    private services: object = {};
+    private serviceInstances: object = {};
+    private serviceInstancesByType: object = {};
     private serviceCount: number = 0;
     private serviceInitCount: number = 0;
 
@@ -91,7 +91,7 @@ export class ServiceHolder {
                 return;
             }
 
-            const args: Object = {};
+            const args: object = {};
             let requirementsMet = true;
 
             service.requires.forEach((requiredService: any) => {

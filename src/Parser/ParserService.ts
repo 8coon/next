@@ -15,14 +15,14 @@ export abstract class ParserService {
      * Преобразовывает строку в объект с соответствующей структурой.
      * @param data
      */
-    public abstract parseString(data: string): Object;
+    public abstract parseString(data: string): object;
 
 
     /**
      * Преобразовывает DOM-элемент в объект с соответствующей структурой
      * @param element
      */
-    public abstract parseDOM(element: HTMLElement): Object;
+    public abstract parseDOM(element: HTMLElement): object;
 
 
     /**
@@ -31,7 +31,7 @@ export abstract class ParserService {
      * @param method
      * @returns {undefined}
      */
-    public parseURL(url: string, method: HTTPMethod = HTTPMethod.GET): Object {
+    public parseURL(url: string, method: HTTPMethod = HTTPMethod.GET): object {
         return this.parseString(this.network.fetch(url, method).data);
     }
 
@@ -42,7 +42,7 @@ export abstract class ParserService {
      * @param callback
      * @param method
      */
-    public parseURLCallback(url: string, callback: (parsed: Object) => void,
+    public parseURLCallback(url: string, callback: (parsed: object) => void,
                             method: HTTPMethod = HTTPMethod.GET): void {
         this.network.fetchAsync(url, method).then((response: HTTPResponse) => {
             callback(this.parseString(response.data));
@@ -57,7 +57,7 @@ export abstract class ParserService {
      */
     public parseURLAsync(url: string, method: HTTPMethod = HTTPMethod.GET): Promise<Object> {
         return new Promise((resolve, reject) => {
-            this.parseURLCallback(url, (parsed: Object) => {
+            this.parseURLCallback(url, (parsed: object) => {
                 resolve(parsed);
             }, method);
         });

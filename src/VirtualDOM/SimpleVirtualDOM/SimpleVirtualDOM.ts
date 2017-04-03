@@ -134,7 +134,7 @@ export class SimpleVirtualDOM implements VirtualDOM {
      * @param elementProto
      * @param args
      */
-    public createCustomElement(elementProto: SimpleVirtualDOMElementExt, args: Object = {}):
+    public createCustomElement(elementProto: SimpleVirtualDOMElementExt, args: object = {}):
             IAbstractVirtualDOMElement {
         return elementProto.createElement(args, SimpleVirtualDOM.NextHash());
     }

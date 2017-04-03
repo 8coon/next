@@ -32,7 +32,7 @@ export abstract class VirtualDOM {
      * @param factory
      * @param args
      */
-    public abstract createCustomElement(factory: IVirtualDOMElementFactory, args: Object):
+    public abstract createCustomElement(factory: IVirtualDOMElementFactory, args: object):
         IAbstractVirtualDOMElement;
 
 }

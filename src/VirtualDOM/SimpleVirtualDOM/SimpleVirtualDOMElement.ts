@@ -45,10 +45,10 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     private _parentNode: SimpleVirtualDOMElement;
     private _children: SimpleVirtualDOMElement[] = [];
     private _text: string;
-    private classes: Object = {};
-    private attributes: Object = { style: {} };
-    private handlers: Object = {};
-    private selectorCache: Object = {};
+    private classes: object = {};
+    private attributes: object = { style: {} };
+    private handlers: object = {};
+    private selectorCache: object = {};
     private _hash: any;
 
     private readonly HASH_KEY: string = '__jsworks_hash__';
@@ -118,7 +118,7 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     }
 
 
-    public get style(): Object {
+    public get style(): object {
         return this.attributes['style'];
     }
 

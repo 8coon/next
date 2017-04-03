@@ -9,7 +9,7 @@ export interface IDOMParsed {
     id: string;
     text: string;
     className: string;
-    attributes: Object;
+    attributes: object;
     children: IDOMParsed[];
 
 }

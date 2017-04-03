@@ -16,7 +16,7 @@ export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceive
     parentNode: IAbstractVirtualDOMElement;
     children: VirtualDOMElementArray;
     text: string;
-    readonly style: Object;
+    readonly style: object;
     view?: View;
 
 

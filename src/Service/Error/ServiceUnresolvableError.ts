@@ -4,7 +4,7 @@ import {JSWorksError} from './ErrorDecorator';
 @JSWorksError
 export class ServiceUnresolvableError extends Error {
 
-    constructor(servicesPresent: Object, servicesResolved: Object) {
+    constructor(servicesPresent: object, servicesResolved: object) {
         const unresolved: string[] = [];
         console.log(servicesPresent, servicesResolved);
 

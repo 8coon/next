@@ -12,7 +12,7 @@ export class JSONParserService extends ParserService {
      * @param data
      * @returns {Object}
      */
-    public parseString(data: string): Object {
+    public parseString(data: string): object {
         try {
             return JSON.parse(data);
         } catch (error) {
@@ -27,7 +27,7 @@ export class JSONParserService extends ParserService {
      * @param element
      * @returns {undefined}
      */
-    public parseDOM(element: HTMLElement): Object {
+    public parseDOM(element: HTMLElement): object {
         return this.parseString(element.innerText);
     }
 

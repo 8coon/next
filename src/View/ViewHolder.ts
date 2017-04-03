@@ -18,7 +18,7 @@ export class ViewHolder implements IEventEmitter {
     /**
      * Все загруженные View приложения
      */
-    public views: Object = {};
+    public views: object = {};
 
     private _templates: IDOMParsed[] = [];
 
