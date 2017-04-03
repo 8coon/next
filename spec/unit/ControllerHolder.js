@@ -28,6 +28,7 @@ describe('ControllerHolder', () => {
        expect(JSWorks.Internal.ControllerHolder).to.be.ok;
    });
 
+
    it('should register controller and return it', () => {
        const controllerHolder = new JSWorks.Internal.ControllerHolder();
        expect(controllerHolder).to.not.equal(undefined);
@@ -37,7 +38,8 @@ describe('ControllerHolder', () => {
 
        controllerHolder.registerController(controller);
        expect(controllerHolder.getController('Muppet').name).to.equal(controller.name);
-   })
+   });
+
 
 });
 
