@@ -1,5 +1,5 @@
 import {JSWorksError} from './ErrorDecorator';
-import {View} from '../../View/View';
+import {View} from '../View/View';
 
 
 @JSWorksError

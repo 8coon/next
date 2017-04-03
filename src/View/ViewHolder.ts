@@ -4,7 +4,7 @@ import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {IEvent} from '../EventManager/IEvent';
 import {EventType} from '../EventManager/EventType';
 import {View} from './View';
-import {DuplicateViewIdError} from '../Service/Error/DuplicateViewIdError';
+import {DuplicateViewIdError} from '../Error/DuplicateViewIdError';
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {ViewConfig} from './ViewConfig';
 import {IDOMParsed} from '../Parser/HTML/IDOMParsed';

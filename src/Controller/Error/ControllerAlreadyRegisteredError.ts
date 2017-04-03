@@ -1,6 +1,6 @@
 
 
-import {JSWorksError} from '../../Service/Error/ErrorDecorator';
+import {JSWorksError} from '../../Error/ErrorDecorator';
 
 @JSWorksError
 export class ControllerAlreadyRegisteredError extends Error {

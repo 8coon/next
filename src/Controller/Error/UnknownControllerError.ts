@@ -1,7 +1,7 @@
-import {JSWorksError} from '../../Service/Error/ErrorDecorator';
+import {JSWorksError} from '../../Error/ErrorDecorator';
 
 @JSWorksError
-export class UknownControllerError extends Error {
+export class UnknownControllerError extends Error {
 
     constructor(controllerName: string) {
         super(`Unknown controller: "${controllerName}"`);

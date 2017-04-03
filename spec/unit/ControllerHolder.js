@@ -41,5 +41,10 @@ describe('ControllerHolder', () => {
    });
 
 
+   it('should load sample controller', () => {
+
+   });
+
+
 });
 

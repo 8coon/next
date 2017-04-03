@@ -1,4 +1,4 @@
-import {MethodNotImplementedError} from '../../Service/Error/MethodNotImplementedError';
+import {MethodNotImplementedError} from '../../Error/MethodNotImplementedError';
 import {ParserService} from '../ParserService';
 import {JSWorksService} from '../../Service/ServiceDecorator';
 import {JSWorksInternal} from '../../Common/InternalDecorator';

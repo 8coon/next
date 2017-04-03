@@ -7,7 +7,7 @@ import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 import {VirtualDOM} from '../VirtualDOM/VirtualDOM';
 import {ViewConfig} from './ViewConfig';
 import {JSWorksInternal} from '../Common/InternalDecorator';
-import {ElementNotPoliteError} from '../Service/Error/ElementNotPoliteError';
+import {ElementNotPoliteError} from '../Error/ElementNotPoliteError';
 import {EventType} from '../EventManager/EventType';
 
 
