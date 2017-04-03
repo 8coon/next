@@ -1,6 +1,7 @@
 import {ServiceHolder} from '../Service/ServiceHolder';
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {ViewHolder} from '../View/ViewHolder';
+import {ControllerHolder} from '../Controller/ControllerHolder';
 
 
 declare const JSWorks: any;
@@ -8,6 +9,14 @@ declare const JSWorks: any;
 
 @JSWorksInternal
 export class ApplicationContext {
+
+    /**
+     * Все контроллеры хранятся тут
+     * @returns {ControllerHolder}
+     */
+    get controllerHolder(): ControllerHolder {
+        return this._controllerHolder;
+    }
 
     /**
      * Все сервисы хранятся тут
@@ -27,17 +36,21 @@ export class ApplicationContext {
     }
 
 
+
     private _serviceHolder: ServiceHolder;
     private _viewHolder: ViewHolder;
+    private _controllerHolder: ControllerHolder;
 
 
     /**
      *
      * @param services
+     * @param controllers
      */
-    constructor(services: ServiceHolder) {
+    constructor(services: ServiceHolder, controllers: ControllerHolder) {
         this._serviceHolder = services;
         this._viewHolder = new ViewHolder();
+        this._controllerHolder = controllers;
     }
 
 
