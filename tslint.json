@@ -25,6 +25,8 @@
     "ordered-imports": false,
     "object-literal-sort-keys": false,
     "object-literal-shorthand": false,
+    "no-angle-bracket-type-assertion": false,
+
 
     "jsdoc-format": true,
     "completed-docs": [true, {
