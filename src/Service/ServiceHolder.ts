@@ -134,6 +134,6 @@ export class ServiceHolder {
         });
 
         return this.serviceCount === this.serviceInitCount;
-    };
+    }
 
 }

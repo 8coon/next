@@ -55,7 +55,7 @@ export abstract class ParserService {
      * @param url
      * @param method
      */
-    public parseURLAsync(url: string, method: HTTPMethod = HTTPMethod.GET): Promise<Object> {
+    public parseURLAsync(url: string, method: HTTPMethod = HTTPMethod.GET): Promise<object> {
         return new Promise((resolve, reject) => {
             this.parseURLCallback(url, (parsed: object) => {
                 resolve(parsed);

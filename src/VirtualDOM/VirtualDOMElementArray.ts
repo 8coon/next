@@ -40,7 +40,7 @@ export class VirtualDOMElementArray implements Iterable<IAbstractVirtualDOMEleme
                 return {value: undefined, done: true};
             },
         };
-    };
+    }
 
 
     /**
