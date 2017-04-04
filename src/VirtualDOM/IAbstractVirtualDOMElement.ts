@@ -58,4 +58,7 @@ export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceive
 
     render(): void;
 
+
+    cloneNode(): IAbstractVirtualDOMElement;
+
 }

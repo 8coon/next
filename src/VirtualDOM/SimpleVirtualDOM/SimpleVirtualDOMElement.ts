@@ -121,6 +121,38 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     }
 
 
+    /**
+     * Создаёт полную копию этого узла со всеми вложенными узлами.
+     * @returns {SimpleVirtualDOMElement}
+     */
+    public cloneNode(): SimpleVirtualDOMElement {
+        const appContext = JSWorks.applicationContext;
+        const virtualDOM = appContext.serviceHolder.getServiceByName('SimpleVirtualDOM');
+        let element;
+
+        if (this.tagName) {
+            element = virtualDOM.createElement(this.tagName);
+        } else {
+            element = virtualDOM.createTextElement(this.text);
+        }
+
+        Object.keys(this.attributes).forEach((attr) => {
+            element.setAttribute(attr, this.getAttribute(attr));
+        });
+
+        Object.keys(this.handlers).forEach((handler) => {
+            element.addEventListener(handler, this.handlers[handler].callback,
+                this.handlers[handler].useCapture);
+        });
+
+        this._children.forEach((child) => {
+            element.appendChild(child.cloneNode());
+        });
+
+        return element;
+    }
+
+
     public get style(): object {
         return this.attributes['style'];
     }
@@ -271,7 +303,7 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      */
     public setAttribute(name: string, value?: any): void {
         if (name.toLowerCase() === 'style') {
-            const expressions: string[] = (<string> value).split(';');
+            const expressions: string[] = (<string> value || '').split(';');
 
             expressions.forEach((expression: string) => {
                 const css: string[] = expression.split(':');

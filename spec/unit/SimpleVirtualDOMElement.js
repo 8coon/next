@@ -224,4 +224,25 @@ describe('SimpleVirtualDOMElement', () => {
     });
 
 
+    it('should clone itself', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const element = virtualDOM.createElement('div');
+        element.innerHTML = `
+            <div align="center">
+                <a href="https://google.com">Please visit Google to find some hot lol kek chebureks</a><br>
+                <ul id="classification">
+                    <li class="meme">lol</li>
+                    <li class="meme">kek</li>
+                    <li class="food">cheburek</li>
+                </ul>
+            </div>
+        `.split('\n').map((l) => { return l.trim(); }).join('');
+
+        const copy = element.cloneNode();
+        expect(copy.getOuterHTML()).to.equal(element.getOuterHTML());
+    });
+
+
 });
