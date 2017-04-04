@@ -54,6 +54,16 @@ export class ViewHolder implements IEventEmitter {
     }
 
 
+    /**
+     * Получить экземпляр View по имени
+     * @param name
+     * @returns {any}
+     */
+    public getView(name: string) {
+        return this.views[name];
+    }
+
+
     private queryViewTemplates() {
         const imports: Element[] = Array.from(document.querySelectorAll('link[rel="import"]'));
         const templatePromises: Array<Promise<any>> = [];

@@ -13,13 +13,13 @@ describe('ViewHolder', () => {
     it('should load sample view', (done) => {
         const appContext = JSWorks.applicationContext;
 
-        if (appContext.viewHolder.views['Sample']) {
+        if (appContext.viewHolder.getView('SampleView')) {
             done();
             return;
         }
 
         JSWorks.EventManager.subscribe({}, appContext.viewHolder, JSWorks.EventType.LOAD, (event) => {
-            expect(appContext.viewHolder.views['Sample']).to.be.ok;
+            expect(appContext.viewHolder.getView('SampleView')).to.be.ok;
             done();
         });
     });
@@ -27,7 +27,7 @@ describe('ViewHolder', () => {
 
     it('should render sample view', (done) => {
         const appContext = JSWorks.applicationContext;
-        const view = appContext.viewHolder.views['Sample'];
+        const view = appContext.viewHolder.getView('SampleView');
         const virtualRoot = view.DOMRoot;
         const renderedRoot = virtualRoot.rendered;
 

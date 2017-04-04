@@ -1,10 +1,9 @@
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {ControllerAlreadyRegisteredError} from '../Error/ControllerAlreadyRegisteredError';
-import {Controller} from './Controller';
 import {UnknownControllerError} from '../Error/UnknownControllerError';
 
 
-declare const __JSWorks_controllers__: any;
+declare const __JSWorks_controllers__: any[];
 
 
 @JSWorksInternal
@@ -41,9 +40,9 @@ export class ControllerHolder {
     /**
      * Получить контроллер по имени(типу)
      * @param name
-     * @returns {Controller} экземляр контроллера
+     * @returns {object} экземляр контроллера
      */
-    public getController(name: string): Controller {
+    public getController(name: string): object {
         if (!this.controllers[name]) {
             throw new UnknownControllerError(name);
         }

@@ -1,3 +1,4 @@
+import {JSWorksInternal} from '../Common/InternalDecorator';
 
 
 enum ComponentTypes {
@@ -6,6 +7,7 @@ enum ComponentTypes {
 }
 
 
+@JSWorksInternal
 export class ComponentConfig {
 
     /**

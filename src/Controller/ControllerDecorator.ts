@@ -1,5 +1,5 @@
 
-declare const __JSWorks_controllers__: any;
+declare const __JSWorks_controllers__: any[];
 
 /**
  * Декоратор, объявляющий контроллер

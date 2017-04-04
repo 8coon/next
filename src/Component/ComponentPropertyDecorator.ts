@@ -1,4 +1,5 @@
 import {IComponentPropertyDecoratorData} from './IComponentPropertyDecoratorData';
+import {EventType} from '../EventManager/EventType';
 
 
 /**
@@ -9,9 +10,24 @@ import {IComponentPropertyDecoratorData} from './IComponentPropertyDecoratorData
  */
 export function JSWorksComponentProperty(data?: IComponentPropertyDecoratorData) {
     return (target: any, name: string) => {
-        console.log(name, data);
-        console.dir(target);
+        return {
+            configurable: false,
+            enumerable: false,
+            // writable: false,
 
-        // If the property decorator returns a value, it will be used as the Property Descriptor for the member.
+            /* tslint:disable */
+            get: function() {
+                return this[`__${name}__`];
+            },
+
+            set: function(value: any) {
+                this[`__${name}__`] = value;
+
+                if (this.emitEvent) {
+                    this.emitEvent({ type: EventType.UPDATE, data: { name, value } });
+                }
+            },
+            /* tslint:enable*/
+        };
     };
 }

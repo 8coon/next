@@ -17,6 +17,19 @@ declare const JSWorks: any;
 @JSWorksInternal
 export class View implements IEventEmitter, IEventReceiver {
 
+
+    /**
+     * Связанный с данной View компонент
+     */
+    public component: any;
+
+
+    /**
+     * Контекст приложения (Задаётся после загрузки соответствующего компонента/страницы).
+     */
+    public applicationContext: ApplicationContext;
+
+
     private _id: string;
     private template: IAbstractVirtualDOMElement;
     private _DOMRoot: IAbstractVirtualDOMElement;
