@@ -136,6 +136,8 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
             element = virtualDOM.createTextElement(this.text);
         }
 
+        element.view = this.view;
+
         Object.keys(this.attributes).forEach((attr) => {
             element.setAttribute(attr, this.getAttribute(attr));
         });
@@ -201,7 +203,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
             this.appendChild(<SimpleVirtualDOMElement> virtualDOM.createElement(parsed));
         });
 
-        this.emitMutilationEvent({ type: EventType.DOMContentChange, data: this });
+        this.emitMutilationEvent({ type: EventType.DOMContentChange, data: value });
     }
 
 
@@ -420,7 +422,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         this._children.splice(index, 0, child);
 
         (<any> child)._parentNode = this;
-        (<any> child).view = this;
+        (<any> child).view = this.view;
 
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
         EventManager.subscribe(this, child);
@@ -469,8 +471,10 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         newChild.forEach((child, pos) => {
             this._children.splice(index + pos + 1, 0, child);
             child._parentNode = this;
+            child.view = this.view;
 
             this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
+            EventManager.subscribe(this, child);
         });
 
         delete this._children[index];
@@ -631,6 +635,19 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
      */
     public querySelector(query: string): SimpleVirtualDOMElement {
         return this.querySelectorAll(query)[0];
+    }
+
+
+    /**
+     * Распространить View по дереву виртуального DOM
+     * @param view
+     */
+    public propagateView(view: View): void {
+        this.view = view;
+
+        this._children.forEach((child) => {
+            child.propagateView(view);
+        });
     }
 
 

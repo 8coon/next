@@ -41,11 +41,17 @@ const prettyPrint = (html) => {
 };
 
 
-const generateView = (path, folder, name, viewExtends) => {
-    let view = fs.readFileSync('./bin/generators/view.html.template', 'utf-8');
+const generateView = (path, folder, name, viewExtends, templateFile) => {
+    templateFile = templateFile || 'view.html';
+    let view = fs.readFileSync(`./bin/generators/${templateFile}.template`, 'utf-8');
 
     view = view.replace(/%\{NAME}%/g, name);
-    view = view.replace(/%\{EXTENDS}%/g, viewExtends);
+
+    if ((viewExtends || '').length > 0) {
+        view = view.replace(/%\{EXTENDS}%/g, `extends="${viewExtends}"`);
+    } else {
+        view = view.replace(/%\{EXTENDS}%/g, '');
+    }
 
     let style = fs.readFileSync('./bin/generators/view.scss.template', 'utf-8');
 
@@ -77,7 +83,7 @@ const generateRoute = (path, name, page, match, parent) => {
 };
 
 
-const generateController = (path, folder, name, withView) => {
+const generateController = (path, folder, name, withView, viewExtends) => {
     let controller = fs.readFileSync('./bin/generators/controller.ts.template', 'utf-8');
 
     controller = controller.replace(/%\{NAME}%/g, name);
@@ -86,7 +92,7 @@ const generateController = (path, folder, name, withView) => {
     fs.writeFileSync(`${path}/${folder}/${name}Controller/${camelToDash(name)}-controller.ts`, controller);
 
     if (withView === '*') {
-        generateView(path, folder, name, '');
+        generateView(path, folder, name, viewExtends || '');
     }
 
     fs.appendFileSync(`${path}/application.js`,
@@ -94,7 +100,7 @@ const generateController = (path, folder, name, withView) => {
 };
 
 
-const generateComponent = (path, name, withRoute, className) => {
+const generateComponent = (path, name, withRoute, className, viewExtends) => {
     className = className || 'Page';
     let folder = 'components';
 
@@ -103,7 +109,7 @@ const generateComponent = (path, name, withRoute, className) => {
     }
 
     mkdirp.sync(`${path}/${folder}/${name}${className}/`);
-    generateController(path, `${folder}/${name}${className}`, name, '*');
+    generateController(path, `${folder}/${name}${className}`, name, '*', viewExtends || '');
 
     let component = fs.readFileSync('./bin/generators/component.ts.template', 'utf-8');
 
@@ -284,6 +290,7 @@ const cleanApp = (path) => {
 
 const startApp = (name, title, path, forTesting, jsWorksPath) => {
     mkdirp.sync(path);
+    mkdirp.sync(`${path}/views`);
     mkdirp.sync(`${path}/components`);
     mkdirp.sync(`${path}/pages`);
     mkdirp.sync(`${path}/models`);
@@ -300,7 +307,8 @@ const startApp = (name, title, path, forTesting, jsWorksPath) => {
 const sampleApp = (path, forTesting, jsWorksPath) => {
     startApp('sample', 'Sample Application', path, forTesting, jsWorksPath);
 
-    generateComponent(path, 'Sample', '*', 'Page');
+    generateView(path, 'views', 'Base', '', 'base-view.html');
+    generateComponent(path, 'Sample', '*', 'Page', 'BaseView');
 };
 
 

@@ -38,6 +38,7 @@ describe('ViewHolder', () => {
             done();
         });
 
+        // view.askToRenderPolitely();
         const virtualTitle = virtualRoot.querySelector('h2');
         virtualTitle.innerHTML = 'It changed!';
     });

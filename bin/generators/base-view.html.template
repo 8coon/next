@@ -1,0 +1,7 @@
+<app-view id="%{NAME}%View" %{EXTENDS}%>
+
+    <h2>This is %{NAME}%View.</h2>
+
+    <view-yield></view-yield>
+
+</app-view>

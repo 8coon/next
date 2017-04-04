@@ -9,6 +9,7 @@ import {ViewConfig} from './ViewConfig';
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {ElementNotPoliteError} from '../Error/ElementNotPoliteError';
 import {EventType} from '../EventManager/EventType';
+import {SimpleVirtualDOMElement} from '../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
 
 
 declare const JSWorks: any;
@@ -41,15 +42,21 @@ export class View implements IEventEmitter, IEventReceiver {
 
     constructor(data: IViewParsed) {
         this._id = data.id;
-        this.template = data.template;
+        // this.template = data.template;
 
         this.appContext = JSWorks.applicationContext;
         this.virtualDOM = this.appContext.serviceHolder.getService('VirtualDOM');
 
-        this._DOMRoot = this.virtualDOM.createElement(ViewConfig.VIEW_TAG);
+        this._DOMRoot = data.template;
+        (<SimpleVirtualDOMElement> this._DOMRoot).propagateView(this);
+
+        /* this._DOMRoot = this.virtualDOM.createElement(ViewConfig.VIEW_TAG);
         this._DOMRoot.id = this._id;
         this._DOMRoot.view = this;
-        this._DOMRoot.innerHTML = this.template.innerHTML;
+        this._DOMRoot.innerHTML = this.template.innerHTML; */
+
+        // this._DOMRoot = this.template.cloneNode();
+        // this._DOMRoot.view = this;
     }
 
 
