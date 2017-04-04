@@ -6,9 +6,6 @@ import {JSWorksInternal} from '../Common/InternalDecorator';
 
 @JSWorksInternal
 export class Route {
-    get name(): string {
-        return this._name;
-    }
 
     private pageName: string;
 
@@ -18,7 +15,10 @@ export class Route {
      */
     public children: Route[];
 
-    private _name: string;
+    /**
+     * имя роута
+     */
+    public name: string;
 
     /**
      *  часть адреса url, данного роута
@@ -26,8 +26,11 @@ export class Route {
     public match: string;
 
     constructor(match: string, name?: string, pageName?: string) {
-        this._name = name;
+        this.name = name;
         this.pageName = pageName;
     }
+
+
+    public fire(): void {}  // tslint:disable-line
 
 }

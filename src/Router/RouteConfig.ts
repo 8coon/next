@@ -2,6 +2,12 @@
 import {JSWorksInternal} from '../Common/InternalDecorator';
 
 
+enum RouteMethod {
+    HASH,
+    HISTORY_API,
+}
+
+
 @JSWorksInternal
 export class RouteConfig {
 
@@ -13,4 +19,7 @@ export class RouteConfig {
 
 
     public static readonly ROUTES_TAG: string = 'APP-ROUTES';
+
+
+    public static readonly RouteMethod = RouteMethod;
 }

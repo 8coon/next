@@ -7,27 +7,33 @@ import {Route} from './Route';
 import {WrongRouterNameError} from './Error/WrongRouterNameError';
 import {AttributeNotFound} from './Error/AttributeNotFound';
 
+
 @JSWorksInternal
 export class RouteHolder {
 
+
     private routes: object;
-    private root: Route = new Route('/');
+    private root: Route = new Route('');
+    private htmlParser: HTMLParserService;
+
 
     public load(): void {
-        const routes: Element = document.querySelector(RouteConfig.ROUTES_TAG);
+        const routes: Element[] = Array.from(document.querySelectorAll(RouteConfig.ROUTES_TAG));
 
         const appContext: ApplicationContext = JSWorks.applicationContext;
-        const htmlParser: HTMLParserService = appContext.serviceHolder.getServiceByName('HTMLParser');
+        this.htmlParser = appContext.serviceHolder.getServiceByName('HTMLParser');
 
-        Array.from(routes.children).forEach((route) => {
-            this.parseRoute(route, this.root, htmlParser);
-        })
+        routes.forEach((route) => {
+            Array.from(route.children).forEach((routeTag) => {
+                this.parseRoute(routeTag, this.root);
+            })
+        });
 
     }
 
-    public parseRoute(routeTag: Element, parent: Route, htmlParser: HTMLParserService) {
 
-        const parsedRoute: IDOMParsed = htmlParser.parseDOM(routeTag);
+    public parseRoute(routeTag: Element, parent: Route) {
+        const parsedRoute: IDOMParsed = this.htmlParser.parseDOM(routeTag);
 
         if (parsedRoute.tagName !== RouteConfig.ROUTE_TAG) {
             throw new WrongRouterNameError(parsedRoute.tagName);
@@ -38,6 +44,7 @@ export class RouteHolder {
         }
 
         let route;
+
         if (parsedRoute.id) {
             if (!parsedRoute.attributes['page']) {
                 throw new AttributeNotFound('page');
@@ -52,7 +59,9 @@ export class RouteHolder {
         parent.children.push(route);
 
         Array.from(routeTag.children).forEach((innerRoute) => {
-            this.parseRoute(innerRoute, route, htmlParser);
+            this.parseRoute(innerRoute, route);
         });
     }
+
+
 }
