@@ -7,9 +7,6 @@ import {JSWorksInternal} from '../Common/InternalDecorator';
 @JSWorksInternal
 export class Route {
 
-    private pageName: string;
-
-
     /**
      * вложенные роуты
      */
@@ -30,9 +27,17 @@ export class Route {
      */
     public match: string;
 
+    /**
+     * url
+     */
+    public path: string;
 
-    constructor(match: string, pathVariableName:string = null, name: string = null, pageName: string = null) {
+    private pageName: string;
+
+
+    constructor(match: string, path: string, pathVariableName?: string, name?: string, pageName?: string) {
         this.match = match;
+        this.path = path;
         this.pathVariableName = pathVariableName;
         this.name = name;
         this.pageName = pageName;
@@ -40,5 +45,22 @@ export class Route {
 
 
     public fire(pathVariables: object): void {}  // tslint:disable-line
+
+
+    /**
+     * вернуть реальный url
+     * @param args объект с переменными пути
+     * @returns {string}
+     */
+    public getPath(args: object): string {
+        let path = this.path;
+
+        Object.keys(args).forEach((pathVar) => {
+            const regexp = new RegExp(pathVar);
+            path = path.replace(regexp, args[pathVar]);
+        });
+
+        return path;
+    }
 
 }

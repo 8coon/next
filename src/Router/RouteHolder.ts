@@ -14,10 +14,13 @@ export class RouteHolder {
 
 
     private routes: object;
-    private _root: Route = new Route('');
+    private _root: Route = new Route('', '');
     private htmlParser: HTMLParserService;
 
 
+    /**
+     * загрузить все роуты из html
+     */
     public load(): void {
         const routes: Element[] = Array.from(document.querySelectorAll(RouteConfig.ROUTES_TAG));
 
@@ -26,17 +29,25 @@ export class RouteHolder {
 
         routes.forEach((route) => {
             Array.from(route.children).forEach((routeTag) => {
-                this.parseRoute(routeTag, this._root);
-            })
+                this.parseRoute(routeTag, this._root, '');
+            });
         });
 
     }
+
 
     get root(): Route {
         return this._root;
     }
 
-    public parseRoute(routeTag: Element, parent: Route) {
+
+    /**
+     * рекурсивный обход вложенных тегов
+     * @param routeTag
+     * @param parent
+     * @param path
+     */
+    public parseRoute(routeTag: Element, parent: Route, path: string) {
         const parsedRoute: IDOMParsed = this.htmlParser.parseDOM(routeTag);
 
         if (parsedRoute.tagName !== RouteConfig.ROUTE_TAG) {
@@ -47,8 +58,10 @@ export class RouteHolder {
             throw new AttributeNotFound('match');
         }
 
+        path = path + '/' + parsedRoute.attributes['match'];
+
         let route;
-        let pathVariableName = null;
+        let pathVariableName;
         let match = parsedRoute.attributes['match'];
 
         if (match.startsWith(':')) {
@@ -61,10 +74,10 @@ export class RouteHolder {
                 throw new AttributeNotFound('page');
             }
 
-            route = new Route(match, pathVariableName, parsedRoute.id, parsedRoute.attributes['page']);
+            route = new Route(match, path, pathVariableName, parsedRoute.id, parsedRoute.attributes['page']);
             this.routes[parsedRoute.id] = route;
         } else {
-            route = new Route(match);
+            route = new Route(match, path);
         }
 
         if (parent.children[match]) {
@@ -74,7 +87,7 @@ export class RouteHolder {
         parent.children[match] = route;
 
         Array.from(routeTag.children).forEach((innerRoute) => {
-            this.parseRoute(innerRoute, route);
+            this.parseRoute(innerRoute, route, path);
         });
     }
 
