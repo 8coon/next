@@ -27,7 +27,6 @@ export class RouteHolder {
 
     public parseRoute(routeTag: Element, parent: Route, htmlParser: HTMLParserService) {
 
-
         const parsedRoute: IDOMParsed = htmlParser.parseDOM(routeTag);
 
         if (parsedRoute.tagName !== RouteConfig.ROUTE_TAG) {

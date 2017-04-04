@@ -2,22 +2,20 @@
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {View} from '../View/View';
 import {JSWorksService} from '../Service/ServiceDecorator';
+import {RouteHolder} from './RouteHolder';
+import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 
-@JSWorksService('Router', 'Router', ['HTMLParser'])
 @JSWorksInternal
 export class Router {
 
-    private _routes: object = {};
-    private node: any = window.history;
+    private routeHolder: RouteHolder;
 
-    get routes(): object {
-        return this._routes;
+    constructor() {
+        const appContext: ApplicationContext = JSWorks.applicationContext;
+        this.routeHolder = appContext.routeHolder;
     }
 
 
-    public register(path: string, view: View): void {
-        this._routes[path] = view;
-    }
 
 
 }

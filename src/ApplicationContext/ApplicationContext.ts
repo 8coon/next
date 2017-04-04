@@ -2,6 +2,7 @@ import {ServiceHolder} from '../Service/ServiceHolder';
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {ViewHolder} from '../View/ViewHolder';
 import {ControllerHolder} from '../Controller/ControllerHolder';
+import {RouteHolder} from '../Router/RouteHolder';
 
 
 declare const JSWorks: any;
@@ -9,6 +10,9 @@ declare const JSWorks: any;
 
 @JSWorksInternal
 export class ApplicationContext {
+    get routeHolder(): RouteHolder {
+        return this._routeHolder;
+    }
 
     /**
      * Все контроллеры хранятся тут
@@ -38,6 +42,7 @@ export class ApplicationContext {
 
 
     private _serviceHolder: ServiceHolder;
+    private _routeHolder: RouteHolder;
     private _viewHolder: ViewHolder;
     private _controllerHolder: ControllerHolder;
 
