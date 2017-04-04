@@ -16,16 +16,24 @@ export class Route {
     public children: object;
 
     /**
+     * имя переменной пути, начинается с ':', может быть нулл
+     */
+    public pathVariableName: string;
+
+    /**
      * имя роута
      */
     public name: string;
 
     /**
-     *  часть адреса url, данного роута
+     *  часть адреса url, данного роута, если этот роут матчится по path variable, то match = '*'
      */
     public match: string;
 
-    constructor(match: string, pathVariableName?:string, name?: string, pageName?: string) {
+
+    constructor(match: string, pathVariableName:string = null, name: string = null, pageName: string = null) {
+        this.match = match;
+        this.pathVariableName = pathVariableName;
         this.name = name;
         this.pageName = pageName;
     }

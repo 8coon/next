@@ -30,8 +30,9 @@ export class Router {
             }
 
             case RouteConfig.RouteMethod.HISTORY_API: {
-                window.addEventListener('', (event) => {
-
+                window.addEventListener('popstate', (event) => {
+                    const route: Route = event.state.route;
+                    route.fire(event.state.pathVariables);
                 });
             } break;
 
@@ -49,7 +50,7 @@ export class Router {
         let route = this.routeHolder.root;
 
         matches.forEach((match) => {
-            route = this.findRoute(route, match, pathVariables);
+            route = Router.findRoute(route, match, pathVariables);
 
             if (!route) {
                 throw new PathNotFoundError(path);
@@ -60,15 +61,23 @@ export class Router {
     }
 
 
-    private findRoute(parent: Route, match: string, pathVariables: object): Route {
-        Array.from(parent.children).forEach((child) => {
-           if (child.match === match) {
-               return child;
-           }
-        });
+    private static findRoute(parent: Route, match: string, pathVariables: object): Route {
 
-        return null;
+        if (!parent.children[match]) {
+            const pathVarChild = parent.children['*'];
+
+            if (pathVarChild) {
+                pathVariables[pathVarChild.pathVariableName] = match;
+                return pathVarChild;
+            }
+
+            return null;
+        }
+
+        return parent.children[match];
     }
+
+
 
 
 }
