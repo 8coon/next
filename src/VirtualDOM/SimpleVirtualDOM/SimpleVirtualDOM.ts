@@ -4,8 +4,9 @@ import {IAbstractVirtualDOMElement} from '../IAbstractVirtualDOMElement';
 import {HTMLParserService} from '../../Parser/HTML/HTMLParserService';
 import {IDOMParsed} from '../../Parser/HTML/IDOMParsed';
 import {SimpleVirtualDOMElement} from './SimpleVirtualDOMElement';
-import {SimpleVirtualDOMElementExt} from './SimpleVirtualDOMElementExt.js';
 import {VirtualDOM} from '../VirtualDOM';
+import {CustomElementAlreadyRegisteredError} from '../../Error/CustomElementAlreadyRegisteredError';
+import {EventType} from '../../EventManager/EventType';
 
 
 type Selector = (IAbstractVirtualDOMElement) => boolean |   // tslint:disable-line
@@ -18,6 +19,7 @@ declare const CSSauron: any;
 @JSWorksInternal
 @JSWorksService('SimpleVirtualDOM', 'VirtualDOM', ['HTMLParser'])
 export class SimpleVirtualDOM implements VirtualDOM {
+
 
     /**
      * Получить следующий уникальный номер и последовательности уникальных номеров нод
@@ -67,6 +69,7 @@ export class SimpleVirtualDOM implements VirtualDOM {
     private static selectorFactory: (selector: string) => Selector;
 
     private hTMLParser: HTMLParserService;
+    private customElements: object = {};
 
 
     /**
@@ -105,11 +108,21 @@ export class SimpleVirtualDOM implements VirtualDOM {
      * @returns {SimpleVirtualDOMElement}
      */
     public createElement(data: IDOMParsed | string = 'DIV'): IAbstractVirtualDOMElement {
-        const element = new SimpleVirtualDOMElement(SimpleVirtualDOM.NextHash());
+        let element = new SimpleVirtualDOMElement(SimpleVirtualDOM.NextHash());
 
         if (typeof data === 'string') {
             element.tagName = (<string> data).toUpperCase();
+
+            if (this.customElements[element.tagName]) {
+                element = this.customElements[element.tagName].cloneNode(true);
+                element.emitEvent({ type: EventType.CREATE, data: element });
+            }
+
             return element;
+        }
+
+        if (this.customElements[data.tagName]) {
+            element = this.customElements[data.tagName].cloneNode(true);
         }
 
         element.tagName = data.tagName;
@@ -125,18 +138,23 @@ export class SimpleVirtualDOM implements VirtualDOM {
             element.appendChild(<SimpleVirtualDOMElement> this.createElement(childData));
         });
 
+        element.emitEvent({ type: EventType.CREATE, data: element });
         return element;
     }
 
 
     /**
-     * Создаёт пользовательский элемент виртуального DOM
+     * Решистрирует прототип пользовательского элемента. Новые элементы будут создаваться с
+     * помощью elementProto.cloneNode(true). Также для элемента будет выпущено событие EventType.CREATE.
+     * @param tagName
      * @param elementProto
-     * @param args
      */
-    public createCustomElement(elementProto: SimpleVirtualDOMElementExt, args: object = {}):
-            IAbstractVirtualDOMElement {
-        return elementProto.createElement(args, SimpleVirtualDOM.NextHash());
+    public registerCustomElement(tagName: string, elementProto: SimpleVirtualDOMElement) {
+        if (this.customElements[tagName]) {
+            throw new CustomElementAlreadyRegisteredError(tagName);
+        }
+
+        this.customElements[tagName] = elementProto;
     }
 
 }

@@ -27,12 +27,7 @@ export abstract class VirtualDOM {
     public abstract createElement(data: IDOMParsed | string): IAbstractVirtualDOMElement;
 
 
-    /**
-     * Создаёт виртуальный DOM элемент из фабрики, реализующей интерфейс {IVirtualDOMElementFactory}
-     * @param factory
-     * @param args
-     */
-    public abstract createCustomElement(factory: IVirtualDOMElementFactory, args: object):
-        IAbstractVirtualDOMElement;
+    // public abstract createCustomElement(factory: IVirtualDOMElementFactory, args: object):
+    //     IAbstractVirtualDOMElement;
 
 }
