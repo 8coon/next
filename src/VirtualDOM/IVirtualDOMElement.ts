@@ -59,6 +59,6 @@ export interface IVirtualDOMElement extends IEventEmitter, IEventReceiver {
     render(): void;
 
 
-    cloneNode(asConstructor: boolean): IVirtualDOMElement;
+    cloneNode(): IVirtualDOMElement;
 
 }

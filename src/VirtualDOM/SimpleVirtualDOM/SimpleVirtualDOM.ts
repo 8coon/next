@@ -7,6 +7,7 @@ import {SimpleVirtualDOMElement} from './SimpleVirtualDOMElement';
 import {VirtualDOM} from '../VirtualDOM';
 import {CustomElementAlreadyRegisteredError} from '../../Error/CustomElementAlreadyRegisteredError';
 import {EventType} from '../../EventManager/EventType';
+import {SimpleVirtualDOMElementExt} from './SimpleVirtualDOMElementExt';
 
 
 type Selector = (IAbstractVirtualDOMElement) => boolean |   // tslint:disable-line
@@ -114,7 +115,7 @@ export class SimpleVirtualDOM implements VirtualDOM {
             element.tagName = (<string> data).toUpperCase();
 
             if (this.customElements[element.tagName]) {
-                element = this.customElements[element.tagName].cloneNode(true);
+                element = this.customElements[element.tagName].createElement();
                 element.emitEvent({ type: EventType.CREATE, data: element });
             }
 
@@ -122,7 +123,7 @@ export class SimpleVirtualDOM implements VirtualDOM {
         }
 
         if (this.customElements[data.tagName]) {
-            element = this.customElements[data.tagName].cloneNode(true);
+            element = this.customElements[data.tagName].createElement();
         }
 
         element.tagName = data.tagName;
@@ -145,11 +146,11 @@ export class SimpleVirtualDOM implements VirtualDOM {
 
     /**
      * Решистрирует прототип пользовательского элемента. Новые элементы будут создаваться с
-     * помощью elementProto.cloneNode(true). Также для элемента будет выпущено событие EventType.CREATE.
+     * помощью elementProto.createElement(). Также для элемента будет выпущено событие EventType.CREATE.
      * @param tagName
      * @param elementProto
      */
-    public registerCustomElement(tagName: string, elementProto: SimpleVirtualDOMElement) {
+    public registerCustomElement(tagName: string, elementProto: SimpleVirtualDOMElementExt) {
         if (this.customElements[tagName]) {
             throw new CustomElementAlreadyRegisteredError(tagName);
         }

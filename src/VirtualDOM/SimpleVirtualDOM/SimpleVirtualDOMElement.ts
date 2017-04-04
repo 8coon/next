@@ -125,7 +125,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
      * Создаёт полную копию этого узла со всеми вложенными узлами.
      * @returns {SimpleVirtualDOMElement}
      */
-    public cloneNode(asConstructor: boolean = false): SimpleVirtualDOMElement {
+    public cloneNode(): SimpleVirtualDOMElement {
         const appContext = JSWorks.applicationContext;
         const virtualDOM = appContext.serviceHolder.getServiceByName('SimpleVirtualDOM');
         let element;
