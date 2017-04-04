@@ -7,13 +7,13 @@ import {View} from '../View/View';
 /**
  * Базовый узел VirtualDOM. Может быть как текстовым, так и отражать HTMLElement.
  */
-export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceiver {
+export interface IVirtualDOMElement extends IEventEmitter, IEventReceiver {
 
     tagName: string;
     innerHTML: string;
     id: string;
     className: string;
-    parentNode: IAbstractVirtualDOMElement;
+    parentNode: IVirtualDOMElement;
     children: VirtualDOMElementArray;
     text: string;
     readonly style: object;
@@ -32,13 +32,13 @@ export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceive
     toggleClass(name: string, on: boolean): void;
 
 
-    appendChild(child: IAbstractVirtualDOMElement): void;
+    appendChild(child: IVirtualDOMElement): void;
 
 
-    insertBefore(child: IAbstractVirtualDOMElement, reference: IAbstractVirtualDOMElement): void;
+    insertBefore(child: IVirtualDOMElement, reference: IVirtualDOMElement): void;
 
 
-    removeChild(child: IAbstractVirtualDOMElement): void;
+    removeChild(child: IVirtualDOMElement): void;
 
 
     remove(): void;
@@ -50,15 +50,15 @@ export interface IAbstractVirtualDOMElement extends IEventEmitter, IEventReceive
     isText(): boolean;
 
 
-    querySelector(query: string): IAbstractVirtualDOMElement;
+    querySelector(query: string): IVirtualDOMElement;
 
 
-    querySelectorAll(query: string): IAbstractVirtualDOMElement[];
+    querySelectorAll(query: string): IVirtualDOMElement[];
 
 
     render(): void;
 
 
-    cloneNode(asConstructor: boolean): IAbstractVirtualDOMElement;
+    cloneNode(asConstructor: boolean): IVirtualDOMElement;
 
 }

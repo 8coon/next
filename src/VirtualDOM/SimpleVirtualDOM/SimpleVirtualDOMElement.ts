@@ -1,4 +1,4 @@
-import {IAbstractVirtualDOMElement} from '../IAbstractVirtualDOMElement';
+import {IVirtualDOMElement} from '../IVirtualDOMElement';
 import {VirtualDOMElementArray} from '../VirtualDOMElementArray';
 import {IEvent} from '../../EventManager/IEvent';
 import {IEventEmitter} from '../../EventManager/IEventEmitter';
@@ -16,7 +16,7 @@ declare const JSWorks: any;
 
 
 @JSWorksInternal
-export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
+export class SimpleVirtualDOMElement implements IVirtualDOMElement {
 
     /**
      * Переводит имена тэгов в нижний регистр в свойстве innerHTML и методе getOuterHTML

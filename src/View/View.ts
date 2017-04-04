@@ -2,7 +2,7 @@ import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {IEventReceiver} from '../EventManager/IEventReceiver';
 import {IEvent} from '../EventManager/IEvent';
 import {IViewParsed} from './IViewParsed';
-import {IAbstractVirtualDOMElement} from '../VirtualDOM/IAbstractVirtualDOMElement';
+import {IVirtualDOMElement} from '../VirtualDOM/IVirtualDOMElement';
 import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 import {VirtualDOM} from '../VirtualDOM/VirtualDOM';
 import {ViewConfig} from './ViewConfig';
@@ -31,8 +31,8 @@ export class View implements IEventEmitter, IEventReceiver {
 
 
     private _id: string;
-    private template: IAbstractVirtualDOMElement;
-    private _DOMRoot: IAbstractVirtualDOMElement;
+    private template: IVirtualDOMElement;
+    private _DOMRoot: IVirtualDOMElement;
 
     private appContext: ApplicationContext;
     private virtualDOM: VirtualDOM;
@@ -64,10 +64,10 @@ export class View implements IEventEmitter, IEventReceiver {
 
     /**
      * Корневой элемент DOM данной View.
-     * @returns {IAbstractVirtualDOMElement}
+     * @returns {IVirtualDOMElement}
      * @constructor
      */
-    public get DOMRoot(): IAbstractVirtualDOMElement {
+    public get DOMRoot(): IVirtualDOMElement {
         return this._DOMRoot;
     }
 

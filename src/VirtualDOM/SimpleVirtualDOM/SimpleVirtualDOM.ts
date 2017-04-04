@@ -1,6 +1,6 @@
 import {JSWorksInternal} from '../../Common/InternalDecorator';
 import {JSWorksService} from '../../Service/ServiceDecorator';
-import {IAbstractVirtualDOMElement} from '../IAbstractVirtualDOMElement';
+import {IVirtualDOMElement} from '../IVirtualDOMElement';
 import {HTMLParserService} from '../../Parser/HTML/HTMLParserService';
 import {IDOMParsed} from '../../Parser/HTML/IDOMParsed';
 import {SimpleVirtualDOMElement} from './SimpleVirtualDOMElement';
@@ -10,8 +10,8 @@ import {EventType} from '../../EventManager/EventType';
 
 
 type Selector = (IAbstractVirtualDOMElement) => boolean |   // tslint:disable-line
-    IAbstractVirtualDOMElement |
-    IAbstractVirtualDOMElement[];
+    IVirtualDOMElement |
+    IVirtualDOMElement[];
 
 declare const CSSauron: any;
 
@@ -75,9 +75,9 @@ export class SimpleVirtualDOM implements VirtualDOM {
     /**
      * Создаёт элемент виртуального DOM по образу реального
      * @param element
-     * @returns {IAbstractVirtualDOMElement}
+     * @returns {IVirtualDOMElement}
      */
-    public createFromDOM(element: HTMLElement): IAbstractVirtualDOMElement {
+    public createFromDOM(element: HTMLElement): IVirtualDOMElement {
         const data = this.hTMLParser.parseDOM(element);
         return this.createElement(data);
     }
@@ -86,9 +86,9 @@ export class SimpleVirtualDOM implements VirtualDOM {
     /**
      * Создаёт текстовый узел виртуального DOM
      * @param text
-     * @returns {IAbstractVirtualDOMElement}
+     * @returns {IVirtualDOMElement}
      */
-    public createTextElement(text: string): IAbstractVirtualDOMElement {
+    public createTextElement(text: string): IVirtualDOMElement {
         const data = {
             tagName: undefined,
             id: undefined,
@@ -107,7 +107,7 @@ export class SimpleVirtualDOM implements VirtualDOM {
      * @param data IDOMParsed либо tagName элемента
      * @returns {SimpleVirtualDOMElement}
      */
-    public createElement(data: IDOMParsed | string = 'DIV'): IAbstractVirtualDOMElement {
+    public createElement(data: IDOMParsed | string = 'DIV'): IVirtualDOMElement {
         let element = new SimpleVirtualDOMElement(SimpleVirtualDOM.NextHash());
 
         if (typeof data === 'string') {
