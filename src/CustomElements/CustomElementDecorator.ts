@@ -16,4 +16,3 @@ export function JSWorksCustomElement(tagName: string) {
         __JSWorks_custom_elements__.push(target);
     };
 }
-

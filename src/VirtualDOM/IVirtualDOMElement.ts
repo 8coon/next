@@ -41,6 +41,9 @@ export interface IVirtualDOMElement extends IEventEmitter, IEventReceiver {
     removeChild(child: IVirtualDOMElement): void;
 
 
+    replaceChild(newChild: IVirtualDOMElement | IVirtualDOMElement[], oldChild: IVirtualDOMElement): void;
+
+
     remove(): void;
 
 

@@ -17,4 +17,11 @@ export class ViewConfig {
      */
     public static readonly VIEW_TAG: string = 'APP-VIEW';
 
+
+    /**
+     * Тэг view-yield
+     * @type {string}
+     */
+    public static readonly VIEW_YIELD_TAG: string = 'VIEW-YIELD';
+
 }

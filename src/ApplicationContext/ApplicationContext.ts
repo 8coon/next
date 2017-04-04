@@ -7,6 +7,7 @@ import {EventManager} from '../EventManager/EventManager';
 import {EventType} from '../EventManager/EventType';
 import {IEvent} from '../EventManager/IEvent';
 import {IEventEmitter} from '../EventManager/IEventEmitter';
+import {CustomElementHolder} from '../CustomElements/CustomElementHolder';
 
 
 declare const JSWorks: any;
@@ -61,10 +62,20 @@ export class ApplicationContext implements IEventEmitter {
     }
 
 
+    /**
+     * Все пользовательские элементы DOM хранятся тут
+     * @returns {CustomElementHolder}
+     */
+    public get customElementHolder(): CustomElementHolder {
+        return this._customElementHolder;
+    }
+
+
     private _serviceHolder: ServiceHolder;
     private _viewHolder: ViewHolder;
     private _controllerHolder: ControllerHolder;
     private _componentHolder: ComponentHolder;
+    private _customElementHolder: CustomElementHolder;
     private _loaded: boolean = false;
 
 
@@ -77,6 +88,7 @@ export class ApplicationContext implements IEventEmitter {
         this._viewHolder = new ViewHolder();
         this._controllerHolder = new ControllerHolder();
         this._componentHolder = new ComponentHolder();
+        this._customElementHolder = new CustomElementHolder();
     }
 
 
@@ -88,6 +100,7 @@ export class ApplicationContext implements IEventEmitter {
 
         EventManager.subscribe({}, this.viewHolder, EventType.LOAD, (event: IEvent) => {
             this.componentHolder.load(this.viewHolder, this.controllerHolder);
+            this.customElementHolder.load();
 
             this._loaded = true;
             this.emitEvent({ type: EventType.LOAD, data: this });

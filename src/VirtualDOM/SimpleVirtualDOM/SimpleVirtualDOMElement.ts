@@ -44,18 +44,18 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
     public view: View;
 
 
-    private _tagName: string;
-    private _parentNode: SimpleVirtualDOMElement;
-    private _children: SimpleVirtualDOMElement[] = [];
-    private _text: string;
-    private classes: object = {};
-    private attributes: object = { style: {} };
-    private handlers: object = {};
-    private selectorCache: object = {};
-    private _hash: any;
+    protected _tagName: string;
+    protected _parentNode: SimpleVirtualDOMElement;
+    protected _children: SimpleVirtualDOMElement[] = [];
+    protected _text: string;
+    protected classes: object = {};
+    protected attributes: object = { style: {} };
+    protected handlers: object = {};
+    protected selectorCache: object = {};
+    protected _hash: any;
 
-    private readonly HASH_KEY: string = '__jsworks_hash__';
-    private readonly HANDLERS_KEY: string = '__jsworks_handlers__';
+    protected readonly HASH_KEY: string = '__jsworks_hash__';
+    protected readonly HANDLERS_KEY: string = '__jsworks_handlers__';
 
 
     constructor(hash) {
@@ -437,12 +437,44 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         }
 
         this._children.splice(this._children.indexOf(child, 0), 1);
-
-        if (child) {
-            child._parentNode = undefined;
-        }
+        child._parentNode = undefined;
 
         this.emitMutilationEvent({ type: EventType.DOMChildRemove, data: { parent: this, child: child } });
+    }
+
+
+    /**
+     * Заменяет одного потомка другим (или несколькими)
+     * @param newChild
+     * @param oldChild
+     */
+    public replaceChild(newChild: SimpleVirtualDOMElement | SimpleVirtualDOMElement[],
+            oldChild: SimpleVirtualDOMElement): void {
+        const index = this._children.indexOf(oldChild, 0);
+
+        if (!(newChild instanceof Array)) {
+            newChild = [newChild];
+        }
+
+        if (!oldChild || index < 0) {
+            newChild.forEach((child) => {
+                this.appendChild(child);
+            });
+
+            return;
+        }
+
+        oldChild._parentNode = undefined;
+
+        newChild.forEach((child, pos) => {
+            this._children.splice(index + pos + 1, 0, child);
+            child._parentNode = this;
+
+            this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
+        });
+
+        delete this._children[index];
+        this.emitMutilationEvent({ type: EventType.DOMChildRemove, data: { parent: this, child: oldChild } });
     }
 
 
@@ -602,7 +634,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
     }
 
 
-    private emitMutilationEvent(data: IEvent) {
+    protected emitMutilationEvent(data: IEvent) {
         this.dirty = true;
         this.selectorCache = {};
         this.emitEvent(data);
