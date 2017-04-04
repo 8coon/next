@@ -13,7 +13,7 @@ export class Route {
     /**
      * вложенные роуты
      */
-    public children: Route[];
+    public children: object;
 
     /**
      * имя роута
@@ -25,12 +25,12 @@ export class Route {
      */
     public match: string;
 
-    constructor(match: string, name?: string, pageName?: string) {
+    constructor(match: string, pathVariableName?:string, name?: string, pageName?: string) {
         this.name = name;
         this.pageName = pageName;
     }
 
 
-    public fire(): void {}  // tslint:disable-line
+    public fire(pathVariables: object): void {}  // tslint:disable-line
 
 }

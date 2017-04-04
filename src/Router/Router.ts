@@ -9,6 +9,8 @@ import {EventManager} from '../EventManager/EventManager';
 import {EventType} from '../EventManager/EventType';
 import {RouteConfig} from './RouteConfig';
 import {MethodNotImplementedError} from '../Service/Error/MethodNotImplementedError';
+import {Route} from './Route';
+import {PathNotFoundError} from './Error/PathNotFoundError';
 
 
 @JSWorksInternal
@@ -41,12 +43,32 @@ export class Router {
     }
 
 
-
     public pathChange(path: string): void {
         const matches = path.split('/');
+        const pathVariables = {};
+        let route = this.routeHolder.root;
+
+        matches.forEach((match) => {
+            route = this.findRoute(route, match, pathVariables);
+
+            if (!route) {
+                throw new PathNotFoundError(path);
+            }
+        });
+
+        route.fire(pathVariables);
     }
 
-    private
+
+    private findRoute(parent: Route, match: string, pathVariables: object): Route {
+        Array.from(parent.children).forEach((child) => {
+           if (child.match === match) {
+               return child;
+           }
+        });
+
+        return null;
+    }
 
 
 }

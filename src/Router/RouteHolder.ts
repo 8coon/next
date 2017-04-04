@@ -6,6 +6,7 @@ import {IDOMParsed} from '../Parser/HTML/IDOMParsed';
 import {Route} from './Route';
 import {WrongRouterNameError} from './Error/WrongRouterNameError';
 import {AttributeNotFound} from './Error/AttributeNotFound';
+import {RouteAlreadyExistError} from './Error/RouteAlreadyExistError';
 
 
 @JSWorksInternal
@@ -13,7 +14,7 @@ export class RouteHolder {
 
 
     private routes: object;
-    private root: Route = new Route('');
+    private _root: Route = new Route('');
     private htmlParser: HTMLParserService;
 
 
@@ -25,12 +26,15 @@ export class RouteHolder {
 
         routes.forEach((route) => {
             Array.from(route.children).forEach((routeTag) => {
-                this.parseRoute(routeTag, this.root);
+                this.parseRoute(routeTag, this._root);
             })
         });
 
     }
 
+    get root(): Route {
+        return this._root;
+    }
 
     public parseRoute(routeTag: Element, parent: Route) {
         const parsedRoute: IDOMParsed = this.htmlParser.parseDOM(routeTag);
@@ -44,19 +48,30 @@ export class RouteHolder {
         }
 
         let route;
+        let pathVariableName = null;
+        let match = parsedRoute.attributes['match'];
+
+        if (match.startsWith(':')) {
+            pathVariableName = match;
+            match = '*';
+        }
 
         if (parsedRoute.id) {
             if (!parsedRoute.attributes['page']) {
                 throw new AttributeNotFound('page');
             }
 
-            route = new Route(parsedRoute.attributes['match'], parsedRoute.id, parsedRoute.attributes['page']);
+            route = new Route(match, pathVariableName, parsedRoute.id, parsedRoute.attributes['page']);
             this.routes[parsedRoute.id] = route;
         } else {
-            route = new Route(parsedRoute.attributes['match']);
+            route = new Route(match);
         }
 
-        parent.children.push(route);
+        if (parent.children[match]) {
+            throw new RouteAlreadyExistError(match);
+        }
+
+        parent.children[match] = route;
 
         Array.from(routeTag.children).forEach((innerRoute) => {
             this.parseRoute(innerRoute, route);
