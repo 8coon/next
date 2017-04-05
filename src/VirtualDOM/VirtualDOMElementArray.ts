@@ -24,8 +24,8 @@ export class VirtualDOMElementArray implements Iterable<IVirtualDOMElement> {
 
 
     /**
-     *
-     * @returns {next: (()=>({value: IAbstractVirtualDOMElement, done: boolean}|{done: boolean}))}
+     * Итератор
+     * @returns {Iterator<IVirtualDOMElement>}
      */
 
     public [Symbol.iterator](): Iterator<IVirtualDOMElement> {

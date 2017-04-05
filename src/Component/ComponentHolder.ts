@@ -3,6 +3,10 @@ import {ControllerHolder} from '../Controller/ControllerHolder';
 import {ComponentConfig} from './ComponentConfig';
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {EventType} from '../EventManager/EventType';
+import {CollectionProperty} from './CollectionProperty';
+import {EventManager} from '../EventManager/EventManager';
+import {IEvent} from '../EventManager/IEvent';
+import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 
 
 declare const JSWorks: any;
@@ -22,7 +26,6 @@ export class ComponentHolder {
     public load(views: ViewHolder, controllers: ControllerHolder): void {
         __JSWorks_components__.forEach((componentProto) => {
             const component = new componentProto();
-
             component.variables = {};
 
             component.setVariable = (name: string, value: any) => {
@@ -36,6 +39,35 @@ export class ComponentHolder {
             component.getVariable = (name: string) => {
                 return component.variables[name];
             };
+
+            (componentProto.__collections__ || []).forEach((name) => {
+                const oldCollection: CollectionProperty = component[name];
+                component[name] = new CollectionProperty();
+
+                EventManager.subscribe({}, component[name], EventType.UPDATE, (event: IEvent) => {
+                    const emit = () => {
+                        if (component.emitEvent) {
+                            component.emitEvent({ type: EventType.UPDATE, data: {} });
+                            component.emitEvent({ type: EventType.PostUpdate, data: {} });
+                        }
+                    };
+
+                    const appContext: ApplicationContext = JSWorks.applicationContext;
+
+                    if (appContext.loaded) {
+                        emit();
+                        return;
+                    }
+
+                    JSWorks.EventManager.subscribe(this, appContext, EventType.ViewsListenersInstalled, (ev) => {
+                        emit();
+                    });
+                });
+
+                if (oldCollection && oldCollection.length > 0) {
+                    component[name].setValues(oldCollection.getValues());
+                }
+            });
 
             const view = views.getView(componentProto.__view_name__);
             view.component = component;
