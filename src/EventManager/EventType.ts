@@ -17,6 +17,7 @@ export enum EventType {
     InstallViewsListeners,
     ViewsListenersInstalled,
     ApplicationLoaded,
+    PostUpdate,
 }
 
 

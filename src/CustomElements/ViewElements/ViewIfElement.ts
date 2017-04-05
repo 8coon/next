@@ -70,12 +70,12 @@ export class ViewIfElement extends AbstractConditionElement {
      * @param newValue
      */
     public conditionChange(newValue: any): void {
-        this.removeChild(this._children[0]);
+        this.removeChildren();
 
         if (newValue) {
-            this.appendChild(this.thenTemplate);
+            this.appendChild(<SimpleVirtualDOMElement[]> Array.from(this.thenTemplate.children));
         } else {
-            this.appendChild(this.elseTemplate);
+            this.appendChild(<SimpleVirtualDOMElement[]> Array.from(this.elseTemplate.children));
         }
     }
 

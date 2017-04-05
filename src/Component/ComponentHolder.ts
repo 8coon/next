@@ -22,13 +22,14 @@ export class ComponentHolder {
         __JSWorks_components__.forEach((componentProto) => {
             const component = new componentProto();
 
-            component.view = views.getView(componentProto.__view_name__);
+            const view = views.getView(componentProto.__view_name__);
+            view.component = component;
+            view.applicationContext = JSWorks.applicationContext;
+
+            component.view = view;
             component.controller = controllers.getController(componentProto.__controller_name__);
             component.applicationContext = JSWorks.applicationContext;
             component.type = componentProto.__type__;
-
-            component.view.component = component;
-            component.view.applicationContext = JSWorks.applicationContext;
 
             component.controller.component = component;
             component.controller.applicationContext = JSWorks.applicationContext;

@@ -1,5 +1,9 @@
 import {IComponentPropertyDecoratorData} from './IComponentPropertyDecoratorData';
 import {EventType} from '../EventManager/EventType';
+import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
+
+
+declare const JSWorks: any;
 
 
 /**
@@ -23,9 +27,23 @@ export function JSWorksComponentProperty(data?: IComponentPropertyDecoratorData)
             set: function(value: any) {
                 this[`__${name}__`] = value;
 
-                if (this.emitEvent) {
-                    this.emitEvent({ type: EventType.UPDATE, data: { name, value } });
+                const emit = () => {
+                    if (this.emitEvent) {
+                        this.emitEvent({ type: EventType.UPDATE, data: { name, value } });
+                        this.emitEvent({ type: EventType.PostUpdate, data: { name, value } });
+                    }
+                };
+
+                const appContext: ApplicationContext = JSWorks.applicationContext;
+
+                if (appContext.loaded) {
+                    emit();
+                    return;
                 }
+
+                JSWorks.EventManager.subscribe(this, appContext, EventType.ViewsListenersInstalled, (ev) => {
+                    emit();
+                });
             },
             /* tslint:enable*/
         };

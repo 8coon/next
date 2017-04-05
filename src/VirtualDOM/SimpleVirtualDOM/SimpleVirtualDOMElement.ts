@@ -406,7 +406,15 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
      * Добавить потомка к узлу
      * @param child
      */
-    public appendChild(child: SimpleVirtualDOMElement): void {
+    public appendChild(child: SimpleVirtualDOMElement | SimpleVirtualDOMElement[]): void {
+        if (child instanceof Array) {
+            child.forEach((ch) => {
+                this.appendChild(ch);
+            });
+
+            return;
+        }
+
         this._children.push(child);
 
         (<any> child)._parentNode = this;
@@ -454,6 +462,16 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         // ToDo: Unsubscribe
 
         this.emitMutilationEvent({ type: EventType.DOMChildRemove, data: { parent: this, child: child } });
+    }
+
+
+    /**
+     * Удалить всех потомков
+     */
+    public removeChildren(): void {
+        this._children.forEach((child) => {
+            this.removeChild(child);
+        });
     }
 
 

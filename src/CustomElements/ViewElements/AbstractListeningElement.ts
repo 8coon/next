@@ -10,12 +10,6 @@ declare const JSWorks: any;
 
 export abstract class AbstractListeningElement extends SimpleVirtualDOMElementExt {
 
-    /**
-     * Массив View, на компоненты которых нужно подписать тэги view-if и так далее.
-     * @type {Array}
-     */
-    public static viewsToSubscribe: View[] = [];
-
 
     /**
      * Подписаться на события от соответствующего компонента
@@ -27,7 +21,6 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
                 return;
             }
 
-            console.log(event);
             this.propertyChange(event.data.name, event.data.value);
         });
     }
@@ -50,17 +43,11 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
 
     /**
      * Элементу была присвоена некоторая View
-     * <view-if name="propertyName" condition="$.toNumber() >= 3">
-     *     <view-then>
-     *         Greater or equals 3!
-     *     </view-then>
-     *     <view-else>
-     *         Less than 3!
-     *     </view-else>
-     * </view-if>
      * @param view
      */
     public propagateView(view: View): void {
+        // ToDo: unsubscribe
+
         super.propagateView(view);
 
         if (this.view && this.view.component) {

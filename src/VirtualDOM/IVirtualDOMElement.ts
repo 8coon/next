@@ -32,13 +32,16 @@ export interface IVirtualDOMElement extends IEventEmitter, IEventReceiver {
     toggleClass(name: string, on: boolean): void;
 
 
-    appendChild(child: IVirtualDOMElement): void;
+    appendChild(child: IVirtualDOMElement | IVirtualDOMElement[]): void;
 
 
     insertBefore(child: IVirtualDOMElement, reference: IVirtualDOMElement): void;
 
 
     removeChild(child: IVirtualDOMElement): void;
+
+
+    removeChildren(): void;
 
 
     replaceChild(newChild: IVirtualDOMElement | IVirtualDOMElement[], oldChild: IVirtualDOMElement): void;
