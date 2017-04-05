@@ -13,6 +13,8 @@ export enum EventType {
     DOMRemove,
     DOMContentChange,
     ViewExtended,
+    ViewsInheritanceRendered,
+    ApplicationLoaded,
 }
 
 

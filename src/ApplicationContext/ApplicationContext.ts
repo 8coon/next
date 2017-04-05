@@ -101,7 +101,11 @@ export class ApplicationContext implements IEventEmitter {
         EventManager.subscribe({}, this.viewHolder, EventType.LOAD, (event: IEvent) => {
             this.componentHolder.load(this.viewHolder, this.controllerHolder);
 
-            this._loaded = true;
+            EventManager.subscribe({}, this, EventType.ViewsInheritanceRendered, (event2) => {
+                this._loaded = true;
+                this.emitEvent({ type: EventType.ApplicationLoaded, data: this });
+            });
+
             this.emitEvent({ type: EventType.LOAD, data: this });
         });
 

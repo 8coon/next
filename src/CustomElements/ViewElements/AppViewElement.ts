@@ -3,11 +3,11 @@ import {JSWorksInternal} from '../../Common/InternalDecorator';
 import {JSWorksCustomElement} from '../CustomElementDecorator';
 import {ViewConfig} from '../../View/ViewConfig';
 import {SimpleVirtualDOM} from '../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOM';
-import {ApplicationContext} from '../../ApplicationContext/ApplicationContext';
 import {EventType} from '../../EventManager/EventType';
 import {ViewHolder} from '../../View/ViewHolder';
 import {View} from '../../View/View';
-import {SimpleVirtualDOMElement} from '../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
+import {UnresolvableViewInheritanceError} from '../../Error/UnresolvableViewInheritanceError';
+import {IVirtualDOMElement} from '../../VirtualDOM/IVirtualDOMElement';
 
 
 declare const JSWorks: any;
@@ -22,13 +22,41 @@ export class AppViewElement extends SimpleVirtualDOMElementExt {
 
 
     private static renderViewInheritance(viewHolder: ViewHolder): void {
-        // const rendered = 0;
+        const rendered = {};
+        const viewNames: string[] = Object.keys(viewHolder.views);
+        let renderedCount = 0;
 
-        Object.keys(viewHolder.views).forEach((viewName) => {
-            const view: View = viewHolder.getView(viewName);
+        for (let i = 0; i < 100; i++) {
+            viewNames.forEach((viewName) => {
+                if (rendered[viewName]) {
+                    return;
+                }
 
-            console.dir(view.DOMRoot);
-        });
+                const view: View = viewHolder.getView(viewName);
+
+                if (!view.DOMRoot.hasAttribute('extends')) {
+                    rendered[viewName] = view;
+                    renderedCount++;
+                    return;
+                }
+
+                const extendsName: string = view.DOMRoot.getAttribute('extends');
+                const extendsView = rendered[extendsName];
+
+                if (extendsView) {
+                    (<AppViewElement> view.DOMRoot).extend(extendsView);
+                    rendered[viewName] = view;
+                    renderedCount++;
+                }
+            });
+
+            if (renderedCount === viewNames.length) {
+                JSWorks.applicationContext.emitEvent({ type: EventType.ViewsInheritanceRendered, data: undefined });
+                return;
+            }
+        }
+
+        throw new UnresolvableViewInheritanceError();
     }
 
 
@@ -44,51 +72,31 @@ export class AppViewElement extends SimpleVirtualDOMElementExt {
                 AppViewElement.renderViewInheritance(JSWorks.applicationContext.viewHolder);
             });
         }
-        console.log('view created');
 
         return new AppViewElement(SimpleVirtualDOM.NextHash());
     }
 
 
     /**
-     * appendChild
-     * @param child
+     * Унаследовать текущую View от данной
+     * @param extending
      */
-    // public appendChild(child: SimpleVirtualDOMElement): void {
-    //     console.dir(this, child);
-    //     super.appendChild(child);
-    // }
+    public extend(extending: View): void {
+        const viewDOM: IVirtualDOMElement = extending.DOMRoot.cloneNode();
+        const includes = viewDOM.querySelector(ViewConfig.VIEW_YIELD_TAG);
 
+        if (includes) {
+            includes.parentNode.replaceChild(this._children, includes);
+        }
 
-    /**
-     * Нужно перерисовать элемент при изменении значения атрибута extends
-     * @param name
-     * @param value
-     */
-    // public setAttribute(name: string, value: any): void {
-        /* if (name.toLowerCase() === 'extends') {
-            const appContext: ApplicationContext = JSWorks.applicationContext;
-            value = String(value);
+        this._children = [];
 
-            const viewDOM = appContext.viewHolder.getView(value).DOMRoot.cloneNode(true);
-            const includes = viewDOM.querySelector(ViewConfig.VIEW_YIELD_TAG);
+        (<AppViewElement> viewDOM)._children.forEach((child) => {
+            this.appendChild(child);
+        });
 
-            if (includes) {
-                includes.parentNode.replaceChild(this._children, includes);
-            }
-
-            this._children = [];
-
-            viewDOM._children.forEach((child) => {
-                this.appendChild(child);
-            });
-
-            this.emitMutilationEvent({ type: EventType.ViewExtended, data: this });
-            return;
-        } */
-
-    //     super.setAttribute(name, value);
-    // }
+        this.emitMutilationEvent({ type: EventType.ViewExtended, data: this });
+    }
 
 
 }
