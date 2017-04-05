@@ -399,7 +399,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         this._children.push(child);
 
         (<any> child)._parentNode = this;
-        (<any> child).view = this.view;
+        child.propagateView(this.view);
 
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
         EventManager.subscribe(this, child);
@@ -422,7 +422,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         this._children.splice(index, 0, child);
 
         (<any> child)._parentNode = this;
-        (<any> child).view = this.view;
+        child.propagateView(this.view);
 
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
         EventManager.subscribe(this, child);
@@ -440,6 +440,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
 
         this._children.splice(this._children.indexOf(child, 0), 1);
         child._parentNode = undefined;
+        // ToDo: Unsubscribe
 
         this.emitMutilationEvent({ type: EventType.DOMChildRemove, data: { parent: this, child: child } });
     }
@@ -471,7 +472,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         newChild.forEach((child, pos) => {
             this._children.splice(index + pos + 1, 0, child);
             child._parentNode = this;
-            child.view = this.view;
+            child.propagateView(this.view);
 
             this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
             EventManager.subscribe(this, child);
