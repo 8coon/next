@@ -17,7 +17,6 @@ export function JSWorksComponentProperty(data?: IComponentPropertyDecoratorData)
         return {
             configurable: false,
             enumerable: false,
-            // writable: false,
 
             /* tslint:disable */
             get: function() {

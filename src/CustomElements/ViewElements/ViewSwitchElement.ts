@@ -6,6 +6,7 @@ import {View} from '../../View/View';
 import {SimpleVirtualDOMElement} from '../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
 import {ForbiddenTagError} from '../../Error/ForbiddenTagError';
 import {AbstractListeningElement} from './AbstractListeningElement';
+import {DuplicateSwitchCaseError} from '../../Error/DuplicateSwitchCaseError';
 
 
 @JSWorksInternal
@@ -14,6 +15,8 @@ export class ViewSwitchElement extends AbstractListeningElement {
 
 
     private switches: object = {};
+    private conditions: string[] = [];
+    private lastCondition: string;
 
 
     /**
@@ -37,7 +40,14 @@ export class ViewSwitchElement extends AbstractListeningElement {
             switch (child.tagName) {
 
                 case ViewConfig.VIEW_CASE_TAG: {
-                    // if (this.switches[])
+                    const condition = child.getAttribute('condition') || 'true';
+
+                    if (this.switches[condition]) {
+                        throw new DuplicateSwitchCaseError(condition);
+                    }
+
+                    this.switches[condition] = child;
+                    this.conditions.push(condition);
                 } break;
 
                 case undefined: break;
@@ -54,20 +64,37 @@ export class ViewSwitchElement extends AbstractListeningElement {
 
 
     /**
-     * <view-switch name="color">
-     *     <view-case condition="$ === 'red'">
+     * <view-switch>
+     *     <view-case condition="$.color === 'red'">
      *         Color is definitely red.
      *     </view-case>
-     *     <view-case condition="$ === 'green'">
+     *     <view-case condition="$.color === 'green'">
      *         Sure Color is green.
      *     </view-case>
-     *     <view-case condition="$ === 'blue'">
+     *     <view-case condition="$.color === 'blue'">
      *         No doubt your Color is blue.
      *     </view-case>
      * </view-switch>
      */
     public propertyChange(): void {
-        return;
+        this.removeChildren();
+        let found = false;
+
+        this.conditions.forEach((condition) => {
+            if (found) {
+                return;
+            }
+
+            if (this.execStatement(condition)) {
+                if (condition === this.lastCondition) {
+                    found = true;
+                    return;
+                }
+
+                this.appendChild(<SimpleVirtualDOMElement[]> Array.from(this.switches[condition].children));
+                found = true;
+            }
+        });
     }
 
 }

@@ -2,7 +2,7 @@
 
     <h2>This is %{NAME}%View.</h2>
 
-    <view-if condition="$.color === 'green'">
+    <view-if condition="$.color1 === 'green'">
         <view-then>
             Color is green
         </view-then>
@@ -10,5 +10,17 @@
             Color is not green
         </view-else>
     </view-if>
+
+    <view-switch>
+        <view-case condition="$.color2 === 'red'">
+            Color is red
+        </view-case>
+        <view-case condition="$.color2 === 'blue'">
+            Color is blue
+        </view-case>
+        <view-case>
+            Color is neither red nor blue
+        </view-case>
+    </view-switch>
 
 </app-view>

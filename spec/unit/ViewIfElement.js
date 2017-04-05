@@ -33,11 +33,11 @@ describe('ViewIfElement', () => {
             expect(html).to.not.contain('Color is green');
             expect(html).to.contain('Color is not green');
 
-            page.color = 'green';
+            page.color1 = 'green';
             done();
         });
 
-        page.color = 'red';
+        page.color1 = 'red';
     });
 
 

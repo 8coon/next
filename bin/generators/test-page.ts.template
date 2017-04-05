@@ -17,7 +17,11 @@ export class %{NAME}%%{CLASS}% {
 
 
     @JSWorks.ComponentProperty()
-    public color: string = "green";
+    public color1: string = "green";
+
+
+    @JSWorks.ComponentProperty()
+    public color2: string = "green";
 
 
 }

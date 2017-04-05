@@ -10,10 +10,10 @@ export abstract class AbstractConditionElement extends AbstractListeningElement 
      * Будет вызван при изменении компонента, на который данный тэг был подписан
      */
     public propertyChange(): void {
-        const condFunc = new Function('$', `return ${this.getAttribute('condition')};`);
-        const newValue = condFunc(this.view.component);
+        const newValue = this.execStatement(this.getAttribute('condition'));
 
         if (newValue !== this.lastValue) {
+            this.lastValue = newValue;
             this.conditionChange(newValue);
         }
     }

@@ -12,6 +12,26 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
 
 
     /**
+     * Выполняет выражение в области видимости View
+     * @param statement
+     */
+    public execStatement(statement: string): any {
+        const variables = Object.keys(this.view.component.variables);
+        const values = [];
+
+        variables.forEach((varName) => {
+            values.push(this.view.component.variables[varName]);
+        });
+
+        values.push(this.view.component);
+        variables.push('$');
+
+        const condFunc = new Function(variables.join(','), `return ${statement};`);
+        return condFunc.call({}, ...values);
+    }
+
+
+    /**
      * Подписаться на события от соответствующего компонента
      * @param component
      */
