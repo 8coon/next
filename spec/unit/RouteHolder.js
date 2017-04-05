@@ -67,10 +67,13 @@ describe('RouteHolder', () => {
 
         JSWorks.EventManager.subscribe({}, routeHolder, JSWorks.EventType.LOAD, (event) => {
             expect(routeHolder.getRoute('UsersRoute')).is.exist;
+            expect(routeHolder.getRoute('UsersRoute').match).to.equal('users');
             done();
         });
 
         routeHolder.load();
     });
+
+
 
 });
