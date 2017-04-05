@@ -21,7 +21,8 @@ export class ViewIfElement extends AbstractConditionElement {
      * Фабрика ViewIfElement
      * @returns {undefined}
      */
-    public createElement(): SimpleVirtualDOMElementExt {
+    public createElement(): ViewIfElement {
+        super.createElement();
         return new ViewIfElement(SimpleVirtualDOM.NextHash());
     }
 
@@ -43,6 +44,8 @@ export class ViewIfElement extends AbstractConditionElement {
                 case ViewConfig.VIEW_ELSE_TAG: {
                     this.elseTemplate = child;
                 } break;
+
+                case undefined: break;
 
                 default: {
                     throw new ForbiddenTagError(child.tagName, 'if condition');

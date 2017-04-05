@@ -1,4 +1,3 @@
-import {SimpleVirtualDOMElementExt} from '../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElementExt';
 import {AbstractListeningElement} from './AbstractListeningElement';
 
 

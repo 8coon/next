@@ -1,0 +1,23 @@
+'use strict';
+
+
+declare const JSWorks: any;
+
+
+@JSWorks.%{CLASS}%({ view: '%{NAME}%View', controller: '%{NAME}%Controller' })
+export class %{NAME}%%{CLASS}% {
+
+
+    @JSWorks.ComponentProperty()
+    public title: string = "Test Page";
+
+
+    @JSWorks.ComponentProperty()
+    public count: number = 0;
+
+
+    @JSWorks.ComponentProperty()
+    public color: string = "green";
+
+
+}

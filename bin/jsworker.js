@@ -83,8 +83,9 @@ const generateRoute = (path, name, page, match, parent) => {
 };
 
 
-const generateController = (path, folder, name, withView, viewExtends) => {
-    let controller = fs.readFileSync('./bin/generators/controller.ts.template', 'utf-8');
+const generateController = (path, folder, name, withView, viewExtends, viewTemplate, templateFile) => {
+    templateFile = templateFile || 'controller.ts';
+    let controller = fs.readFileSync(`./bin/generators/${templateFile}.template`, 'utf-8');
 
     controller = controller.replace(/%\{NAME}%/g, name);
 
@@ -92,15 +93,17 @@ const generateController = (path, folder, name, withView, viewExtends) => {
     fs.writeFileSync(`${path}/${folder}/${name}Controller/${camelToDash(name)}-controller.ts`, controller);
 
     if (withView === '*') {
-        generateView(path, folder, name, viewExtends || '');
+        generateView(path, folder, name, viewExtends || '', viewTemplate);
     }
 
+    const outFolder = folder.slice(folder.indexOf('/'));
     fs.appendFileSync(`${path}/application.js`,
-            `require('./dist/compiled/${name}Controller/${camelToDash(name)}-controller.js');\n`);
+            `require('./dist/compiled/${outFolder}/${name}Controller/${camelToDash(name)}-controller.js');\n`);
 };
 
 
-const generateComponent = (path, name, withRoute, className, viewExtends) => {
+const generateComponent = (path, name, withRoute, className, viewExtends, viewTemplate,
+                           controllerTemplate, templateFile) => {
     className = className || 'Page';
     let folder = 'components';
 
@@ -109,9 +112,11 @@ const generateComponent = (path, name, withRoute, className, viewExtends) => {
     }
 
     mkdirp.sync(`${path}/${folder}/${name}${className}/`);
-    generateController(path, `${folder}/${name}${className}`, name, '*', viewExtends || '');
+    generateController(path, `${folder}/${name}${className}`, name, '*', viewExtends || '',
+        viewTemplate, controllerTemplate);
 
-    let component = fs.readFileSync('./bin/generators/component.ts.template', 'utf-8');
+    templateFile = templateFile || 'component.ts';
+    let component = fs.readFileSync(`./bin/generators/${templateFile}.template`, 'utf-8');
 
     component = component.replace(/%\{CLASS}%/g, className);
     component = component.replace(/%\{NAME}%/g, name);
@@ -124,7 +129,7 @@ const generateComponent = (path, name, withRoute, className, viewExtends) => {
     }
 
     fs.appendFileSync(`${path}/application.js`,
-        `require('./dist/compiled/${camelToDash(name)}-${className.toLowerCase()}.js');\n`);
+        `require('./dist/compiled/${name}${className}/${camelToDash(name)}-${className.toLowerCase()}.js');\n`);
 };
 
 
@@ -309,6 +314,9 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
 
     generateView(path, 'views', 'Base', '', 'base-view.html');
     generateComponent(path, 'Sample', '*', 'Page', 'BaseView');
+
+    generateComponent(path, 'Test', '*', 'Page', 'BaseView', 'test-view.html',
+        'test-controller.ts', 'test-page.ts');
 };
 
 

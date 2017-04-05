@@ -5,7 +5,47 @@ import {EventType} from '../../EventManager/EventType';
 import {IEvent} from '../../EventManager/IEvent';
 
 
+declare const JSWorks: any;
+
+
 export abstract class AbstractListeningElement extends SimpleVirtualDOMElementExt {
+
+    /**
+     * Массив View, на компоненты которых нужно подписать тэги view-if и так далее.
+     * @type {Array}
+     */
+    public static viewsToSubscribe: View[] = [];
+
+
+    /**
+     * Подписаться на события от соответствующего компонента
+     * @param component
+     */
+    public subscribeOnComponent(component: any): void {
+        EventManager.subscribe(this, component, EventType.UPDATE, (event: IEvent) => {
+            if (event.data.name.toLowerCase() !== this.getAttribute('name')) {
+                return;
+            }
+
+            console.log(event);
+            this.propertyChange(event.data.name, event.data.value);
+        });
+    }
+
+
+    /**
+     * Фабрика элементов
+     * @returns {undefined}
+     */
+    public createElement(): AbstractListeningElement {
+        EventManager.subscribe(this, JSWorks.applicationContext, EventType.InstallViewsListeners, (ev) => {
+            if (this.view && this.view.component) {
+                this.subscribeOnComponent(this.view.component);
+            }
+        });
+
+        return undefined;
+    }
 
 
     /**
@@ -23,13 +63,9 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
     public propagateView(view: View): void {
         super.propagateView(view);
 
-        EventManager.subscribe(this, view.component, EventType.UPDATE, (event: IEvent) => {
-            if (event.data.name.toLowerCase() !== this.getAttribute('name')) {
-                return;
-            }
-
-            this.propertyChange(event.data.name, event.data.value);
-        });
+        if (this.view && this.view.component) {
+            this.subscribeOnComponent(this.view.component);
+        }
     }
 
 

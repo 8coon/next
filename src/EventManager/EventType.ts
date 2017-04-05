@@ -14,6 +14,8 @@ export enum EventType {
     DOMContentChange,
     ViewExtended,
     ViewsInheritanceRendered,
+    InstallViewsListeners,
+    ViewsListenersInstalled,
     ApplicationLoaded,
 }
 

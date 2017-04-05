@@ -1,0 +1,14 @@
+<app-view id="%{NAME}%View" %{EXTENDS}%>
+
+    <h2>This is %{NAME}%View.</h2>
+
+    <view-if name="color" condition="$ === 'green'">
+        <view-then>
+            Color is green
+        </view-then>
+        <view-else>
+            Color is not green
+        </view-else>
+    </view-if>
+
+</app-view>
