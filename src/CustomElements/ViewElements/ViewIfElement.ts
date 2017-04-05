@@ -1,4 +1,3 @@
-import {SimpleVirtualDOMElementExt} from '../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElementExt';
 import {JSWorksInternal} from '../../Common/InternalDecorator';
 import {View} from '../../View/View';
 import {JSWorksCustomElement} from '../CustomElementDecorator';
@@ -59,7 +58,7 @@ export class ViewIfElement extends AbstractConditionElement {
 
 
     /**
-     * <view-if name="propertyName" condition="$.toNumber() >= 3">
+     * <view-if condition="$.propertyName.toNumber() >= 3">
      *     <view-then>
      *         Greater or equals 3!
      *     </view-then>

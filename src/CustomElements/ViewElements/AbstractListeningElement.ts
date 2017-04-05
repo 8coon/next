@@ -17,11 +17,7 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
      */
     public subscribeOnComponent(component: any): void {
         EventManager.subscribe(this, component, EventType.UPDATE, (event: IEvent) => {
-            if (event.data.name.toLowerCase() !== this.getAttribute('name')) {
-                return;
-            }
-
-            this.propertyChange(event.data.name, event.data.value);
+            this.propertyChange();
         });
     }
 
@@ -57,11 +53,9 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
 
 
     /**
-     * Будет вызван при изменении свойства компонента, на которое данный тэг был подписан
-     * @param name
-     * @param value
+     * Будет вызван при изменении компонента, на который данный тэг был подписан
      */
-    public abstract propertyChange(name: string, value: any): void;
+    public abstract propertyChange(): void;
 
 }
 

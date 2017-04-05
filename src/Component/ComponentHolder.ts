@@ -2,6 +2,7 @@ import {ViewHolder} from '../View/ViewHolder';
 import {ControllerHolder} from '../Controller/ControllerHolder';
 import {ComponentConfig} from './ComponentConfig';
 import {JSWorksInternal} from '../Common/InternalDecorator';
+import {EventType} from '../EventManager/EventType';
 
 
 declare const JSWorks: any;
@@ -21,6 +22,20 @@ export class ComponentHolder {
     public load(views: ViewHolder, controllers: ControllerHolder): void {
         __JSWorks_components__.forEach((componentProto) => {
             const component = new componentProto();
+
+            component.variables = {};
+
+            component.setVariable = (name: string, value: any) => {
+                component.variables[name] = value;
+
+                if (component.emitEvent) {
+                    component.emitEvent({ type: EventType.UPDATE, data: undefined });
+                }
+            };
+
+            component.getVariable = (name: string) => {
+                return component.variables[name];
+            };
 
             const view = views.getView(componentProto.__view_name__);
             view.component = component;

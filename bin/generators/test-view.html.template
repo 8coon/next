@@ -2,7 +2,7 @@
 
     <h2>This is %{NAME}%View.</h2>
 
-    <view-if name="color" condition="$ === 'green'">
+    <view-if condition="$.color === 'green'">
         <view-then>
             Color is green
         </view-then>
