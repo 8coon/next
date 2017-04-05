@@ -21,8 +21,12 @@ export abstract class Router {
 
 
     constructor(baseUrl: string) {
-        const appContext: ApplicationContext = JSWorks.applicationContext;
         this.routeHolder = new RouteHolder();
+
+        if (baseUrl.endsWith('/')) {
+            baseUrl = baseUrl.slice(0, -1);
+        }
+
         this.baseUrl = baseUrl;
     }
 
@@ -31,7 +35,7 @@ export abstract class Router {
      * Найти роут и, если он существует, активировать его
      * @param path
      */
-    public pathChange(path: string): void {
+    public pathChange(path: string): {route: Route, pathVariables: object} {
         const matches = path.split('/');
         const pathVariables = {};
         let route = this.routeHolder.root;
@@ -45,6 +49,8 @@ export abstract class Router {
         });
 
         this.navigate(route, pathVariables);
+        // return {name: route.name, path: route.getPath(pathVariables), pathVariables};
+        return {route, pathVariables};
     }
 
 
@@ -65,7 +71,7 @@ export abstract class Router {
      */
     public findRoute(parent: Route, match: string, pathVariables: object): Route {
 
-        if (!parent.children[match]) {
+        if (parent.children[match] === undefined) {
             const pathVarChild = parent.children['*'];
 
             if (pathVarChild) {
@@ -73,7 +79,7 @@ export abstract class Router {
                 return pathVarChild;
             }
 
-            return undefined;
+            return;
         }
 
         return parent.children[match];

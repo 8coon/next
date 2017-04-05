@@ -30,7 +30,7 @@ JSWorks.__init__ = () => {
 window.addEventListener('load', () => {
     JSWorks.__init__();
     JSWorks.applicationContext = new JSWorks.Internal.ApplicationContext(JSWorks.__registerServices__()
-        , JSWorks.__registerControllers__(), JSWorks.Internal.HistoryAPIRouter('http://localhost:3000/'));
+        , JSWorks.__registerControllers__(), new JSWorks.Internal.HistoryAPIRouter('http://localhost:3000/'));
     JSWorks.applicationContext.run();
 });
 

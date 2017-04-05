@@ -12,7 +12,6 @@ describe('RouteHolder', () => {
         const routeHolder = appContext.router.routeHolder;
 
         expect(routeHolder).is.exist;
-        console.dir(routeHolder);
     });
 
     it('should load routes', done => {
@@ -73,7 +72,5 @@ describe('RouteHolder', () => {
 
         routeHolder.load();
     });
-
-
 
 });

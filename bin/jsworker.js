@@ -74,7 +74,11 @@ const generateRoute = (path, name, page, match, parent) => {
         routeTag.setAttribute('page', `${page}Page`);
     }
 
-    routeTag.setAttribute('match', match);
+    if (match === '') {
+        routeTag.setAttribute('default', '');
+    } else {
+        routeTag.setAttribute('match', match);
+    }
     routeParent.appendChild(routeTag);
     fs.writeFileSync(`${path}/application.html`, prettyPrint(serializeDocument(document)));
 };
@@ -279,6 +283,7 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
 
     generateController(path, 'Sample', '*', 'false');
 
+    generateRoute(path, 'Default', 'Default', '', '');
     generateRoute(path, undefined, undefined, 'api', '');
     generateRoute(path, 'Users', 'Users', 'users', 'api');
     generateRoute(path, 'Profile', 'Profile', ':id', 'users');

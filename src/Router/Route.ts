@@ -2,10 +2,13 @@
 import {Controller} from '../Controller/Controller';
 import {View} from '../View/View';
 import {JSWorksInternal} from '../Common/InternalDecorator';
+import {IEventEmitter} from '../EventManager/IEventEmitter';
+import {IEvent} from '../EventManager/IEvent';
+import {EventType} from '../EventManager/EventType';
 
 
 @JSWorksInternal
-export class Route {
+export class Route implements IEventEmitter {
 
     /**
      * вложенные роуты
@@ -44,7 +47,7 @@ export class Route {
     }
 
 
-    public fire(pathVariables: object): void {}  // tslint:disable-line
+    public fire(pathVariables: object): void { this.emitEvent({ type: EventType.ROUTE_FIRED, data: this });}  // tslint:disable-line
 
 
     /**
@@ -55,12 +58,15 @@ export class Route {
     public getPath(args: object): string {
         let path = this.path;
 
-        Object.keys(args).forEach((pathVar) => {
-            const regexp = new RegExp(pathVar);
-            path = path.replace(regexp, args[pathVar]);
-        });
+        if (args) {
+            Object.keys(args).forEach((pathVar) => {
+                const regexp = new RegExp(pathVar);
+                path = path.replace(regexp, args[pathVar]);
+            });
+        }
 
         return path;
     }
 
+    public emitEvent(event: IEvent): void {}  // tslint:disable-line
 }

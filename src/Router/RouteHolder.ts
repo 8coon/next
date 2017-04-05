@@ -72,7 +72,13 @@ export class RouteHolder implements IEventEmitter {
         }
 
         if (!parsedRoute.attributes['match']) {
-            throw new AttributeNotFound('match');
+
+            if (typeof parsedRoute.attributes['default'] === 'string') {
+                parsedRoute.attributes['match'] = '';
+            } else {
+                throw new AttributeNotFound('match');
+            }
+
         }
 
         path = path + '/' + parsedRoute.attributes['match'];

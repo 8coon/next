@@ -13,6 +13,7 @@ export enum EventType {
     DOMRemove,
     DOMContentChange,
     UrlChange,
+    ROUTE_FIRED,
 }
 
 
