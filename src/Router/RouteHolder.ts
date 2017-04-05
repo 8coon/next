@@ -7,10 +7,13 @@ import {Route} from './Route';
 import {WrongRouterNameError} from './Error/WrongRouterNameError';
 import {AttributeNotFound} from './Error/AttributeNotFound';
 import {RouteAlreadyExistError} from './Error/RouteAlreadyExistError';
+import {IEventEmitter} from '../EventManager/IEventEmitter';
+import {IEvent} from '../EventManager/IEvent';
+import {EventType} from '../EventManager/EventType';
 
 
 @JSWorksInternal
-export class RouteHolder {
+export class RouteHolder implements IEventEmitter {
 
 
     private routes: object;
@@ -33,11 +36,16 @@ export class RouteHolder {
             });
         });
 
+        this.emitEvent({ type: EventType.LOAD, data: this });
     }
 
 
     get root(): Route {
         return this._root;
+    }
+
+    public getRoute(name: string): Route {
+        return this.routes[name];
     }
 
 
@@ -90,6 +98,8 @@ export class RouteHolder {
             this.parseRoute(innerRoute, route, path);
         });
     }
+
+    public emitEvent(event: IEvent): void {}  // tslint:disable-line
 
 
 }

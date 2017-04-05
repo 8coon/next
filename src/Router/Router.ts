@@ -1,13 +1,10 @@
 
-import {JSWorksInternal} from '../Common/InternalDecorator';
-import {View} from '../View/View';
 import {RouteHolder} from './RouteHolder';
 import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 import {Route} from './Route';
 import {PathNotFoundError} from './Error/PathNotFoundError';
 
 
-@JSWorksInternal
 export abstract class Router {
 
     /**
