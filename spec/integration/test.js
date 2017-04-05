@@ -23,4 +23,4 @@ getTestServiceHolder = (services) => {
 getTestControllerHolder = () => {
     'use strict';
     return JSWorks.applicationContext.controllerHolder;
-}
+};

@@ -3,24 +3,32 @@ import {RouteHolder} from './RouteHolder';
 import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 import {Route} from './Route';
 import {PathNotFoundError} from './Error/PathNotFoundError';
+import {JSWorksInternal} from '../Common/InternalDecorator';
 
 
+@JSWorksInternal
 export abstract class Router {
+
+    /**
+     * старторвый домен
+     */
+    public baseUrl: string;
 
     /**
      * загрузщик роутов
      */
-    protected routeHolder: RouteHolder;
+    public routeHolder: RouteHolder;
 
 
-    constructor() {
+    constructor(baseUrl: string) {
         const appContext: ApplicationContext = JSWorks.applicationContext;
-        this.routeHolder = appContext.routeHolder;
+        this.routeHolder = new RouteHolder();
+        this.baseUrl = baseUrl;
     }
 
 
     /**
-     * проверка
+     * Найти роут и, если он существует, активировать его
      * @param path
      */
     public pathChange(path: string): void {
@@ -49,13 +57,13 @@ export abstract class Router {
 
 
     /**
-     * Найти рекурсивный поиск роута в детях родителя
+     * Поиск роута в детях родителя
      * @param parent
      * @param match
      * @param pathVariables
      * @returns {Route}
      */
-    protected findRoute(parent: Route, match: string, pathVariables: object): Route {
+    public findRoute(parent: Route, match: string, pathVariables: object): Route {
 
         if (!parent.children[match]) {
             const pathVarChild = parent.children['*'];
@@ -70,4 +78,5 @@ export abstract class Router {
 
         return parent.children[match];
     }
+
 }

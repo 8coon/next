@@ -16,7 +16,7 @@ import {EventType} from '../EventManager/EventType';
 export class RouteHolder implements IEventEmitter {
 
 
-    private routes: object;
+    private routes: object = {};
     private _root: Route = new Route('', '');
     private htmlParser: HTMLParserService;
 
@@ -44,9 +44,18 @@ export class RouteHolder implements IEventEmitter {
         return this._root;
     }
 
+    /**
+     * вернуть роут по имени
+     * @param name
+     * @returns {any}
+     */
     public getRoute(name: string): Route {
         return this.routes[name];
     }
+
+    // public getRouteByMatch(name: string): Route {
+    //
+    // }
 
 
     /**

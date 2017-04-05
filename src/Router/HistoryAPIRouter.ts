@@ -7,16 +7,9 @@ import {JSWorksInternal} from '../Common/InternalDecorator';
 @JSWorksInternal
 export class HistoryAPIRouter extends Router {
 
-    /**
-     * старторвый домен
-     */
-    public baseUrl: string;
 
     constructor(baseUrl: string) {
-        super();
-
-        this.baseUrl = baseUrl;
-
+        super(baseUrl);
         window.addEventListener('popstate', (event) => {
             const route: Route = event.state.route;
             route.fire(event.state.pathVariables);

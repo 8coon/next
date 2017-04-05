@@ -10,7 +10,7 @@ export class Route {
     /**
      * вложенные роуты
      */
-    public children: object;
+    public children: object = {};
 
     /**
      * имя переменной пути, начинается с ':', может быть нулл

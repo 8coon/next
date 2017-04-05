@@ -60,17 +60,20 @@ const generateView = (path, name, viewExtends) => {
 };
 
 
-const generateRoute = (path, name, controller, match, parent) => {
+const generateRoute = (path, name, page, match, parent) => {
     const document = jsdom(fs.readFileSync(`${path}/application.html`), {});
     const routeTag = document.createElement('app-route');
     let routeParent = document.body.querySelector('app-routes');
 
     if (parent.length > 0) {
-        routeParent = routeParent.querySelector(`#${parent}`);
+        routeParent = routeParent.querySelector(`app-route[match="${parent}"]`);
     }
 
-    routeTag.setAttribute('id', `${name}Route`);
-    routeTag.setAttribute('controller', controller);
+    if (name) {
+        routeTag.setAttribute('id', `${name}Route`);
+        routeTag.setAttribute('page', `${page}Page`);
+    }
+
     routeTag.setAttribute('match', match);
     routeParent.appendChild(routeTag);
     fs.writeFileSync(`${path}/application.html`, prettyPrint(serializeDocument(document)));
@@ -274,7 +277,17 @@ const startApp = (name, title, path, forTesting, jsWorksPath) => {
 const sampleApp = (path, forTesting, jsWorksPath) => {
     startApp('sample', 'Sample Application', path, forTesting, jsWorksPath);
 
-    generateController(path, 'Sample', '*', '*');
+    generateController(path, 'Sample', '*', 'false');
+
+    generateRoute(path, undefined, undefined, 'api', '');
+    generateRoute(path, 'Users', 'Users', 'users', 'api');
+    generateRoute(path, 'Profile', 'Profile', ':id', 'users');
+    generateRoute(path, 'EditProfile', 'EditProfile', 'edit', ':id');
+    generateRoute(path, undefined, undefined, 'posts', 'users');
+    generateRoute(path, 'UserPostsAll', 'UserPostsAll', 'all', 'posts');
+    generateRoute(path, 'UserPost', 'UserPost', ':slug', 'posts');
+    // generateRoute(path, 'Posts')
+
 };
 
 
