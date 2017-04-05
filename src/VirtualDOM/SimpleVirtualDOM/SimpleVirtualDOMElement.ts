@@ -299,6 +299,17 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
 
 
     /**
+     * Задать атрибут CSS стиля
+     * @param name
+     * @param value
+     */
+    public setStyleAttribute(name: string, value: any): void {
+        this.attributes['style'][name] = String(value || 'inherit');
+        this.emitMutilationEvent({ type: EventType.DOMPropertyChange, data: this });
+    }
+
+
+    /**
      * Задать атрибут виртуального элемента
      * @param name
      * @param value
@@ -644,6 +655,10 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
      * @param view
      */
     public propagateView(view: View): void {
+        if (this.view === view) {
+            return;
+        }
+
         this.view = view;
 
         this._children.forEach((child) => {

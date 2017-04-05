@@ -3,14 +3,12 @@ import {JSWorksInternal} from '../../Common/InternalDecorator';
 
 
 @JSWorksInternal
-export class SimpleVirtualDOMElementExt extends SimpleVirtualDOMElement {
+export abstract class SimpleVirtualDOMElementExt extends SimpleVirtualDOMElement {
 
 
     /**
      * Метод, возвращающий новый экземпляр данного элемента
      */
-    public createElement(): SimpleVirtualDOMElementExt {
-        return undefined;
-    }
+    public abstract createElement(): SimpleVirtualDOMElementExt;
 
 }
