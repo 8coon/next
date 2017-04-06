@@ -224,4 +224,67 @@ describe('SimpleVirtualDOMElement', () => {
     });
 
 
+    it('should clone itself', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const element = virtualDOM.createElement('div');
+        element.innerHTML = `
+            <div align="center">
+                <a href="https://google.com">Please visit Google to find some hot lol kek chebureks</a><br>
+                <ul id="classification">
+                    <li class="meme">lol</li>
+                    <li class="meme">kek</li>
+                    <li class="food">cheburek</li>
+                </ul>
+            </div>
+        `.split('\n').map((l) => { return l.trim(); }).join('');
+
+        const copy = element.cloneNode();
+        expect(copy.getOuterHTML()).to.equal(element.getOuterHTML());
+    });
+
+
+    it('should replace existing child with one or many nodes', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+
+        const element = virtualDOM.createElement('div');
+        element.innerHTML = `
+            <div align="center">
+                <a href="https://google.com">Please visit Google to find some hot lol kek chebureks</a>
+                <ul id="classification">
+                    <li class="meme">lol</li>
+                    <li id="replace-me" class="meme">kek</li>
+                    <li class="food">cheburek</li>
+                </ul>
+            </div>
+        `.split('\n').map((l) => { return l.trim(); }).join('');
+
+        const href = element.querySelector('a[href="https://google.com"]');
+        const hrefReplace = virtualDOM.createElement('DIV');
+        expect(href).to.be.ok;
+
+        const li = element.querySelector('li#replace-me');
+        const liReplace = [virtualDOM.createTextElement('chebu'), virtualDOM.createTextElement('rek')];
+        expect(li).to.be.ok;
+
+        href.parentNode.replaceChild(hrefReplace, href);
+        li.parentNode.replaceChild(liReplace, li);
+
+        const html = `
+            <div align="center">
+                <div></div>
+                <ul id="classification">
+                    <li class="meme">lol</li>
+                    cheburek
+                    <li class="food">cheburek</li>
+                </ul>
+            </div>
+        `.split('\n').map((l) => { return l.trim(); }).join('');
+
+        expect(element.innerHTML).to.equal(html);
+    });
+
+
 });

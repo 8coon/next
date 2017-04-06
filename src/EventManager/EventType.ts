@@ -12,6 +12,12 @@ export enum EventType {
     DOMChildRemove,
     DOMRemove,
     DOMContentChange,
+    ViewExtended,
+    ViewsInheritanceRendered,
+    InstallViewsListeners,
+    ViewsListenersInstalled,
+    ApplicationLoaded,
+    PostUpdate,
 }
 
 

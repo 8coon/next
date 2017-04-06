@@ -1,0 +1,34 @@
+'use strict';
+
+
+declare const JSWorks: any;
+
+
+@JSWorks.%{CLASS}%({ view: '%{NAME}%View', controller: '%{NAME}%Controller' })
+export class %{NAME}%%{CLASS}% {
+
+
+    @JSWorks.ComponentProperty()
+    public title: string = "Test Page";
+
+
+    @JSWorks.ComponentProperty()
+    public count: number = 0;
+
+
+    @JSWorks.ComponentProperty()
+    public color1: string = "green";
+
+
+    @JSWorks.ComponentProperty()
+    public color2: string = "green";
+
+
+    @JSWorks.ComponentCollectionProperty()
+    public persons: any[] = [
+        { name: "Asriel Dreemurr", age: 9000 },
+        { name: "Mae Borowski", age: 20 },
+    ];
+
+
+}

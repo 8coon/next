@@ -233,4 +233,37 @@ describe('SimpleVirtualDOM', () => {
         expect(dst.children.length).to.equal(5);
     });
 
+
+    it('should register, create and render custom element', () => {
+        const holder = getTestServiceHolder('SimpleVirtualDOM');
+        const virtualDOM = holder.getServiceByName('SimpleVirtualDOM');
+        let created = false;
+        let fired = false;
+
+        const customElement = virtualDOM.createElement('X-CUSTOM');
+
+        customElement.createElement = () => {
+            created = true;
+            return customElement;
+        };
+
+        JSWorks.EventManager.subscribe({}, customElement, JSWorks.EventType.CREATE, (event) => {
+            fired = true;
+        });
+
+        virtualDOM.registerCustomElement('X-CUSTOM', customElement);
+
+        const element = virtualDOM.createElement('DIV');
+        element.innerHTML = `
+            <x-custom id="lol" class="kek cheburek">
+                <div>I should be here!</div>
+            </x-custom>
+        `.split('\n').map((l) => { return l.trim(); }).join('');
+
+        expect(created).to.be.true;
+        expect(fired).to.be.true;
+        expect(element.querySelector('x-custom').innerHTML).to.equal('<div>I should be here!</div>');
+    });
+
+
 });

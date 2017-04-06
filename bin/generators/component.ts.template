@@ -1,0 +1,23 @@
+'use strict';
+
+
+declare const JSWorks: any;
+
+
+@JSWorks.%{CLASS}%({ view: '%{NAME}%View', controller: '%{NAME}%Controller' })
+export class %{NAME}%%{CLASS}% {
+
+
+    @JSWorks.ComponentProperty()
+    public testA: string;
+
+
+    @JSWorks.ComponentProperty({ onChange: 'onTestBChange' })
+    public testB: string = 'default';
+
+
+    @JSWorks.ComponentProperty({ mapping: '#h2@innerHTML' })
+    public testC: string;
+
+
+}

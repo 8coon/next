@@ -1,6 +1,5 @@
-import {IAbstractVirtualDOMElement} from './IAbstractVirtualDOMElement';
+import {IVirtualDOMElement} from './IVirtualDOMElement';
 import {IDOMParsed} from '../Parser/HTML/IDOMParsed';
-import {IVirtualDOMElementFactory} from './IVirtualDOMElementFactory';
 
 
 export abstract class VirtualDOM {
@@ -9,14 +8,14 @@ export abstract class VirtualDOM {
      * Создаёт элемент виртуального DOM по образу реального.
      * @param element
      */
-    public abstract createFromDOM(element: HTMLElement): IAbstractVirtualDOMElement;
+    public abstract createFromDOM(element: HTMLElement): IVirtualDOMElement;
 
 
     /**
      * Создаёт текстовый узел виртуального DOM.
      * @param text
      */
-    public abstract createTextElement(text: string): IAbstractVirtualDOMElement;
+    public abstract createTextElement(text: string): IVirtualDOMElement;
 
 
     /**
@@ -24,15 +23,6 @@ export abstract class VirtualDOM {
      * с именем тэга, соответствующему этой строке.
      * @param data {IDOMParsed | string}
      */
-    public abstract createElement(data: IDOMParsed | string): IAbstractVirtualDOMElement;
-
-
-    /**
-     * Создаёт виртуальный DOM элемент из фабрики, реализующей интерфейс {IVirtualDOMElementFactory}
-     * @param factory
-     * @param args
-     */
-    public abstract createCustomElement(factory: IVirtualDOMElementFactory, args: object):
-        IAbstractVirtualDOMElement;
+    public abstract createElement(data: IDOMParsed | string): IVirtualDOMElement;
 
 }

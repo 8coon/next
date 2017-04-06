@@ -1,7 +1,9 @@
 import {JSWorksInternal} from '../Common/InternalDecorator';
-import {ControllerAlreadyRegisteredError} from './Error/ControllerAlreadyRegisteredError';
-import {Controller} from './Controller';
-import {UknownControllerError} from './Error/UknownControllerError';
+import {ControllerAlreadyRegisteredError} from '../Error/ControllerAlreadyRegisteredError';
+import {UnknownControllerError} from '../Error/UnknownControllerError';
+
+
+declare const __JSWorks_controllers__: any[];
 
 
 @JSWorksInternal
@@ -12,27 +14,39 @@ export class ControllerHolder {
 
 
     /**
-     * Зарегистрировать контроллер
-     * @param controller экземпляр контролера имеет поле namе, оно же тип класса контроллера
+     * Загрузить все существующие контроллеры
      */
-    public registerController(controller: any): void {
-        if (this.controllers[controller.name]) {
-            throw new ControllerAlreadyRegisteredError(controller.name);
+    public load(): void {
+        __JSWorks_controllers__.forEach((controller) => {
+            this.registerController(controller);
+        });
+    }
+
+
+    /**
+     * Зарегистрировать контроллер
+     * @param controllerProto экземпляр контролера имеет поле namе, оно же тип класса контроллера
+     */
+    public registerController(controllerProto): void {
+        if (this.controllers[controllerProto.name]) {
+            throw new ControllerAlreadyRegisteredError(controllerProto.name);
         }
 
-        this.controllers[controller.name] = controller;
+        this.controllers[controllerProto.name] = new controllerProto();
         this.controllerCount++;
     }
+
 
     /**
      * Получить контроллер по имени(типу)
      * @param name
-     * @returns {Controller} экземляр контроллера
+     * @returns {object} экземляр контроллера
      */
-    public getController(name: string): Controller {
+    public getController(name: string): object {
         if (!this.controllers[name]) {
-            throw new UknownControllerError(name);
+            throw new UnknownControllerError(name);
         }
+
         return this.controllers[name];
     }
 

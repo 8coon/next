@@ -1,4 +1,4 @@
-import {HTTPError} from '../Service/Error/HTTPError';
+import {HTTPError} from '../Error/HTTPError';
 import {HTTPMethod} from './HTTPMethod';
 import {HTTPResponse} from './HTTPResponse';
 

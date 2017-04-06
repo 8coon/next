@@ -9,7 +9,7 @@ module.exports = {
 
     output: {
         filename: 'application.js',
-        path: `${__dirname}/dist/`
+        path: `${__dirname}/dist/out/`
     },
 
     devtool: 'source-map',

@@ -1,0 +1,71 @@
+<app-view id="%{NAME}%View" %{EXTENDS}%>
+
+    <h2>This is %{NAME}%View.</h2>
+
+    <view-if condition="$.color1 === 'green'">
+        <view-then>
+            Color is green
+        </view-then>
+        <view-else>
+            Color is not green
+        </view-else>
+    </view-if>
+
+    <view-switch>
+        <view-case condition="$.color2 === 'red'">
+            Color is red
+        </view-case>
+        <view-case condition="$.color2 === 'blue'">
+            Color is blue
+        </view-case>
+        <view-case>
+            Color is neither red nor blue
+        </view-case>
+    </view-switch>
+
+    <view-for variable="person" in="$.persons">
+        <view-eval value="person.name"></view-eval>
+        <view-eval value="person.age"></view-eval>
+        <br>
+    </view-for>
+
+    <view-for variable="person" in="$.persons">
+
+        <view-eval value="person.age < 30"></view-eval>
+        <view-eval value="'MaeBea'"></view-eval>
+
+        <view-if condition="person.age < 30" static><view-then>
+
+            This is probably Mae.
+
+            <view-if condition="person.name.includes('Mae')" static><view-then>
+
+                It's Maaaeee!!!!
+
+            </view-then><view-else>
+
+                It's no Mae :'C
+
+            </view-else></view-if>
+
+        </view-then><view-else>
+
+            Person's age is above or equal 30
+
+        </view-else></view-if>
+
+        <view-switch static>
+
+            <view-case condition="person.name.includes('Mae')">
+                Hello, Mae!
+            </view-case>
+
+            <view-case condition="person.name.includes('Asriel')">
+                Hello, Asriel!
+            </view-case>
+
+        </view-switch>
+
+    </view-for>
+
+</app-view>
