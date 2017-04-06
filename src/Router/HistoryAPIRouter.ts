@@ -3,6 +3,8 @@
 import {Router} from './Router';
 import {Route} from './Route';
 import {JSWorksInternal} from '../Common/InternalDecorator';
+import {EventManager} from '../EventManager/EventManager';
+import {EventType} from '../EventManager/EventType';
 
 @JSWorksInternal
 export class HistoryAPIRouter extends Router {
@@ -17,12 +19,14 @@ export class HistoryAPIRouter extends Router {
                 route.fire(event.state.pathVariables);
                 return;
             }
+        });
 
+        EventManager.subscribe(this, this.routeHolder, EventType.LOAD, (event) => {
             const path =  window.location.href.split('/', 4)[3];
-            // const state = this.pathChange(path);
             const state = this.pathChange(path);
-            this.navigate(state.route, state.pathVariables);
-            // window.history.replaceState(state, state.name, this.baseUrl + state.path);
+            state.route.fire(state.pathVariables);
+            window.history.replaceState({name: state.route.name, pathVariables: state.pathVariables},
+                state.route.name, this.baseUrl + state.route.getPath(state.pathVariables));
         });
     }
 
