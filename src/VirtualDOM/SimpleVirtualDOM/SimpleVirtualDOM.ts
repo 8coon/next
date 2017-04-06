@@ -71,6 +71,28 @@ export class SimpleVirtualDOM implements VirtualDOM {
 
     private hTMLParser: HTMLParserService;
     private customElements: object = {};
+    private _root: SimpleVirtualDOMElement;
+
+
+    /**
+     * Получить корневой элемент Virtual DOM
+     * @returns {SimpleVirtualDOMElement}
+     */
+    public get root(): SimpleVirtualDOMElement {
+        if (!this._root) {
+            this._root = new SimpleVirtualDOMElement(SimpleVirtualDOM.NextHash());
+            this._root.tagName = 'DIV';
+        }
+
+        return this._root;
+    }
+
+
+    /*
+    public setActiveElement(element: SimpleVirtualDOMElement): void {
+        // this._root.removeChildren();
+        // this._root.
+    } */
 
 
     /**
@@ -158,5 +180,15 @@ export class SimpleVirtualDOM implements VirtualDOM {
 
         this.customElements[tagName] = elementProto;
     }
+
+
+    /**
+     * Сливает виртуальный DOM с реальным
+     * @param realRoot
+     * @param virtualRoot
+     */
+    /* public merge(realRoot: Element, virtualRoot: SimpleVirtualDOM): void {
+
+    } */
 
 }

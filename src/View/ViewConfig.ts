@@ -94,4 +94,11 @@ export class ViewConfig {
      */
     public static readonly VIEW_EVAL_TAG: string = 'VIEW-EVAL';
 
+
+    /**
+     * Корневой тэг, куда рендерятся все View
+     * @type {string}
+     */
+    public static readonly ROOT_TAG: string = 'APP-MAIN';
+
 }

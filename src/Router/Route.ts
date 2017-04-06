@@ -2,6 +2,11 @@ import {JSWorksInternal} from '../Common/InternalDecorator';
 import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {IEvent} from '../EventManager/IEvent';
 import {EventType} from '../EventManager/EventType';
+import {ComponentHolder} from '../Component/ComponentHolder';
+import {ViewConfig} from '../View/ViewConfig';
+
+
+declare const JSWorks: any;
 
 
 @JSWorksInternal
@@ -48,7 +53,22 @@ export class Route implements IEventEmitter {
     }
 
 
-    public fire(pathVariables: object): void { this.emitEvent({ type: EventType.ROUTE_FIRED, data: this });}  // tslint:disable-line
+    /**
+     * Метод вызывается, когда на маршрут переходят
+     * @param pathVariables
+     */
+    public fire(pathVariables: object): void {
+        this.emitEvent({ type: EventType.ROUTE_FIRED, data: this });
+
+        const componentHolder: ComponentHolder = JSWorks.applicationContext.componentHolder;
+
+        if (this.pageName && componentHolder.getPage(this.pageName)) {
+            const page = componentHolder.getPage(this.pageName);
+            const root: Element = document.querySelector(ViewConfig.ROOT_TAG);
+
+            // page.ren
+        }
+    }
 
 
     /**
