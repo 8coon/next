@@ -14,6 +14,13 @@ export class CollectionProperty implements IEventEmitter {
     public dirty: boolean = false;
 
 
+    /**
+     * Словарь, хранящий информацию о том, какие тёги view-for обновили содержимое, а какие нет
+     * @type {{}}
+     */
+    public cleanForTag: object = {};
+
+
     private values: any[] = [];
     private lastIndex: number = 0;
 
@@ -251,7 +258,9 @@ export class CollectionProperty implements IEventEmitter {
 
 
     protected update(): void {
-        this.dirty = true;
+        // this.dirty = true;
+        this.cleanForTag = {};
+
         this.emitEvent({ type: EventType.UPDATE, data: undefined });
     }
 

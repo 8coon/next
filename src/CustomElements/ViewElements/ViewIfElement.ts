@@ -27,6 +27,22 @@ export class ViewIfElement extends AbstractConditionElement {
 
 
     /**
+     * Обновить все ноды в ветках условия
+     */
+    public customUpdate(): void {
+        super.customUpdate();
+
+        if (this.thenTemplate) {
+            this.thenTemplate.customUpdate();
+        }
+
+        if (this.elseTemplate) {
+            this.elseTemplate.customUpdate();
+        }
+    }
+
+
+    /**
      * См. View.propagateView
      * @param view
      */
@@ -36,6 +52,14 @@ export class ViewIfElement extends AbstractConditionElement {
         }
 
         super.propagateView(view);
+
+        if (this.thenTemplate) {
+            this.thenTemplate.propagateView(view);
+        }
+
+        if (this.elseTemplate) {
+            this.elseTemplate.propagateView(view);
+        }
 
         this._children.forEach((child: SimpleVirtualDOMElement) => {
             switch (child.tagName) {
@@ -76,9 +100,20 @@ export class ViewIfElement extends AbstractConditionElement {
         this.removeChildren();
 
         if (newValue) {
-            this.appendChild(<SimpleVirtualDOMElement[]> Array.from(this.thenTemplate.children));
+            this.appendChild((<any> this.thenTemplate)._children);
         } else {
-            this.appendChild(<SimpleVirtualDOMElement[]> Array.from(this.elseTemplate.children));
+            this.appendChild((<any> this.elseTemplate)._children);
+        }
+    }
+
+
+    protected customCloneNode(node: ViewIfElement): void {
+        if (this.thenTemplate) {
+            node.thenTemplate = this.thenTemplate.cloneNode();
+        }
+
+        if (this.elseTemplate) {
+            node.elseTemplate = this.elseTemplate.cloneNode();
         }
     }
 

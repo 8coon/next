@@ -30,6 +30,18 @@ export class ViewSwitchElement extends AbstractListeningElement {
 
 
     /**
+     * Обновить все ноды в ветках условия
+     */
+    public customUpdate(): void {
+        super.customUpdate();
+
+        Object.keys(this.switches).forEach((condition) => {
+            this.switches[condition].customUpdate();
+        });
+    }
+
+
+    /**
      * См. View.propagateView
      * @param view
      */
@@ -38,7 +50,12 @@ export class ViewSwitchElement extends AbstractListeningElement {
             return;
         }
 
+        // console.log(this.getOuterHTML(), 'view propagated', view);
         super.propagateView(view);
+
+        Object.keys(this.switches).forEach((condition) => {
+            this.switches[condition].propagateView(view);
+        });
 
         this._children.forEach((child: SimpleVirtualDOMElement) => {
             switch (child.tagName) {
@@ -98,6 +115,14 @@ export class ViewSwitchElement extends AbstractListeningElement {
                 this.appendChild(<SimpleVirtualDOMElement[]> Array.from(this.switches[condition].children));
                 found = true;
             }
+        });
+    }
+
+
+    protected customCloneNode(node: ViewSwitchElement): void {
+        Object.keys(this.switches).forEach((condition) => {
+            node.switches[condition] = this.switches[condition].cloneNode();
+            node.conditions.push(condition);
         });
     }
 

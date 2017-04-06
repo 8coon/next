@@ -15,6 +15,9 @@ describe('ViewForElement', () => {
 
         expect(html).to.contain('Mae Borowski').and.to.contain('20');
         expect(html).to.contain('Asriel Dreemurr').and.to.contain('9000');
+
+        expect(html).to.contain('This is probably Mae.').and.to.contain('It\'s Maaaeee!!!!');
+        expect(html).to.contain('Hello, Mae!');
     });
 
 
@@ -30,12 +33,16 @@ describe('ViewForElement', () => {
         expect(html).not.to.contain('Mae Borowski').and.to.contain('20');
         expect(html).to.contain('Asriel Dreemurr').and.to.contain('9000');
 
+        expect(html).to.contain('Person\'s age is above or equal 30');
+        expect(html).to.contain('Hello, Asriel!');
+
 
         // Test 2
         for (let i = 0; i < 10; i++) {
             page.persons.push({ name: 'Trash Mammal', age: 20 });
         }
 
+        html = page.view.DOMRoot.getOuterHTML();
         const elem = document.createElement('DIV');
         elem.innerHTML = page.view.DOMRoot.getOuterHTML();
         let mae = 0;
@@ -54,10 +61,15 @@ describe('ViewForElement', () => {
         expect(mae).to.equal(10);
         expect(asriel).to.equal(1);
 
+        expect(html).to.contain('This is probably Mae.');
+        expect(html).to.contain('It\'s no Mae :\'C');
+        expect(html).to.contain('Hello, Asriel!');
+
 
         // Test 3
         page.persons.clear();
 
+        html = page.view.DOMRoot.getOuterHTML();
         expect(page.view.DOMRoot.querySelector('view-for').children.length).to.equal(0);
 
 
@@ -68,6 +80,9 @@ describe('ViewForElement', () => {
         html = page.view.DOMRoot.getOuterHTML();
         expect(html).to.contain('Mae Borowski').and.to.contain('20');
         expect(html).to.contain('Asriel Dreemurr').and.to.contain('9000');
+
+        expect(html).to.contain('This is probably Mae.').and.to.contain('It\'s Maaaeee!!!!');
+        expect(html).to.contain('Hello, Mae!');
     });
 
 

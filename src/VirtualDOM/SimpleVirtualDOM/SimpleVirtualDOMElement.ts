@@ -122,6 +122,16 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
 
 
     /**
+     * Обновить пользовательские данные
+     */
+    public customUpdate(): void {
+        this._children.forEach((child) => {
+            child.customUpdate();
+        });
+    }
+
+
+    /**
      * Создаёт полную копию этого узла со всеми вложенными узлами.
      * @returns {SimpleVirtualDOMElement}
      */
@@ -152,6 +162,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
             element.appendChild(child.cloneNode());
         });
 
+        this.customCloneNode(element);
         element.propagateView(this.view);
         return element;
     }
@@ -698,6 +709,9 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
             this.view.askToRenderPolitely();
         }
     }
+
+
+    protected customCloneNode(node: SimpleVirtualDOMElement): void {}  // tslint:disable-line
 
 
     private renderHandlers() {

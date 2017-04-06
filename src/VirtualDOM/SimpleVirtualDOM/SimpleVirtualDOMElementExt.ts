@@ -11,6 +11,10 @@ export abstract class SimpleVirtualDOMElementExt extends SimpleVirtualDOMElement
      * @param statement
      */
     public execStatement(statement: string): any {
+        if (!this.view || !this.view.component) {
+            return;
+        }
+
         const variables = Object.keys(this.view.component.variables);
         const values = [];
 

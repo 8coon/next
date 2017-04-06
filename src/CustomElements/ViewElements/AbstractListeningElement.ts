@@ -38,7 +38,7 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
      */
     public createElement(): AbstractListeningElement {
         EventManager.subscribe(this, JSWorks.applicationContext, EventType.InstallViewsListeners, (ev) => {
-            if (this.view && this.view.component) {
+            if (this.view && this.view.component && !this.hasAttribute('static')) {
                 this.subscribeOnComponent(this.view.component);
             }
         });
@@ -48,10 +48,26 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
 
 
     /**
+     * Пересчитать условие
+     */
+    public customUpdate(): void {
+        if (this.view && this.view.component) {
+            this.propertyChange();
+        }
+    }
+
+
+    /**
      * Элементу была присвоена некоторая View
      * @param view
      */
     public propagateView(view: View): void {
+        if (this.hasAttribute('static')) {
+            super.propagateView(view);
+
+            return;
+        }
+
         if (this.view && this.view.component) {
             this.unsubscribeFromComponent(this.view.component);
         }
