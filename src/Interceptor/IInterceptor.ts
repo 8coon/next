@@ -4,9 +4,7 @@ import {InterceptorType} from './InterceptorType';
 
 export interface IInterceptor {
 
-    readonly type: InterceptorType;
+    type: InterceptorType;
 
-    before?():void;
-
-    after?():void;
+    intercept(args: object): Promise<any>;
 }
