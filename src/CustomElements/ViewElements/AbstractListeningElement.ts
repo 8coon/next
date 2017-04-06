@@ -10,35 +10,25 @@ declare const JSWorks: any;
 
 export abstract class AbstractListeningElement extends SimpleVirtualDOMElementExt {
 
-
-    /**
-     * Выполняет выражение в области видимости View
-     * @param statement
-     */
-    public execStatement(statement: string): any {
-        const variables = Object.keys(this.view.component.variables);
-        const values = [];
-
-        variables.forEach((varName) => {
-            values.push(this.view.component.variables[varName]);
-        });
-
-        values.push(this.view.component);
-        variables.push('$');
-
-        const condFunc = new Function(variables.join(','), `return ${statement};`);
-        return condFunc.call({}, ...values);
-    }
-
+    private updateDescriptor: number;
 
     /**
      * Подписаться на события от соответствующего компонента
      * @param component
      */
     public subscribeOnComponent(component: any): void {
-        EventManager.subscribe(this, component, EventType.UPDATE, (event: IEvent) => {
+        this.updateDescriptor = EventManager.subscribe(this, component, EventType.UPDATE, (event: IEvent) => {
             this.propertyChange();
         });
+    }
+
+
+    /**
+     * Отписаться от событий компонента
+     * @param component
+     */
+    public unsubscribeFromComponent(component: any): void {
+        EventManager.unsubscribe(this.updateDescriptor, component);
     }
 
 
@@ -62,7 +52,9 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
      * @param view
      */
     public propagateView(view: View): void {
-        // ToDo: unsubscribe
+        if (this.view && this.view.component) {
+            this.unsubscribeFromComponent(this.view.component);
+        }
 
         super.propagateView(view);
 

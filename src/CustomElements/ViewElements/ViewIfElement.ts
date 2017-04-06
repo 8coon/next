@@ -31,6 +31,10 @@ export class ViewIfElement extends AbstractConditionElement {
      * @param view
      */
     public propagateView(view: View): void {
+        if (this.view === view) {
+            return;
+        }
+
         super.propagateView(view);
 
         this._children.forEach((child: SimpleVirtualDOMElement) => {

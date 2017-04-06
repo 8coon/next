@@ -80,4 +80,18 @@ export class ViewConfig {
      */
     public static readonly VIEW_FOR_TAG: string = 'VIEW-FOR';
 
+
+    /**
+     * Тэг view-item
+     * @type {string}
+     */
+    public static readonly VIEW_ITEM: string = 'VIEW-ITEM';
+
+
+    /**
+     * Тэг view-eval
+     * @type {string}
+     */
+    public static readonly VIEW_EVAL_TAG: string = 'VIEW-EVAL';
+
 }

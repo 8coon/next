@@ -136,7 +136,8 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
             element = virtualDOM.createTextElement(this.text);
         }
 
-        element.view = this.view;
+        // element.view = this.view;
+        // element.propagateView(this.view);
 
         Object.keys(this.attributes).forEach((attr) => {
             element.setAttribute(attr, this.getAttribute(attr));
@@ -151,6 +152,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
             element.appendChild(child.cloneNode());
         });
 
+        element.propagateView(this.view);
         return element;
     }
 
@@ -421,7 +423,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         child.propagateView(this.view);
 
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
-        EventManager.subscribe(this, child);
+        child['__descriptor__'] = EventManager.subscribe(this, child);
     }
 
 
@@ -444,7 +446,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         child.propagateView(this.view);
 
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
-        EventManager.subscribe(this, child);
+        child['__descriptor__'] = EventManager.subscribe(this, child);
     }
 
 
@@ -459,8 +461,8 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
 
         this._children.splice(this._children.indexOf(child, 0), 1);
         child._parentNode = undefined;
-        // ToDo: Unsubscribe
 
+        EventManager.unsubscribe(child['__descriptor__'], child);
         this.emitMutilationEvent({ type: EventType.DOMChildRemove, data: { parent: this, child: child } });
     }
 
@@ -469,9 +471,11 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
      * Удалить всех потомков
      */
     public removeChildren(): void {
-        this._children.forEach((child) => {
-            this.removeChild(child);
-        });
+        for (let i = this._children.length - 1; i >= 0; i--) {
+            this.removeChild(this._children[i]);
+        }
+
+        this._children = [];
     }
 
 
@@ -504,7 +508,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
             child.propagateView(this.view);
 
             this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
-            EventManager.subscribe(this, child);
+            child['__descriptor__'] = EventManager.subscribe(this, child);
         });
 
         delete this._children[index];

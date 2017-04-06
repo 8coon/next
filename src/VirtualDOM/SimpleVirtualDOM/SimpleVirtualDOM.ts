@@ -116,6 +116,7 @@ export class SimpleVirtualDOM implements VirtualDOM {
 
             if (this.customElements[element.tagName]) {
                 element = this.customElements[element.tagName].createElement();
+                element.tagName = (<string> data).toUpperCase();
                 element.emitEvent({ type: EventType.CREATE, data: element });
             }
 

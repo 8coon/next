@@ -28,6 +28,7 @@ export class ComponentHolder {
             const component = new componentProto();
             component.variables = {};
 
+
             component.setVariable = (name: string, value: any) => {
                 component.variables[name] = value;
 
@@ -36,16 +37,23 @@ export class ComponentHolder {
                 }
             };
 
+
             component.getVariable = (name: string) => {
                 return component.variables[name];
             };
 
-            (componentProto.__collections__ || []).forEach((name) => {
+            component.subscribeCollection = (name: string) => {
+                if (component[name].__subscribed__) {
+                    return;
+                }
+
                 const oldCollection: CollectionProperty = component[name];
                 component[name] = new CollectionProperty();
+                component[name].__subscribed__ = true;
 
                 EventManager.subscribe({}, component[name], EventType.UPDATE, (event: IEvent) => {
                     const emit = () => {
+
                         if (component.emitEvent) {
                             component.emitEvent({ type: EventType.UPDATE, data: {} });
                             component.emitEvent({ type: EventType.PostUpdate, data: {} });
@@ -67,6 +75,11 @@ export class ComponentHolder {
                 if (oldCollection && oldCollection.length > 0) {
                     component[name].setValues(oldCollection.getValues());
                 }
+            };
+
+
+            (componentProto.__collections__ || []).forEach((name) => {
+                component.subscribeCollection(name);
             });
 
             const view = views.getView(componentProto.__view_name__);
@@ -95,6 +108,10 @@ export class ComponentHolder {
                     throw new Error(`Unknown component type: ${componentProto.__type__}`);
                 }
 
+            }
+
+            if (component.emitEvent) {
+                component.emitEvent({ type: EventType.CREATE, data: component });
             }
         });
     }

@@ -7,6 +7,12 @@ import {EventType} from '../EventManager/EventType';
 @JSWorksInternal
 export class CollectionProperty implements IEventEmitter {
 
+    /**
+     * Флаг, указывающий, что представление коллекции необходимо обновить
+     * @type {boolean}
+     */
+    public dirty: boolean = false;
+
 
     private values: any[] = [];
     private lastIndex: number = 0;
@@ -92,6 +98,98 @@ export class CollectionProperty implements IEventEmitter {
 
 
     /**
+     * Удалить элемент под индексом
+     * @param index
+     */
+    public remove(index: number | number[]): void {
+        if (index instanceof Array) {
+            index.forEach((i) => {
+                this.remove(i);
+            });
+
+            return;
+        }
+
+        this.splice(index, 1);
+    }
+
+
+    /**
+     * Удалить первое вхождение данного элемента
+     * @param item
+     */
+    public removeItem(item: any): void {
+        const index = this.indexOf(item);
+
+        if (index >= 0) {
+            this.remove(index);
+        }
+    }
+
+
+    /**
+     * Вернуть массив индексов всех вхождений данного элемента
+     * @param item
+     * @returns {number[]}
+     */
+    public indexesOf(item: any): number[] {
+        const result: number[] = [];
+
+        this.getValues().forEach((value, index) => {
+            if (value === item) {
+                result.push(index);
+            }
+        });
+
+        return result;
+    }
+
+
+    /**
+     * Удалить все вхождения данного элемента
+     * @param item
+     */
+    public removeItemAll(item: any): void {
+        this.getValues().forEach((value, index) => {
+            if (value === item) {
+                this.remove(index);
+            }
+        });
+    }
+
+
+    /**
+     * Индекс первого вхождения данного элемента
+     * @param item
+     * @returns {number}
+     */
+    public indexOf(item: any): number {
+        return this.getValues().indexOf(item);
+    }
+
+
+    /**
+     * Индекс последнего вхождения данного элемента
+     * @param item
+     * @param fromIndex
+     * @returns {number}
+     */
+    public lastIndexOf(item: any, fromIndex?: number): number {
+        return this.getValues().lastIndexOf(item, fromIndex);
+    }
+
+
+    /**
+     * Проверка на вхождение элемента
+     * @param item
+     * @returns {boolean}
+     */
+    public includes(item: any): boolean {
+        return this.indexOf(item) >= 0;
+    }
+
+
+    /**
      * Получить элемент коллекции под индексом
      * @param index
      * @returns {any}
@@ -137,9 +235,9 @@ export class CollectionProperty implements IEventEmitter {
     public [Symbol.iterator](): Iterator<any> {
         return {
             next: () => {
-                if (this.lastIndex < this.values.length) {
+                if (this.lastIndex < this.length) {
                     this.lastIndex++;
-                    return { value: this.values[this.lastIndex - 1], done: false };
+                    return { value: this.get(this.lastIndex - 1), done: false };
                 }
 
                 this.lastIndex = 0;
@@ -153,6 +251,7 @@ export class CollectionProperty implements IEventEmitter {
 
 
     protected update(): void {
+        this.dirty = true;
         this.emitEvent({ type: EventType.UPDATE, data: undefined });
     }
 

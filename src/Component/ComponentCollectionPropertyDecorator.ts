@@ -1,5 +1,8 @@
 import {IComponentPropertyDecoratorData} from './IComponentPropertyDecoratorData';
 import {CollectionProperty} from './CollectionProperty';
+import {EventType} from '../EventManager/EventType';
+import {EventManager} from '../EventManager/EventManager';
+import {IEvent} from '../EventManager/IEvent';
 
 
 declare const JSWorks: any;
@@ -28,6 +31,18 @@ export function JSWorksComponentCollectionProperty(data?: IComponentPropertyDeco
             set: function(value: any) {
                 this[`__${name}_collection__`] = this[`__${name}_collection__`] || new CollectionProperty();
                 const collection: CollectionProperty = this[`__${name}_collection__`];
+
+                collection['__descriptor__'] = collection['__descriptor__'] || EventManager.subscribeUnique(
+                        collection['__descriptor__'], {}, this, EventType.CREATE, (event: IEvent) => {
+                    if (this.subscribeCollection && !collection['__subscribed__']) {
+                        this.subscribeCollection(name);
+                        this[name] = value;
+                    }
+                });
+
+                if (!collection['__subscribed__']) {
+                    return;
+                }
 
                 if (value instanceof Array) {
                     collection.setValues(value);

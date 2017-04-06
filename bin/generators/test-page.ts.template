@@ -24,4 +24,11 @@ export class %{NAME}%%{CLASS}% {
     public color2: string = "green";
 
 
+    @JSWorks.ComponentCollectionProperty()
+    public persons: any[] = [
+        { name: "Asriel Dreemurr", age: 9000 },
+        { name: "Mae Borowski", age: 20 },
+    ];
+
+
 }

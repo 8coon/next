@@ -4,6 +4,7 @@ import {JSWorksPage} from './Component/PageDecorator';
 import {JSWorksService} from './Service/ServiceDecorator';
 import {JSWorksComponentProperty} from './Component/ComponentPropertyDecorator';
 import {JSWorksCustomElement} from './CustomElements/CustomElementDecorator';
+import {JSWorksComponentCollectionProperty} from './Component/ComponentCollectionPropertyDecorator';
 
 
 declare const JSWorks: any;
@@ -30,6 +31,7 @@ JSWorks.__init__ = () => {
     JSWorks.Page = JSWorksPage;
     JSWorks.ComponentProperty = JSWorksComponentProperty;
     JSWorks.CustomElement = JSWorksCustomElement;
+    JSWorks.ComponentCollectionProperty = JSWorksComponentCollectionProperty;
 };
 
 
