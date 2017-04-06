@@ -1,5 +1,4 @@
-
-import {JSWorksError} from '../../Service/Error/ErrorDecorator';
+import {JSWorksError} from './ErrorDecorator';
 
 
 @JSWorksError

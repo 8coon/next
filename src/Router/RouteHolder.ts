@@ -4,12 +4,15 @@ import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 import {HTMLParserService} from '../Parser/HTML/HTMLParserService';
 import {IDOMParsed} from '../Parser/HTML/IDOMParsed';
 import {Route} from './Route';
-import {WrongRouterNameError} from './Error/WrongRouterNameError';
-import {AttributeNotFound} from './Error/AttributeNotFound';
-import {RouteAlreadyExistError} from './Error/RouteAlreadyExistError';
+import {WrongRouterNameError} from '../Error/WrongRouterNameError';
+import {AttributeNotFound} from '../Error/AttributeNotFound';
+import {RouteAlreadyExistError} from '../Error/RouteAlreadyExistError';
 import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {IEvent} from '../EventManager/IEvent';
 import {EventType} from '../EventManager/EventType';
+
+
+declare const JSWorks: any;
 
 
 @JSWorksInternal
@@ -32,7 +35,7 @@ export class RouteHolder implements IEventEmitter {
 
         routes.forEach((route) => {
             Array.from(route.children).forEach((routeTag) => {
-                this.parseRoute(routeTag, this._root, '');
+                this.parseRoute(routeTag, appContext.routeHolder.root, '');
             });
         });
 

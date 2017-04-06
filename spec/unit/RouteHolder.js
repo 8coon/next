@@ -3,74 +3,68 @@
 
 describe('RouteHolder', () => {
 
-    it('should exists', () => {
-        expect(JSWorks.Internal.RouteHolder).is.exist;
+
+    it('should exist', () => {
+        expect(JSWorks.Internal.RouteHolder).to.be.ok;
     });
 
-    it('should created at appContext', () => {
+
+    it('should be created at appContext', () => {
         const appContext = JSWorks.applicationContext;
-        const routeHolder = appContext.router.routeHolder;
+        const routeHolder = appContext.routeHolder;
 
-        expect(routeHolder).is.exist;
+        expect(routeHolder).to.be.ok;
     });
 
-    it('should load routes', done => {
-        const routeHolder = new JSWorks.Internal.RouteHolder();
 
-        JSWorks.EventManager.subscribe({}, routeHolder, JSWorks.EventType.LOAD, (event) => {
-            const apiRoute = routeHolder.root.children['api'];
-            expect(apiRoute).is.ok;
-            expect(apiRoute.match).to.equal('api');
-            expect(apiRoute.path).to.equal('/api');
+    it('should load routes', () => {
+        const routeHolder = JSWorks.applicationContext.routeHolder;
 
-            const usersRoute = apiRoute.children['users'];
-            expect(usersRoute.name).to.equal('UsersRoute');
-            expect(usersRoute.pageName).to.equal('UsersPage');
-            expect(usersRoute.path).to.equal('/api/users');
+        const apiRoute = routeHolder.root.children['api'];
+        expect(apiRoute).to.be.ok;
+        expect(apiRoute.match).to.equal('api');
+        expect(apiRoute.path).to.equal('/api');
 
-            const profileRoute = usersRoute.children['*'];
-            expect(profileRoute.name).to.equal('ProfileRoute');
-            expect(profileRoute.pageName).to.equal('ProfilePage');
-            expect(profileRoute.pathVariableName).to.equal(':id');
-            expect(profileRoute.path).to.equal('/api/users/:id');
+        const usersRoute = apiRoute.children['users'];
+        expect(usersRoute.name).to.equal('UsersRoute');
+        expect(usersRoute.pageName).to.equal('UsersPage');
+        expect(usersRoute.path).to.equal('/api/users');
 
-            const editRoute = profileRoute.children['edit'];
-            expect(editRoute.name).to.equal('EditProfileRoute');
-            expect(editRoute.pageName).to.equal('EditProfilePage');
-            expect(editRoute.path).to.equal('/api/users/:id/edit');
+        const profileRoute = usersRoute.children['*'];
+        expect(profileRoute.name).to.equal('ProfileRoute');
+        expect(profileRoute.pageName).to.equal('ProfilePage');
+        expect(profileRoute.pathVariableName).to.equal(':id');
+        expect(profileRoute.path).to.equal('/api/users/:id');
 
-            const postsRoute = usersRoute.children['posts'];
-            expect(postsRoute.match).to.equal('posts');
-            expect(postsRoute.path).to.equal('/api/users/posts');
-            expect(postsRoute.name).is.undefined;
+        const editRoute = profileRoute.children['edit'];
+        expect(editRoute.name).to.equal('EditProfileRoute');
+        expect(editRoute.pageName).to.equal('EditProfilePage');
+        expect(editRoute.path).to.equal('/api/users/:id/edit');
 
-            const allPostsRoute = postsRoute.children['all'];
-            expect(allPostsRoute.name).to.equal('UserPostsAllRoute');
-            expect(allPostsRoute.pageName).to.equal('UserPostsAllPage');
-            expect(allPostsRoute.path).to.equal('/api/users/posts/all');
+        const postsRoute = usersRoute.children['posts'];
+        expect(postsRoute.match).to.equal('posts');
+        expect(postsRoute.path).to.equal('/api/users/posts');
+        expect(postsRoute.name).to.be.undefined;
 
-            const postRoute = postsRoute.children['*'];
-            expect(postRoute.name).to.equal('UserPostRoute');
-            expect(postRoute.pageName).to.equal('UserPostPage');
-            expect(postRoute.pathVariableName).to.equal(':slug');
-            expect(postRoute.path).to.equal('/api/users/posts/:slug');
+        const allPostsRoute = postsRoute.children['all'];
+        expect(allPostsRoute.name).to.equal('UserPostsAllRoute');
+        expect(allPostsRoute.pageName).to.equal('UserPostsAllPage');
+        expect(allPostsRoute.path).to.equal('/api/users/posts/all');
 
-            done();
-        });
-
-        routeHolder.load();
+        const postRoute = postsRoute.children['*'];
+        expect(postRoute.name).to.equal('UserPostRoute');
+        expect(postRoute.pageName).to.equal('UserPostPage');
+        expect(postRoute.pathVariableName).to.equal(':slug');
+        expect(postRoute.path).to.equal('/api/users/posts/:slug');
     });
 
-    it('should gets routes by name', done => {
-        const routeHolder = new JSWorks.Internal.RouteHolder();
 
-        JSWorks.EventManager.subscribe({}, routeHolder, JSWorks.EventType.LOAD, (event) => {
-            expect(routeHolder.getRoute('UsersRoute')).is.exist;
-            expect(routeHolder.getRoute('UsersRoute').match).to.equal('users');
-            done();
-        });
+    it('should return routes by name', () => {
+        const routeHolder = JSWorks.applicationContext.routeHolder;
 
-        routeHolder.load();
+        expect(routeHolder.getRoute('UsersRoute')).to.be.ok;
+        expect(routeHolder.getRoute('UsersRoute').match).to.equal('users');
     });
+
 
 });

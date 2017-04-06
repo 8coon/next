@@ -2,8 +2,5 @@
 
 export enum InterceptorType {
     RouteBeforeNavigateInterceptor,
-    RouteAfterNavigateInterceptor
+    RouteAfterNavigateInterceptor,
 }
-
-declare const JSWorks: any;
-JSWorks.InterceptorType = InterceptorType;

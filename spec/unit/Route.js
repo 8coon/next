@@ -3,7 +3,7 @@
 describe('Route', () => {
 
     it('should exist', () => {
-        expect(JSWorks.Internal.Route).is.ok;
+        expect(JSWorks.Internal.Route).to.be.ok;
     });
 
 
@@ -11,12 +11,12 @@ describe('Route', () => {
 
         const route = new JSWorks.Internal.Route('main', 'http://localhost:3000/main',
             undefined, 'MainRoute', 'MainPage');
-        expect(route).is.ok;
+
+        expect(route).to.be.ok;
         expect(route.pageName).to.equal('MainPage');
         expect(route.path).to.equal('http://localhost:3000/main');
         expect(route.match).to.equal('main');
-        expect(route.pathVariableName).is.undefined;
-
+        expect(route.pathVariableName).to.be.undefined;
     });
 
 
@@ -27,6 +27,7 @@ describe('Route', () => {
 
         const pathVariables = {':id': '123', ':login':'vileven'};
         const realPath = 'http://localhost:3000/users/123/vileven/profile';
+
         expect(route.getPath(pathVariables)).to.equal(realPath);
     });
 

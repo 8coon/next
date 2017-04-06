@@ -10,6 +10,7 @@ import {EventType} from '../EventManager/EventType';
 import {IEvent} from '../EventManager/IEvent';
 import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {CustomElementHolder} from '../CustomElements/CustomElementHolder';
+import {HistoryAPIRouter} from '../Router/HistoryAPIRouter';
 
 
 declare const JSWorks: any;
@@ -81,10 +82,20 @@ export class ApplicationContext implements IEventEmitter {
     }
 
 
+    /**
+     * Все роуты хранятся тут
+     * @returns {RouteHolder}
+     */
+    public get routeHolder(): RouteHolder {
+        return this._routeHolder;
+    }
+
+
     private _serviceHolder: ServiceHolder;
     private _viewHolder: ViewHolder;
     private _controllerHolder: ControllerHolder;
     private _router: Router;
+    private _routeHolder: RouteHolder;
     private _componentHolder: ComponentHolder;
     private _customElementHolder: CustomElementHolder;
     private _loaded: boolean = false;
@@ -100,7 +111,7 @@ export class ApplicationContext implements IEventEmitter {
         this._controllerHolder = new ControllerHolder();
         this._componentHolder = new ComponentHolder();
         this._customElementHolder = new CustomElementHolder();
-        this._router = new JSWorks.Internal.HistoryAPIRouter(location.host);
+        this._routeHolder = new RouteHolder();
     }
 
 
@@ -125,7 +136,12 @@ export class ApplicationContext implements IEventEmitter {
 
                     case EventType.ViewsListenersInstalled: {
                         this._loaded = true;
-                        this._router.routeHolder.load();
+
+                        this.routeHolder.load();
+
+                        const host = `${location.href.split(':')[0]}://${location.host}`;
+                        this._router = new HistoryAPIRouter(host);
+
                         this.emitEvent({ type: EventType.ApplicationLoaded, data: this });
 
                         return;

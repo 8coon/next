@@ -1,5 +1,6 @@
+import {JSWorksError} from './ErrorDecorator';
 
-import {JSWorksError} from '../../Service/Error/ErrorDecorator';
+
 @JSWorksError
 export class WrongRouterNameError extends Error {
 

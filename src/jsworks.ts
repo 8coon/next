@@ -5,6 +5,8 @@ import {JSWorksService} from './Service/ServiceDecorator';
 import {JSWorksComponentProperty} from './Component/ComponentPropertyDecorator';
 import {JSWorksCustomElement} from './CustomElements/CustomElementDecorator';
 import {JSWorksComponentCollectionProperty} from './Component/ComponentCollectionPropertyDecorator';
+import {EventType} from './EventManager/EventType';
+import {InterceptorType} from './Interceptor/InterceptorType';
 
 
 declare const JSWorks: any;
@@ -24,6 +26,8 @@ JSWorks.__registerServices__ = () => {
 
 JSWorks.__init__ = () => {
     JSWorks.EventManager = JSWorks.Internal.EventManager;
+    JSWorks.EventType = EventType;
+    JSWorks.InterceptorType = InterceptorType;
 
     JSWorks.Service = JSWorksService;
     JSWorks.Controller = JSWorksController;

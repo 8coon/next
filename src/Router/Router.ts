@@ -1,9 +1,9 @@
-
-import {RouteHolder} from './RouteHolder';
-import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 import {Route} from './Route';
-import {PathNotFoundError} from './Error/PathNotFoundError';
+import {PathNotFoundError} from '../Error/PathNotFoundError';
 import {JSWorksInternal} from '../Common/InternalDecorator';
+
+
+declare const JSWorks: any;
 
 
 @JSWorksInternal
@@ -14,15 +14,8 @@ export abstract class Router {
      */
     public baseUrl: string;
 
-    /**
-     * загрузщик роутов
-     */
-    public routeHolder: RouteHolder;
-
 
     constructor(baseUrl: string) {
-        this.routeHolder = new RouteHolder();
-
         if (baseUrl.endsWith('/')) {
             baseUrl = baseUrl.slice(0, -1);
         }
@@ -38,7 +31,7 @@ export abstract class Router {
     public pathChange(path: string): {route: Route, pathVariables: object} {
         const matches = path.split('/');
         const pathVariables = {};
-        let route = this.routeHolder.root;
+        let route = JSWorks.applicationContext.routeHolder.root;
 
         matches.forEach((match) => {
             route = this.findRoute(route, match, pathVariables);

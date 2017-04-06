@@ -1,16 +1,17 @@
-
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {IInterceptor} from './IInterceptor';
 import {InterceptorType} from './InterceptorType';
-import {InterceptorNotFound} from './Error/InterceptorNotFound';
-// import {__JSWorks_interceptors__} from './InterceptorDecorator';
+import {InterceptorNotFound} from '../Error/InterceptorNotFound';
+
 
 declare const __JSWorks_interceptors__: any[];
+
 
 @JSWorksInternal
 export class InterceptorHolder {
 
     private _interceptors: object;
+
 
     /**
      * получить всех перехватчиков
@@ -20,13 +21,14 @@ export class InterceptorHolder {
         return this._interceptors;
     }
 
+
     /**
      * загрузить всех перехватчиков
      */
-    public load():void {
+    public load(): void {
         __JSWorks_interceptors__.forEach((interceptor: IInterceptor) => {
             this.registerInterceptor(interceptor);
-        })
+        });
     }
 
 
@@ -38,6 +40,7 @@ export class InterceptorHolder {
     public getInterceptorsByType(interceptorType: InterceptorType): IInterceptor[] {
         return this._interceptors[interceptorType];
     }
+
 
     /**
      * активировать перехватчики данного типа
@@ -55,7 +58,7 @@ export class InterceptorHolder {
 
         // последовательное выполнение интерсептеров
         this._interceptors[interceptorType].forEach((interceptor: IInterceptor) => {
-            promise = promise.then( () => { return interceptor.intercept(args); } );
+            promise = promise.then(() => { return interceptor.intercept(args); });
         });
 
         return promise;
@@ -67,7 +70,7 @@ export class InterceptorHolder {
      * @param interceptor перехватчик реализующий интерфейс IInterceptor
      */
     private registerInterceptor(interceptor: IInterceptor): void {
-        if(!this._interceptors[interceptor.type]) {
+        if (!this._interceptors[interceptor.type]) {
             this._interceptors[interceptor.type] = [];
         }
 

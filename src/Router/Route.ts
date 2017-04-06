@@ -1,6 +1,3 @@
-
-import {Controller} from '../Controller/Controller';
-import {View} from '../View/View';
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {IEvent} from '../EventManager/IEvent';
@@ -35,7 +32,11 @@ export class Route implements IEventEmitter {
      */
     public path: string;
 
-    private pageName: string;
+
+    /**
+     * Имя страницы, к которой ведёт данный маршрут
+     */
+    public pageName: string;
 
 
     constructor(match: string, path: string, pathVariableName?: string, name?: string, pageName?: string) {

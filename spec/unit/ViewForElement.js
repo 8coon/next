@@ -13,6 +13,8 @@ describe('ViewForElement', () => {
         const page = JSWorks.applicationContext.componentHolder.getPage('TestPage');
         const html = page.view.DOMRoot.getOuterHTML();
 
+        expect(html).to.contain('MaeBea');
+
         expect(html).to.contain('Mae Borowski').and.to.contain('20');
         expect(html).to.contain('Asriel Dreemurr').and.to.contain('9000');
 
