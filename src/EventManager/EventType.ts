@@ -12,6 +12,8 @@ export enum EventType {
     DOMChildRemove,
     DOMRemove,
     DOMContentChange,
+    UrlChange,
+    ROUTE_FIRED,
     ViewExtended,
     ViewsInheritanceRendered,
     InstallViewsListeners,

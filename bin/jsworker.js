@@ -72,12 +72,20 @@ const generateRoute = (path, name, page, match, parent) => {
     let routeParent = document.body.querySelector('app-routes');
 
     if (parent.length > 0) {
-        routeParent = routeParent.querySelector(`#${parent}`);
+        routeParent = routeParent.querySelector(`app-route[match="${parent}"]`);
     }
 
-    routeTag.setAttribute('id', `${name}Route`);
-    routeTag.setAttribute('page', page);
-    routeTag.setAttribute('match', match);
+    if (name) {
+        routeTag.setAttribute('id', `${name}Route`);
+        routeTag.setAttribute('page', `${page}Page`);
+    }
+
+    if (match === '') {
+        routeTag.setAttribute('default', '');
+    } else {
+        routeTag.setAttribute('match', match);
+    }
+
     routeParent.appendChild(routeTag);
     fs.writeFileSync(`${path}/application.html`, prettyPrint(serializeDocument(document)));
 };
@@ -311,6 +319,16 @@ const startApp = (name, title, path, forTesting, jsWorksPath) => {
 
 const sampleApp = (path, forTesting, jsWorksPath) => {
     startApp('sample', 'Sample Application', path, forTesting, jsWorksPath);
+
+    generateRoute(path, 'Default', 'Default', '', '');
+    generateRoute(path, undefined, undefined, 'api', '');
+    generateRoute(path, 'Users', 'Users', 'users', 'api');
+    generateRoute(path, 'Profile', 'Profile', ':id', 'users');
+    generateRoute(path, 'EditProfile', 'EditProfile', 'edit', ':id');
+    generateRoute(path, undefined, undefined, 'posts', 'users');
+    generateRoute(path, 'UserPostsAll', 'UserPostsAll', 'all', 'posts');
+    generateRoute(path, 'UserPost', 'UserPost', ':slug', 'posts');
+    // generateRoute(path, 'Posts')
 
     generateView(path, 'views', 'Base', '', 'base-view.html');
     generateComponent(path, 'Sample', '*', 'Page', 'BaseView');

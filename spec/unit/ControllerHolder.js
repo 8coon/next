@@ -33,7 +33,7 @@ describe('ControllerHolder', () => {
 
    it('should register controller and return it', () => {
        const controllerHolder = new JSWorks.Internal.ControllerHolder();
-       expect(controllerHolder).to.not.equal(undefined);
+       expect(controllerHolder).is.ok;
 
        const controllerPrototype = createControllerMuppet('Muppet');
 

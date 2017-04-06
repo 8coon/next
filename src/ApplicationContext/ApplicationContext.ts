@@ -2,6 +2,8 @@ import {ServiceHolder} from '../Service/ServiceHolder';
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {ViewHolder} from '../View/ViewHolder';
 import {ControllerHolder} from '../Controller/ControllerHolder';
+import {RouteHolder} from '../Router/RouteHolder';
+import {Router} from '../Router/Router';
 import {ComponentHolder} from '../Component/ComponentHolder';
 import {EventManager} from '../EventManager/EventManager';
 import {EventType} from '../EventManager/EventType';
@@ -25,6 +27,14 @@ export class ApplicationContext implements IEventEmitter {
         return this._loaded;
     }
 
+
+    /**
+     * Роутер
+     * @returns {Router}
+     */
+    get router(): Router {
+        return this._router;
+    }
 
     /**
      * Все контроллеры хранятся тут
@@ -74,6 +84,7 @@ export class ApplicationContext implements IEventEmitter {
     private _serviceHolder: ServiceHolder;
     private _viewHolder: ViewHolder;
     private _controllerHolder: ControllerHolder;
+    private _router: Router;
     private _componentHolder: ComponentHolder;
     private _customElementHolder: CustomElementHolder;
     private _loaded: boolean = false;
@@ -89,6 +100,7 @@ export class ApplicationContext implements IEventEmitter {
         this._controllerHolder = new ControllerHolder();
         this._componentHolder = new ComponentHolder();
         this._customElementHolder = new CustomElementHolder();
+        this._router = new JSWorks.Internal.HistoryAPIRouter(location.host);
     }
 
 
@@ -113,6 +125,7 @@ export class ApplicationContext implements IEventEmitter {
 
                     case EventType.ViewsListenersInstalled: {
                         this._loaded = true;
+                        this._router.routeHolder.load();
                         this.emitEvent({ type: EventType.ApplicationLoaded, data: this });
 
                         return;
