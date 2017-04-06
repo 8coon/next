@@ -37,12 +37,12 @@
 
       "methods": {
         "locations": ["all"],
-        "privacies": ["public", "protected"]
+        "privacies": ["public"]
       },
 
       "namespaces": {
         "locations": ["all"],
-        "privacies": ["public", "protected"]
+        "privacies": ["public"]
       },
 
       "interfaces": {
@@ -50,7 +50,7 @@
       },
 
       "properties": {
-        "privacies": ["public", "protected"]
+        "privacies": ["public"]
       },
 
       "classes": {

@@ -14,6 +14,12 @@ export enum EventType {
     DOMContentChange,
     UrlChange,
     ROUTE_FIRED,
+    ViewExtended,
+    ViewsInheritanceRendered,
+    InstallViewsListeners,
+    ViewsListenersInstalled,
+    ApplicationLoaded,
+    PostUpdate,
 }
 
 

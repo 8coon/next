@@ -1,0 +1,7 @@
+declare const JSWorks: any;
+
+
+@JSWorks.Controller
+export class %{NAME}%Controller {
+
+}

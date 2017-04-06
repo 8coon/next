@@ -4,13 +4,29 @@ import {ViewHolder} from '../View/ViewHolder';
 import {ControllerHolder} from '../Controller/ControllerHolder';
 import {RouteHolder} from '../Router/RouteHolder';
 import {Router} from '../Router/Router';
+import {ComponentHolder} from '../Component/ComponentHolder';
+import {EventManager} from '../EventManager/EventManager';
+import {EventType} from '../EventManager/EventType';
+import {IEvent} from '../EventManager/IEvent';
+import {IEventEmitter} from '../EventManager/IEventEmitter';
+import {CustomElementHolder} from '../CustomElements/CustomElementHolder';
 
 
 declare const JSWorks: any;
 
 
 @JSWorksInternal
-export class ApplicationContext {
+export class ApplicationContext implements IEventEmitter {
+
+
+    /**
+     * Флаг, устанавливающийся в true при полной загрузке приложения.
+     * @returns {boolean}
+     */
+    public get loaded(): boolean {
+        return this._loaded;
+    }
+
 
     /**
      * Роутер
@@ -24,9 +40,10 @@ export class ApplicationContext {
      * Все контроллеры хранятся тут
      * @returns {ControllerHolder}
      */
-    get controllerHolder(): ControllerHolder {
+    public get controllerHolder(): ControllerHolder {
         return this._controllerHolder;
     }
+
 
     /**
      * Все сервисы хранятся тут
@@ -46,24 +63,44 @@ export class ApplicationContext {
     }
 
 
+    /**
+     * Все компоненты и страницы хранятся тут
+     * @returns {ComponentHolder}
+     */
+    public get componentHolder(): ComponentHolder {
+        return this._componentHolder;
+    }
+
+
+    /**
+     * Все пользовательские элементы DOM хранятся тут
+     * @returns {CustomElementHolder}
+     */
+    public get customElementHolder(): CustomElementHolder {
+        return this._customElementHolder;
+    }
+
 
     private _serviceHolder: ServiceHolder;
     private _viewHolder: ViewHolder;
     private _controllerHolder: ControllerHolder;
     private _router: Router;
+    private _componentHolder: ComponentHolder;
+    private _customElementHolder: CustomElementHolder;
+    private _loaded: boolean = false;
 
 
     /**
      *
      * @param services
-     * @param controllers
-     * @param router
      */
-    constructor(services: ServiceHolder, controllers: ControllerHolder, router: Router) {
+    constructor(services: ServiceHolder) {
         this._serviceHolder = services;
         this._viewHolder = new ViewHolder();
-        this._controllerHolder = controllers;
-        this._router = router;
+        this._controllerHolder = new ControllerHolder();
+        this._componentHolder = new ComponentHolder();
+        this._customElementHolder = new CustomElementHolder();
+        this._router = new JSWorks.Internal.HistoryAPIRouter(location.host);
     }
 
 
@@ -72,8 +109,41 @@ export class ApplicationContext {
      */
     public run(): void {
         this.serviceHolder.instantiateServices();
-        this._viewHolder.load();
-        this._router.routeHolder.load();
+
+        EventManager.subscribe({}, this.viewHolder, EventType.LOAD, (event: IEvent) => {
+            this.componentHolder.load(this.viewHolder, this.controllerHolder);
+
+            EventManager.subscribe({}, this, undefined, (event2) => {
+                switch (event2.type) {
+
+                    default: break;
+
+                    case EventType.ViewsInheritanceRendered: {
+                        this.emitEvent({ type: EventType.InstallViewsListeners, data: this });
+                        this.emitEvent({ type: EventType.ViewsListenersInstalled, data: this });
+                    } break;
+
+                    case EventType.ViewsListenersInstalled: {
+                        this._loaded = true;
+                        this._router.routeHolder.load();
+                        this.emitEvent({ type: EventType.ApplicationLoaded, data: this });
+
+                        return;
+                    }
+
+                }
+            });
+
+            this.emitEvent({ type: EventType.LOAD, data: this });
+        });
+
+        this.customElementHolder.load();
+        this.viewHolder.load();
+        this.controllerHolder.load();
     }
+
+
+    public emitEvent(event: IEvent) {}  // tslint:disable-line
+
 
 }

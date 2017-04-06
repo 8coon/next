@@ -1,6 +1,14 @@
+import {JSWorksController} from './Controller/ControllerDecorator';
+import {JSWorksComponent} from './Component/ComponentDecorator';
+import {JSWorksPage} from './Component/PageDecorator';
+import {JSWorksService} from './Service/ServiceDecorator';
+import {JSWorksComponentProperty} from './Component/ComponentPropertyDecorator';
+import {JSWorksCustomElement} from './CustomElements/CustomElementDecorator';
+import {JSWorksComponentCollectionProperty} from './Component/ComponentCollectionPropertyDecorator';
+
+
 declare const JSWorks: any;
 declare const __JSWorks_services__: any;
-declare const __JSWorks_controllers__: any;
 
 
 JSWorks.__registerServices__ = () => {
@@ -13,24 +21,25 @@ JSWorks.__registerServices__ = () => {
     return holder;
 };
 
-JSWorks.__registerControllers__ = () => {
-    const holder = new JSWorks.Internal.ControllerHolder();
-    __JSWorks_controllers__.forEach((controllerData) => {
-        holder.registerController(controllerData);
-    });
-    return holder;
-};
-
 
 JSWorks.__init__ = () => {
     JSWorks.EventManager = JSWorks.Internal.EventManager;
+
+    JSWorks.Service = JSWorksService;
+    JSWorks.Controller = JSWorksController;
+    JSWorks.Component = JSWorksComponent;
+    JSWorks.Page = JSWorksPage;
+    JSWorks.ComponentProperty = JSWorksComponentProperty;
+    JSWorks.CustomElement = JSWorksCustomElement;
+    JSWorks.ComponentCollectionProperty = JSWorksComponentCollectionProperty;
 };
 
 
+JSWorks.__init__();
+
+
 window.addEventListener('load', () => {
-    JSWorks.__init__();
-    JSWorks.applicationContext = new JSWorks.Internal.ApplicationContext(JSWorks.__registerServices__()
-        , JSWorks.__registerControllers__(), new JSWorks.Internal.HistoryAPIRouter('http://localhost:3000/'));
+    JSWorks.applicationContext = new JSWorks.Internal.ApplicationContext(JSWorks.__registerServices__());
     JSWorks.applicationContext.run();
 });
 

@@ -41,22 +41,28 @@ const prettyPrint = (html) => {
 };
 
 
-const generateView = (path, name, viewExtends) => {
-    let view = fs.readFileSync('./bin/generators/view.html.template', 'utf-8');
+const generateView = (path, folder, name, viewExtends, templateFile) => {
+    templateFile = templateFile || 'view.html';
+    let view = fs.readFileSync(`./bin/generators/${templateFile}.template`, 'utf-8');
 
-    view = view.replace('%{NAME}%', name);
-    view = view.replace('%{EXTENDS}%', viewExtends);
+    view = view.replace(/%\{NAME}%/g, name);
+
+    if ((viewExtends || '').length > 0) {
+        view = view.replace(/%\{EXTENDS}%/g, `extends="${viewExtends}"`);
+    } else {
+        view = view.replace(/%\{EXTENDS}%/g, '');
+    }
 
     let style = fs.readFileSync('./bin/generators/view.scss.template', 'utf-8');
 
-    mkdirp.sync(`${path}/views/${name}View/`);
-    fs.writeFileSync(`${path}/views/${name}View/${camelToDash(name)}-view.html`, view);
-    fs.writeFileSync(`${path}/views/${name}View/${camelToDash(name)}-view.scss`, style);
+    mkdirp.sync(`${path}/${folder}/${name}View/`);
+    fs.writeFileSync(`${path}/${folder}/${name}View/${camelToDash(name)}-view.html`, view);
+    fs.writeFileSync(`${path}/${folder}/${name}View/${camelToDash(name)}-view.scss`, style);
 
     fs.appendFileSync(`${path}/application.js`,
-        `require('./views/${name}View/${camelToDash(name)}-view.scss');\n`);
+        `require('./${folder}/${name}View/${camelToDash(name)}-view.scss');\n`);
     fs.appendFileSync(`${path}/application.js`,
-        `require('./views/${name}View/${camelToDash(name)}-view.html');\n`);
+        `require('./${folder}/${name}View/${camelToDash(name)}-view.html');\n`);
 };
 
 
@@ -79,38 +85,59 @@ const generateRoute = (path, name, page, match, parent) => {
     } else {
         routeTag.setAttribute('match', match);
     }
+
     routeParent.appendChild(routeTag);
     fs.writeFileSync(`${path}/application.html`, prettyPrint(serializeDocument(document)));
 };
 
 
-const generateController = (path, name, withView, withRoute) => {
-    let controller = fs.readFileSync('./bin/generators/controller.js.template', 'utf-8');
+const generateController = (path, folder, name, withView, viewExtends, viewTemplate, templateFile) => {
+    templateFile = templateFile || 'controller.ts';
+    let controller = fs.readFileSync(`./bin/generators/${templateFile}.template`, 'utf-8');
 
-    controller = controller.replace('%{NAME}%', name);
+    controller = controller.replace(/%\{NAME}%/g, name);
 
-    mkdirp.sync(`${path}/controllers/${name}Controller/`);
-    fs.writeFileSync(`${path}/controllers/${name}Controller/${camelToDash(name)}-controller.js`, controller);
-
-    const document = jsdom(fs.readFileSync(`${path}/application.html`), {});
-    const controllerTag = document.createElement('app-controller');
-    controllerTag.setAttribute('id', `${name}Controller`);
+    mkdirp.sync(`${path}/${folder}/${name}Controller/`);
+    fs.writeFileSync(`${path}/${folder}/${name}Controller/${camelToDash(name)}-controller.ts`, controller);
 
     if (withView === '*') {
-        controllerTag.setAttribute('view', `${name}View`);
-        generateView(path, name, '');
-    } else if (!(withView === '')) {
-        controllerTag.setAttribute('view', withView);
+        generateView(path, folder, name, viewExtends || '', viewTemplate);
     }
 
-    document.body.querySelector('app-info app-controllers').appendChild(controllerTag);
-    fs.writeFileSync(`${path}/application.html`, prettyPrint(serializeDocument(document)));
+    const outFolder = folder.slice(folder.indexOf('/'));
     fs.appendFileSync(`${path}/application.js`,
-            `require('./controllers/${name}Controller/${camelToDash(name)}-controller.js');\n`);
+            `require('./dist/compiled/${outFolder}/${name}Controller/${camelToDash(name)}-controller.js');\n`);
+};
 
-    if (withRoute !== 'false') {
-        generateRoute(path, name, `${name}Controller`, camelToDash(name), '');
+
+const generateComponent = (path, name, withRoute, className, viewExtends, viewTemplate,
+                           controllerTemplate, templateFile) => {
+    className = className || 'Page';
+    let folder = 'components';
+
+    if (className === 'Page') {
+        folder = 'pages';
     }
+
+    mkdirp.sync(`${path}/${folder}/${name}${className}/`);
+    generateController(path, `${folder}/${name}${className}`, name, '*', viewExtends || '',
+        viewTemplate, controllerTemplate);
+
+    templateFile = templateFile || 'component.ts';
+    let component = fs.readFileSync(`./bin/generators/${templateFile}.template`, 'utf-8');
+
+    component = component.replace(/%\{CLASS}%/g, className);
+    component = component.replace(/%\{NAME}%/g, name);
+
+    fs.writeFileSync(`${path}/${folder}/${name}${className}/${camelToDash(name)}-${className.toLowerCase()}.ts`,
+        component);
+
+    if (withRoute !== 'false' && className === 'Page') {
+        generateRoute(path, name, `${name}Page`, camelToDash(name), '');
+    }
+
+    fs.appendFileSync(`${path}/application.js`,
+        `require('./dist/compiled/${name}${className}/${camelToDash(name)}-${className.toLowerCase()}.js');\n`);
 };
 
 
@@ -122,9 +149,9 @@ const generateStaticServer = (path, title, jsWorksPath, forTesting) => {
         testsPath = '/../../spec';
     }
 
-    server = server.replace('%{TITLE}%', title);
-    server = server.replace('%{JSWORKS_PATH}%', jsWorksPath);
-    server = server.replace('%{TESTS_PATH}%', testsPath);
+    server = server.replace(/%\{TITLE}%/g, title);
+    server = server.replace(/%\{JSWORKS_PATH}%/g, jsWorksPath);
+    server = server.replace(/%\{TESTS_PATH}%/g, testsPath);
 
     fs.writeFileSync(`${path}/server.js`, server);
 };
@@ -182,9 +209,9 @@ const generateApplication = (path, name, title, forTesting) => {
         testingOutput = testingOutput.replace('%{TESTS}%', getTests(path, forTesting).join('\n'));
     }
 
-    application = application.replace('%{TITLE}%', title);
-    application = application.replace('%{TESTING}%', testing);
-    application = application.replace('%{TESTING-OUTPUT}%', testingOutput);
+    application = application.replace(/%\{TITLE}%/g, title);
+    application = application.replace(/%\{TESTING}%/g, testing);
+    application = application.replace(/%\{TESTING-OUTPUT}%/g, testingOutput);
 
 
     fs.writeFileSync(`${path}/application.html`, application);
@@ -198,7 +225,11 @@ const generateApplication = (path, name, title, forTesting) => {
         license: 'MIT',
 
         scripts: {
-            start: 'node ./node_modules/webpack/bin/webpack.js && node ./server.js'
+            start: `
+                node ./node_modules/typescript/bin/tsc && 
+                node ./node_modules/webpack/bin/webpack.js &&
+                node ./server.js
+            `.replace('\n', '')
         },
 
         dependencies: {
@@ -223,18 +254,26 @@ const generateApplication = (path, name, title, forTesting) => {
 
     const tsConfig = {
         "compilerOptions": {
-            "outDir": "./dist/",
+            "outDir": "./dist/compiled/",
             "sourceMap": true,
-            "noImplicitAny": true,
-            "module": "commonjs",
-            "target": "es5"
+            "alwaysStrict": true,
+            "target": "es5",
+            "experimentalDecorators": true,
+            "emitDecoratorMetadata": true,
         },
+
         "include": [
             "./**/*"
+        ],
+
+        "exclude": [
+            "node_modules",
+            "spec",
+            "dist"
         ]
     };
 
-    fs.writeFileSync(`${path}/tsconfig.json`, JSON.stringify(nodePackage, null, 4));
+    fs.writeFileSync(`${path}/tsconfig.json`, JSON.stringify(tsConfig, null, 4));
 
     const jsWorksManifest = {
         application: {
@@ -264,9 +303,9 @@ const cleanApp = (path) => {
 
 const startApp = (name, title, path, forTesting, jsWorksPath) => {
     mkdirp.sync(path);
-    mkdirp.sync(`${path}/controllers`);
     mkdirp.sync(`${path}/views`);
     mkdirp.sync(`${path}/components`);
+    mkdirp.sync(`${path}/pages`);
     mkdirp.sync(`${path}/models`);
     mkdirp.sync(`${path}/helpers`);
     mkdirp.sync(`${path}/spec`);
@@ -281,8 +320,6 @@ const startApp = (name, title, path, forTesting, jsWorksPath) => {
 const sampleApp = (path, forTesting, jsWorksPath) => {
     startApp('sample', 'Sample Application', path, forTesting, jsWorksPath);
 
-    generateController(path, 'Sample', '*', 'false');
-
     generateRoute(path, 'Default', 'Default', '', '');
     generateRoute(path, undefined, undefined, 'api', '');
     generateRoute(path, 'Users', 'Users', 'users', 'api');
@@ -293,6 +330,11 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
     generateRoute(path, 'UserPost', 'UserPost', ':slug', 'posts');
     // generateRoute(path, 'Posts')
 
+    generateView(path, 'views', 'Base', '', 'base-view.html');
+    generateComponent(path, 'Sample', '*', 'Page', 'BaseView');
+
+    generateComponent(path, 'Test', '*', 'Page', 'BaseView', 'test-view.html',
+        'test-controller.ts', 'test-page.ts');
 };
 
 
@@ -331,7 +373,7 @@ switch (process.argv[2]) {
                 // ToDo: model generator
             } break;
 
-            case 'view': {
+            /* case 'view': {
                 const name = parseArg('--name', 'Unnamed');
                 const viewExtends = parseArg('--extends', '');
 
@@ -344,14 +386,14 @@ switch (process.argv[2]) {
                 const withRoute = parseArg('--withRoute', '*');
 
                 generateController(path, name);
+            } break; */
+
+            case 'component': {
+                // ToDo: component generator
             } break;
 
             case 'helper': {
                 // ToDo: helper generator
-            } break;
-
-            case 'component': {
-                // ToDo: component generator
             } break;
 
             case 'spec': {

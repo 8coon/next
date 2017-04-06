@@ -2,13 +2,14 @@ import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {IEventReceiver} from '../EventManager/IEventReceiver';
 import {IEvent} from '../EventManager/IEvent';
 import {IViewParsed} from './IViewParsed';
-import {IAbstractVirtualDOMElement} from '../VirtualDOM/IAbstractVirtualDOMElement';
+import {IVirtualDOMElement} from '../VirtualDOM/IVirtualDOMElement';
 import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 import {VirtualDOM} from '../VirtualDOM/VirtualDOM';
 import {ViewConfig} from './ViewConfig';
 import {JSWorksInternal} from '../Common/InternalDecorator';
-import {ElementNotPoliteError} from '../Service/Error/ElementNotPoliteError';
+import {ElementNotPoliteError} from '../Error/ElementNotPoliteError';
 import {EventType} from '../EventManager/EventType';
+import {SimpleVirtualDOMElement} from '../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
 
 
 declare const JSWorks: any;
@@ -17,9 +18,22 @@ declare const JSWorks: any;
 @JSWorksInternal
 export class View implements IEventEmitter, IEventReceiver {
 
+
+    /**
+     * Связанный с данной View компонент
+     */
+    public component: any;
+
+
+    /**
+     * Контекст приложения (Задаётся после загрузки соответствующего компонента/страницы).
+     */
+    public applicationContext: ApplicationContext;
+
+
     private _id: string;
-    private template: IAbstractVirtualDOMElement;
-    private _DOMRoot: IAbstractVirtualDOMElement;
+    private template: IVirtualDOMElement;
+    private _DOMRoot: IVirtualDOMElement;
 
     private appContext: ApplicationContext;
     private virtualDOM: VirtualDOM;
@@ -28,15 +42,21 @@ export class View implements IEventEmitter, IEventReceiver {
 
     constructor(data: IViewParsed) {
         this._id = data.id;
-        this.template = data.template;
+        // this.template = data.template;
 
         this.appContext = JSWorks.applicationContext;
         this.virtualDOM = this.appContext.serviceHolder.getService('VirtualDOM');
 
-        this._DOMRoot = this.virtualDOM.createElement(ViewConfig.VIEW_TAG);
+        this._DOMRoot = data.template;
+        (<SimpleVirtualDOMElement> this._DOMRoot).propagateView(this);
+
+        /* this._DOMRoot = this.virtualDOM.createElement(ViewConfig.VIEW_TAG);
         this._DOMRoot.id = this._id;
         this._DOMRoot.view = this;
-        this._DOMRoot.innerHTML = this.template.innerHTML;
+        this._DOMRoot.innerHTML = this.template.innerHTML; */
+
+        // this._DOMRoot = this.template.cloneNode();
+        // this._DOMRoot.view = this;
     }
 
 
@@ -51,10 +71,10 @@ export class View implements IEventEmitter, IEventReceiver {
 
     /**
      * Корневой элемент DOM данной View.
-     * @returns {IAbstractVirtualDOMElement}
+     * @returns {IVirtualDOMElement}
      * @constructor
      */
-    public get DOMRoot(): IAbstractVirtualDOMElement {
+    public get DOMRoot(): IVirtualDOMElement {
         return this._DOMRoot;
     }
 

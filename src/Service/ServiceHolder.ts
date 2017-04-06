@@ -1,8 +1,8 @@
-import {ServiceAlreadyRegisteredError} from './Error/ServiceAlreadyRegisteredError';
-import {ServiceUnresolvableError} from './Error/ServiceUnresolvableError';
+import {ServiceAlreadyRegisteredError} from '../Error/ServiceAlreadyRegisteredError';
+import {ServiceUnresolvableError} from '../Error/ServiceUnresolvableError';
 
-import {UnknownServiceError} from './Error/UnknownServiceError';
-import {UnknownServiceTypeError} from './Error/UnknownServiceTypeError';
+import {UnknownServiceError} from '../Error/UnknownServiceError';
+import {UnknownServiceTypeError} from '../Error/UnknownServiceTypeError';
 import {JSWorksInternal} from '../Common/InternalDecorator';
 
 
@@ -72,7 +72,7 @@ export class ServiceHolder {
      * Получить сервис по имени. Выбрасывает UnknownServiceError в случае, если сервис с таким
      * типом не был зарегистрирован.
      * @param serviceName имя сервиса
-     * @returns {anu}
+     * @returns {any}
      */
     public getServiceByName(serviceName: string): any {
         if (this.serviceInstances[serviceName]) {

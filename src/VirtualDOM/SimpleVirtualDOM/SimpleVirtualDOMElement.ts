@@ -1,4 +1,4 @@
-import {IAbstractVirtualDOMElement} from '../IAbstractVirtualDOMElement';
+import {IVirtualDOMElement} from '../IVirtualDOMElement';
 import {VirtualDOMElementArray} from '../VirtualDOMElementArray';
 import {IEvent} from '../../EventManager/IEvent';
 import {IEventEmitter} from '../../EventManager/IEventEmitter';
@@ -12,8 +12,11 @@ import {ApplicationContext} from '../../ApplicationContext/ApplicationContext';
 import {View} from '../../View/View';
 
 
+declare const JSWorks: any;
+
+
 @JSWorksInternal
-export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
+export class SimpleVirtualDOMElement implements IVirtualDOMElement {
 
     /**
      * Переводит имена тэгов в нижний регистр в свойстве innerHTML и методе getOuterHTML
@@ -41,18 +44,18 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     public view: View;
 
 
-    private _tagName: string;
-    private _parentNode: SimpleVirtualDOMElement;
-    private _children: SimpleVirtualDOMElement[] = [];
-    private _text: string;
-    private classes: object = {};
-    private attributes: object = { style: {} };
-    private handlers: object = {};
-    private selectorCache: object = {};
-    private _hash: any;
+    protected _tagName: string;
+    protected _parentNode: SimpleVirtualDOMElement;
+    protected _children: SimpleVirtualDOMElement[] = [];
+    protected _text: string;
+    protected classes: object = {};
+    protected attributes: object = { style: {} };
+    protected handlers: object = {};
+    protected selectorCache: object = {};
+    protected _hash: any;
 
-    private readonly HASH_KEY: string = '__jsworks_hash__';
-    private readonly HANDLERS_KEY: string = '__jsworks_handlers__';
+    protected readonly HASH_KEY: string = '__jsworks_hash__';
+    protected readonly HANDLERS_KEY: string = '__jsworks_handlers__';
 
 
     constructor(hash) {
@@ -118,6 +121,53 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     }
 
 
+    /**
+     * Обновить пользовательские данные
+     */
+    public customUpdate(): void {
+        this._children.forEach((child) => {
+            child.customUpdate();
+        });
+    }
+
+
+    /**
+     * Создаёт полную копию этого узла со всеми вложенными узлами.
+     * @returns {SimpleVirtualDOMElement}
+     */
+    public cloneNode(): SimpleVirtualDOMElement {
+        const appContext = JSWorks.applicationContext;
+        const virtualDOM = appContext.serviceHolder.getServiceByName('SimpleVirtualDOM');
+        let element;
+
+        if (this.tagName) {
+            element = virtualDOM.createElement(this.tagName);
+        } else {
+            element = virtualDOM.createTextElement(this.text);
+        }
+
+        // element.view = this.view;
+        // element.propagateView(this.view);
+
+        Object.keys(this.attributes).forEach((attr) => {
+            element.setAttribute(attr, this.getAttribute(attr));
+        });
+
+        Object.keys(this.handlers).forEach((handler) => {
+            element.addEventListener(handler, this.handlers[handler].callback,
+                this.handlers[handler].useCapture);
+        });
+
+        this._children.forEach((child) => {
+            element.appendChild(child.cloneNode());
+        });
+
+        this.customCloneNode(element);
+        element.propagateView(this.view);
+        return element;
+    }
+
+
     public get style(): object {
         return this.attributes['style'];
     }
@@ -166,7 +216,7 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
             this.appendChild(<SimpleVirtualDOMElement> virtualDOM.createElement(parsed));
         });
 
-        this.emitMutilationEvent({ type: EventType.DOMContentChange, data: this });
+        this.emitMutilationEvent({ type: EventType.DOMContentChange, data: value });
     }
 
 
@@ -262,13 +312,24 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
 
 
     /**
+     * Задать атрибут CSS стиля
+     * @param name
+     * @param value
+     */
+    public setStyleAttribute(name: string, value: any): void {
+        this.attributes['style'][name] = String(value || 'inherit');
+        this.emitMutilationEvent({ type: EventType.DOMPropertyChange, data: this });
+    }
+
+
+    /**
      * Задать атрибут виртуального элемента
      * @param name
      * @param value
      */
     public setAttribute(name: string, value?: any): void {
         if (name.toLowerCase() === 'style') {
-            const expressions: string[] = (<string> value).split(';');
+            const expressions: string[] = (<string> value || '').split(';');
 
             expressions.forEach((expression: string) => {
                 const css: string[] = expression.split(':');
@@ -358,14 +419,22 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
      * Добавить потомка к узлу
      * @param child
      */
-    public appendChild(child: SimpleVirtualDOMElement): void {
+    public appendChild(child: SimpleVirtualDOMElement | SimpleVirtualDOMElement[]): void {
+        if (child instanceof Array) {
+            child.forEach((ch) => {
+                this.appendChild(ch);
+            });
+
+            return;
+        }
+
         this._children.push(child);
 
         (<any> child)._parentNode = this;
-        (<any> child).view = this.view;
+        child.propagateView(this.view);
 
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
-        EventManager.subscribe(this, child);
+        child['__descriptor__'] = EventManager.subscribe(this, child);
     }
 
 
@@ -385,10 +454,10 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
         this._children.splice(index, 0, child);
 
         (<any> child)._parentNode = this;
-        (<any> child).view = this;
+        child.propagateView(this.view);
 
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
-        EventManager.subscribe(this, child);
+        child['__descriptor__'] = EventManager.subscribe(this, child);
     }
 
 
@@ -402,12 +471,59 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
         }
 
         this._children.splice(this._children.indexOf(child, 0), 1);
+        child._parentNode = undefined;
 
-        if (child) {
-            child._parentNode = undefined;
+        EventManager.unsubscribe(child['__descriptor__'], child);
+        this.emitMutilationEvent({ type: EventType.DOMChildRemove, data: { parent: this, child: child } });
+    }
+
+
+    /**
+     * Удалить всех потомков
+     */
+    public removeChildren(): void {
+        for (let i = this._children.length - 1; i >= 0; i--) {
+            this.removeChild(this._children[i]);
         }
 
-        this.emitMutilationEvent({ type: EventType.DOMChildRemove, data: { parent: this, child: child } });
+        this._children = [];
+    }
+
+
+    /**
+     * Заменяет одного потомка другим (или несколькими)
+     * @param newChild
+     * @param oldChild
+     */
+    public replaceChild(newChild: SimpleVirtualDOMElement | SimpleVirtualDOMElement[],
+            oldChild: SimpleVirtualDOMElement): void {
+        const index = this._children.indexOf(oldChild, 0);
+
+        if (!(newChild instanceof Array)) {
+            newChild = [newChild];
+        }
+
+        if (!oldChild || index < 0) {
+            newChild.forEach((child) => {
+                this.appendChild(child);
+            });
+
+            return;
+        }
+
+        oldChild._parentNode = undefined;
+
+        newChild.forEach((child, pos) => {
+            this._children.splice(index + pos + 1, 0, child);
+            child._parentNode = this;
+            child.propagateView(this.view);
+
+            this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
+            child['__descriptor__'] = EventManager.subscribe(this, child);
+        });
+
+        delete this._children[index];
+        this.emitMutilationEvent({ type: EventType.DOMChildRemove, data: { parent: this, child: oldChild } });
     }
 
 
@@ -567,7 +683,24 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
     }
 
 
-    private emitMutilationEvent(data: IEvent) {
+    /**
+     * Распространить View по дереву виртуального DOM
+     * @param view
+     */
+    public propagateView(view: View): void {
+        if (this.view === view) {
+            return;
+        }
+
+        this.view = view;
+
+        this._children.forEach((child) => {
+            child.propagateView(view);
+        });
+    }
+
+
+    protected emitMutilationEvent(data: IEvent) {
         this.dirty = true;
         this.selectorCache = {};
         this.emitEvent(data);
@@ -576,6 +709,9 @@ export class SimpleVirtualDOMElement implements IAbstractVirtualDOMElement {
             this.view.askToRenderPolitely();
         }
     }
+
+
+    protected customCloneNode(node: SimpleVirtualDOMElement): void {}  // tslint:disable-line
 
 
     private renderHandlers() {

@@ -8,7 +8,7 @@ const testsPath = `${__dirname}%{TESTS_PATH}%`;
 const app = express();
 
 
-app.use('/', express.static(`${__dirname}/dist`));
+app.use('/', express.static(`${__dirname}/dist/out`));
 app.use('/static', express.static(`${__dirname}/static`));
 app.use('/jsworks', express.static(path));
 app.use('/mocha', express.static('./node_modules/mocha'));

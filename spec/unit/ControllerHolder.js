@@ -1,7 +1,8 @@
 'use strict';
 
-const createMuppet = name => {
-    return class {
+
+const createControllerMuppet = name => {
+    return class Muppet {
         constructor() {
             this._args = {};
         }
@@ -21,6 +22,7 @@ const createMuppet = name => {
     };
 };
 
+
 describe('ControllerHolder', () => {
 
 
@@ -28,16 +30,23 @@ describe('ControllerHolder', () => {
        expect(JSWorks.Internal.ControllerHolder).to.be.ok;
    });
 
+
    it('should register controller and return it', () => {
        const controllerHolder = new JSWorks.Internal.ControllerHolder();
        expect(controllerHolder).is.ok;
 
-       const controllerPrototype = createMuppet('Muppet');
-       const controller = new controllerPrototype();
+       const controllerPrototype = createControllerMuppet('Muppet');
 
-       controllerHolder.registerController(controller);
-       expect(controllerHolder.getController('Muppet').name).to.equal(controller.name);
-   })
+       controllerHolder.registerController(controllerPrototype);
+       expect(controllerHolder.getController('Muppet').name).to.equal(controllerPrototype.name);
+   });
+
+
+   it('should load sample controller', () => {
+        const appContext = JSWorks.applicationContext;
+        expect(appContext.controllerHolder.getController('SampleController')).to.be.ok;
+   });
+
 
 });
 
