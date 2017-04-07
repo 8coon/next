@@ -29,10 +29,6 @@ export abstract class Router {
      * @param path
      */
     public pathChange(path: string): {route: Route, pathVariables: object} {
-        if (JSWorks.__router_disabled__) {
-            return;
-        }
-
         const matches = path.split('/');
         const pathVariables = {};
         let route = JSWorks.applicationContext.routeHolder.root;

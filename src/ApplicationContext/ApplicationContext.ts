@@ -139,8 +139,10 @@ export class ApplicationContext implements IEventEmitter {
 
                         this.routeHolder.load();
 
-                        const host = `${location.href.split(':')[0]}://${location.host}`;
-                        this._router = new HistoryAPIRouter(host);
+                        if (!JSWorks.__router_disabled__) {
+                            const host = `${location.href.split(':')[0]}://${location.host}`;
+                            this._router = new HistoryAPIRouter(host);
+                        }
 
                         this.emitEvent({ type: EventType.ApplicationLoaded, data: this });
 
