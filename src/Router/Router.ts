@@ -29,6 +29,10 @@ export abstract class Router {
      * @param path
      */
     public pathChange(path: string): {route: Route, pathVariables: object} {
+        if (JSWorks.__router_disabled__) {
+            return;
+        }
+
         const matches = path.split('/');
         const pathVariables = {};
         let route = JSWorks.applicationContext.routeHolder.root;
@@ -37,10 +41,6 @@ export abstract class Router {
             route = this.findRoute(route, match, pathVariables);
 
             if (!route) {
-                if (JSWorks.__router_disabled__) {
-                    return;
-                }
-
                 throw new PathNotFoundError(path);
             }
         });
