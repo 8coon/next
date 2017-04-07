@@ -14,10 +14,8 @@ declare const __JSWorks_interceptors__: any[];
 export function JSWorksInterceptor(data: IInterceptorDecoratorData) {
 
     return (target: any) => {
-        const interceptor = target();
-        interceptor.type = data.type;
-        console.log(target, data);
-        __JSWorks_interceptors__.push(interceptor);
+        target.__type__ = data.type;
+        __JSWorks_interceptors__.push(target);
     };
 
 }

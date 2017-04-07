@@ -26,7 +26,10 @@ export class InterceptorHolder {
      * загрузить всех перехватчиков
      */
     public load(): void {
-        __JSWorks_interceptors__.forEach((interceptor: IInterceptor) => {
+        __JSWorks_interceptors__.forEach((interceptorProto) => {
+            const interceptor = new interceptorProto();
+            interceptor.type = interceptorProto.__type__;
+
             this.registerInterceptor(interceptor);
         });
     }
