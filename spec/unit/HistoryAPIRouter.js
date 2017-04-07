@@ -25,7 +25,7 @@ describe('Router(History API)', () => {
 
         afterEach((done) => {
             window.history.back();
-            setTimeout(done, 30);
+            setTimeout(done, 20);
         });
 
 

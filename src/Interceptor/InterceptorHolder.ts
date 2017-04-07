@@ -10,7 +10,7 @@ declare const __JSWorks_interceptors__: any[];
 @JSWorksInternal
 export class InterceptorHolder {
 
-    private _interceptors: object;
+    private _interceptors: object = {};
 
 
     /**

@@ -359,10 +359,14 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
     generateComponent(path, 'Test', '*', 'Page', 'BaseView', 'test-view.html',
         'test-controller.ts', 'test-page.ts');
 
-    generateInterceptor(path, 'interceptors', 'Test1', 'RouteBeforeNavigateInterceptor',
+    generateInterceptor(path, 'interceptors', 'TestBefore1', 'RouteBeforeNavigateInterceptor',
        'test-interceptor.ts');
-    // generateInterceptor(path, 'interceptors', 'Test2', 'RouteAfterNavigateInterceptor',
-    //     'test-interceptor.ts');
+    generateInterceptor(path, 'interceptors', 'TestBefore2', 'RouteBeforeNavigateInterceptor',
+        'test-interceptor.ts');
+    generateInterceptor(path, 'interceptors', 'TestAfter1', 'RouteAfterNavigateInterceptor',
+        'test-interceptor.ts');
+    generateInterceptor(path, 'interceptors', 'TestAfter2', 'RouteAfterNavigateInterceptor',
+        'test-interceptor.ts');
 };
 
 
