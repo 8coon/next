@@ -16,6 +16,10 @@ export class HistoryAPIRouter extends Router {
         super(baseUrl);
 
         window.addEventListener('popstate', (event) => {
+            if (JSWorks.__router_disabled__) {
+                return;
+            }
+
             if (event.state && event.state.name) {
                 const route: Route = JSWorks.applicationContext.routeHolder.getRoute(String(event.state.name));
 
