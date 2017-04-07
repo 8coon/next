@@ -37,6 +37,10 @@ export abstract class Router {
             route = this.findRoute(route, match, pathVariables);
 
             if (!route) {
+                if (JSWorks.__router_disabled__) {
+                    return;
+                }
+
                 throw new PathNotFoundError(path);
             }
         });
