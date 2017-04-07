@@ -7,6 +7,7 @@ import {JSWorksCustomElement} from './CustomElements/CustomElementDecorator';
 import {JSWorksComponentCollectionProperty} from './Component/ComponentCollectionPropertyDecorator';
 import {EventType} from './EventManager/EventType';
 import {InterceptorType} from './Interceptor/InterceptorType';
+import {JSWorksInterceptor} from './Interceptor/InterceptorDecorator';
 
 
 declare const JSWorks: any;
@@ -31,6 +32,7 @@ JSWorks.__init__ = () => {
 
     JSWorks.Service = JSWorksService;
     JSWorks.Controller = JSWorksController;
+    JSWorks.Interceptor = JSWorksInterceptor;
     JSWorks.Component = JSWorksComponent;
     JSWorks.Page = JSWorksPage;
     JSWorks.ComponentProperty = JSWorksComponentProperty;

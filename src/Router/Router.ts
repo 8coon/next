@@ -41,7 +41,7 @@ export abstract class Router {
             }
         });
 
-        this.navigate(route, pathVariables);
+        // this.navigate(route, pathVariables);
         // return {name: route.name, path: route.getPath(pathVariables), pathVariables};
         return {route, pathVariables};
     }

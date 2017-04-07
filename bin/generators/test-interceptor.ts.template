@@ -1,0 +1,12 @@
+declare const JSWorks: any;
+
+
+@JSWorks.Interceptor
+export class %{NAME}%Interceptor {
+
+    public type: JSWorks.InterceptorType = %{INTERCEPTOR_TYPE}%;
+
+    public intercept(args: object) : Promise<any> {
+        return new Promise(() => 1);
+    }
+}
