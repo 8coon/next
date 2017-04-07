@@ -25,7 +25,7 @@ export abstract class Router {
 
 
     /**
-     * Найти роут и, если он существует, активировать его
+     * Найти роут, если он существует
      * @param path
      */
     public pathChange(path: string): {route: Route, pathVariables: object} {

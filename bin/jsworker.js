@@ -109,6 +109,22 @@ const generateController = (path, folder, name, withView, viewExtends, viewTempl
             `require('./dist/compiled/${outFolder}/${name}Controller/${camelToDash(name)}-controller.js');\n`);
 };
 
+const generateInterceptor = (path, folder, name, interceptorType, templateFile) => {
+    templateFile = templateFile || 'interceptor.ts';
+
+    let interceptor = fs.readFileSync(`./bin/generators/${templateFile}.template`, 'utf-8');
+
+    interceptor = interceptor.replace(/%\{NAME}%/g, name);
+    interceptor = interceptor.replace(/%\{INTERCEPTOR_TYPE}%/g, interceptorType)
+
+    mkdirp.sync(`${path}/${folder}/${name}Interceptor/`);
+    fs.writeFileSync(`${path}/${folder}/${name}Interceptor/${camelToDash(name)}-interceptor.ts`, interceptor);
+
+    const outFolder = folder.slice(folder.indexOf('/'));
+    fs.appendFileSync(`${path}/application.js`,
+        `require('./dist/compiled/${outFolder}/${name}Interceptor/${camelToDash(name)}-interceptor.js');\n`);
+};
+
 
 const generateComponent = (path, name, withRoute, className, viewExtends, viewTemplate,
                            controllerTemplate, templateFile) => {
@@ -260,6 +276,11 @@ const generateApplication = (path, name, title, forTesting) => {
             "target": "es5",
             "experimentalDecorators": true,
             "emitDecoratorMetadata": true,
+
+            "lib": [
+                "es2016",
+                "dom"
+            ]
         },
 
         "include": [
@@ -335,6 +356,11 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
 
     generateComponent(path, 'Test', '*', 'Page', 'BaseView', 'test-view.html',
         'test-controller.ts', 'test-page.ts');
+
+    generateInterceptor(path, 'interceptors', 'Test1', 'RouteBeforeNavigateInterceptor',
+        'test-interceptor.ts');
+    // generateInterceptor(path, 'interceptors', 'Test2', 'RouteAfterNavigateInterceptor',
+    //     'test-interceptor.ts');
 };
 
 
