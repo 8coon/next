@@ -36,6 +36,9 @@ describe('Router(History API)', () => {
             const usersRoute = appContext.routeHolder.getRoute('UsersRoute');
 
             router.navigate(usersRoute, {});
+
+            const state = window.history.state;
+            expect(state.name).to.equal(usersRoute.name);
         });
 
 

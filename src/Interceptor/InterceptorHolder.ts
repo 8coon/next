@@ -15,9 +15,9 @@ export class InterceptorHolder {
 
     /**
      * получить всех перехватчиков
-     * @returns {Object}
+     * @returns {object}
      */
-    get interceptors(): Object {
+    get interceptors(): object {
         return this._interceptors;
     }
 
@@ -58,7 +58,7 @@ export class InterceptorHolder {
 
         // последовательное выполнение интерсептеров
         this._interceptors[interceptorType].forEach((interceptor: IInterceptor) => {
-            promise = promise.then(() => { return interceptor.intercept(args); });
+            promise = promise.then(() => interceptor.intercept(args) );
         });
 
         return promise;
