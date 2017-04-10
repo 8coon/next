@@ -52,7 +52,7 @@ export abstract class Router {
      * @param route
      * @param pathVariable
      */
-    public abstract navigate(route: Route, pathVariable: object): void;
+    public abstract navigate(route: Route, pathVariable: object): Promise<any>;
 
 
     /**

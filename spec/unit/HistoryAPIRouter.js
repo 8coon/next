@@ -25,40 +25,48 @@ describe('Router(History API)', () => {
 
         afterEach((done) => {
             window.history.back();
-            setTimeout(done, 35);
+            setTimeout(done, 50);
         });
 
 
-        it('should navigate', () => {
+        it('should navigate', (done) => {
             const appContext = JSWorks.applicationContext;
             const router = appContext.router;
 
             const usersRoute = appContext.routeHolder.getRoute('UsersRoute');
 
-            router.navigate(usersRoute, {});
+            router.navigate(usersRoute, {})
+                .then( () => {
+                    const state = window.history.state;
+                    expect(state.name).to.equal(usersRoute.name);
+                    done();
+                });
 
-            const state = window.history.state;
-            expect(state.name).to.equal(usersRoute.name);
         });
 
 
 
-        it('should navigate routes with path variables', () => {
+        it('should navigate routes with path variables', (done) => {
             const appContext = JSWorks.applicationContext;
             const router = appContext.router;
 
             const profileRoute = appContext.routeHolder.getRoute('ProfileRoute');
             const pv = {':id': 123};
-            router.navigate(profileRoute, pv);
 
-            const state = window.history.state;
+            router.navigate(profileRoute, pv)
+                .then( () => {
+                    const state = window.history.state;
 
-            expect(state).to.exist;
-            expect(state.name).to.exist;
-            expect(state.name).to.equal(profileRoute.name);
+                    expect(state).to.exist;
+                    expect(state.name).to.exist;
+                    expect(state.name).to.equal(profileRoute.name);
 
-            const stateRoute = appContext.routeHolder.getRoute(state.name);
-            expect(baseUrl + stateRoute.getPath(pv)).to.equal(window.location.href);
+                    const stateRoute = appContext.routeHolder.getRoute(state.name);
+                    expect(baseUrl + stateRoute.getPath(pv)).to.equal(window.location.href);
+                    expect(window.location.href).to.equal('http://localhost:3000/api/users/123');
+
+                    done();
+                });
         });
 
 
