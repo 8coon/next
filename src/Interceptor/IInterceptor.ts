@@ -7,6 +7,7 @@ import {InterceptorType} from './InterceptorType';
 export interface IInterceptor {
 
     type: InterceptorType;
+    name: string;
 
     intercept(args: object): Promise<any>;
 }

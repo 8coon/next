@@ -5,6 +5,6 @@ declare const JSWorks: any;
 export class %{NAME}%Interceptor {
 
     public intercept(args: object) {
-        return new Promise(() => 1);
+        return new Promise((resolve, reject) => %{RESOLVE_REJECT}%);
     }
 }

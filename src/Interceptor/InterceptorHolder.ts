@@ -28,7 +28,9 @@ export class InterceptorHolder {
     public load(): void {
         __JSWorks_interceptors__.forEach((interceptorProto) => {
             const interceptor = new interceptorProto();
+
             interceptor.type = interceptorProto.__type__;
+            interceptor.name = interceptorProto.name;
 
             this.registerInterceptor(interceptor);
         });
@@ -57,14 +59,12 @@ export class InterceptorHolder {
             throw new InterceptorNotFound(interceptorType.toString());
         }
 
-        let promise = Promise.resolve();
-
-        // последовательное выполнение интерсептеров
-        this._interceptors[interceptorType].forEach((interceptor: IInterceptor) => {
-            promise = promise.then(() => interceptor.intercept(args) );
-        });
-
-        return promise;
+        return this._interceptors[interceptorType]
+            .reduce((prevVal: Promise<any>, cur: IInterceptor) =>
+                    prevVal
+                        .then(() => cur.intercept(args))
+                        .catch((reject) => Promise.reject(reject))
+                , Promise.resolve() );
     }
 
 

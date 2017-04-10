@@ -109,13 +109,20 @@ const generateController = (path, folder, name, withView, viewExtends, viewTempl
             `require('./dist/compiled/${folder}/${name}Controller/${camelToDash(name)}-controller.js');\n`);
 };
 
-const generateInterceptor = (path, folder, name, interceptorType, templateFile) => {
+const generateInterceptor = (path, folder, name, interceptorType, templateFile, reject) => {
     templateFile = templateFile || 'interceptor.ts';
 
     let interceptor = fs.readFileSync(`./bin/generators/${templateFile}.template`, 'utf-8');
+    reject = reject || 'false';
 
     interceptor = interceptor.replace(/%\{NAME}%/g, name);
     interceptor = interceptor.replace(/%\{INTERCEPTOR_TYPE}%/g, interceptorType);
+
+    if (reject === 'true') {
+        interceptor = interceptor.replace(/%\{RESOLVE_REJECT}%/g, `reject('error')`);
+    } else {
+        interceptor = interceptor.replace(/%\{RESOLVE_REJECT}%/g, 'resolve(1)');
+    }
 
     mkdirp.sync(`${path}/${folder}/${name}Interceptor/`);
     fs.writeFileSync(`${path}/${folder}/${name}Interceptor/${camelToDash(name)}-interceptor.ts`, interceptor);
@@ -366,6 +373,8 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
     generateInterceptor(path, 'interceptors', 'TestAfter1', 'RouteAfterNavigateInterceptor',
         'test-interceptor.ts');
     generateInterceptor(path, 'interceptors', 'TestAfter2', 'RouteAfterNavigateInterceptor',
+        'test-interceptor.ts', 'true');
+    generateInterceptor(path, 'interceptors', 'TestAfter3', 'RouteAfterNavigateInterceptor',
         'test-interceptor.ts');
 };
 
