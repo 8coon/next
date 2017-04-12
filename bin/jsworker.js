@@ -164,6 +164,19 @@ const generateComponent = (path, name, withRoute, className, viewExtends, viewTe
 };
 
 
+const generateModel = (path, name, modelFile) => {
+    modelFile = modelFile || 'model.ts';
+    let model = fs.readFileSync(`./bin/generators/${modelFile}.template`, 'utf-8');
+
+    model = model.replace(/%\{NAME}%/g, name);
+
+    mkdirp.sync(`${path}/models/${name}Model/`);
+    fs.writeFileSync(`${path}/models/${name}Model/${camelToDash(name)}-model.ts`, model);
+    fs.appendFileSync(`${path}/application.js`,
+        `require('./dist/compiled/models/${name}Model/${camelToDash(name)}-model.js');\n`);
+};
+
+
 const generateStaticServer = (path, title, jsWorksPath, forTesting) => {
     let server = fs.readFileSync('./bin/generators/server.js.template', 'utf-8');
     let testsPath = `/spec`;
@@ -336,7 +349,6 @@ const startApp = (name, title, path, forTesting, jsWorksPath) => {
     mkdirp.sync(`${path}/components`);
     mkdirp.sync(`${path}/pages`);
     mkdirp.sync(`${path}/models`);
-    mkdirp.sync(`${path}/helpers`);
     mkdirp.sync(`${path}/spec`);
     mkdirp.sync(`${path}/dist`);
     mkdirp.sync(`${path}/static`);
@@ -376,6 +388,8 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
         'test-interceptor.ts', 'true');
     generateInterceptor(path, 'interceptors', 'TestAfter3', 'RouteAfterNavigateInterceptor',
         'test-interceptor.ts');
+
+    generateModel(path, 'Test', 'test-model.ts');
 };
 
 

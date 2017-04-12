@@ -1,0 +1,47 @@
+
+
+declare const JSWorks: any;
+
+
+interface %{NAME}%ModelFields {
+    id: number,
+    name: string,
+    price: number,
+}
+
+
+@JSWorks.Model
+class %{NAME}%Model implements %{NAME}%ModelFields {
+
+    @JSWorks.ModelPrimaryKey
+    public id: number;
+
+
+    @JSWorks.ModelField
+    public name: string;
+
+
+    @JSWorks.ModelField
+    public price: number;
+
+
+    @JSWorks.ModelCreateMethod
+    create(data: %{NAME}%ModelFields) {
+    }
+
+
+    @JSWorks.ModelReadMethod
+    query(params: object) {
+    }
+
+
+    @JSWorks.ModelUpdateMethod
+    update(data: %{NAME}%ModelFields) {
+    }
+
+
+    @JSWorks.ModelDeleteMethod
+    delete(data: %{NAME}%ModelFields) {
+    }
+
+}
