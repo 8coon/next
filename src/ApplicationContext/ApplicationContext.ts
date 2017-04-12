@@ -11,6 +11,7 @@ import {IEvent} from '../EventManager/IEvent';
 import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {CustomElementHolder} from '../CustomElements/CustomElementHolder';
 import {HistoryAPIRouter} from '../Router/HistoryAPIRouter';
+import {InterceptorHolder} from '../Interceptor/InterceptorHolder';
 
 
 declare const JSWorks: any;
@@ -18,7 +19,6 @@ declare const JSWorks: any;
 
 @JSWorksInternal
 export class ApplicationContext implements IEventEmitter {
-
 
     /**
      * Флаг, устанавливающийся в true при полной загрузке приложения.
@@ -35,6 +35,14 @@ export class ApplicationContext implements IEventEmitter {
      */
     get router(): Router {
         return this._router;
+    }
+
+    /**
+     * Все перехватчики хранятся тут
+     * @returns {InterceptorHolder}
+     */
+    get interceptorHolder(): InterceptorHolder {
+        return this._interceptorHolder;
     }
 
     /**
@@ -96,6 +104,7 @@ export class ApplicationContext implements IEventEmitter {
     private _controllerHolder: ControllerHolder;
     private _router: Router;
     private _routeHolder: RouteHolder;
+    private _interceptorHolder: InterceptorHolder;
     private _componentHolder: ComponentHolder;
     private _customElementHolder: CustomElementHolder;
     private _loaded: boolean = false;
@@ -112,6 +121,7 @@ export class ApplicationContext implements IEventEmitter {
         this._componentHolder = new ComponentHolder();
         this._customElementHolder = new CustomElementHolder();
         this._routeHolder = new RouteHolder();
+        this._interceptorHolder = new InterceptorHolder();
     }
 
 
@@ -138,6 +148,7 @@ export class ApplicationContext implements IEventEmitter {
                         this._loaded = true;
 
                         this.routeHolder.load();
+                        this.interceptorHolder.load();
 
                         if (!JSWorks.__router_disabled__) {
                             const host = `${location.href.split(':')[0]}://${location.host}`;

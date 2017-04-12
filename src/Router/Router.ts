@@ -25,7 +25,7 @@ export abstract class Router {
 
 
     /**
-     * Найти роут и, если он существует, активировать его
+     * Найти роут, если он существует
      * @param path
      */
     public pathChange(path: string): {route: Route, pathVariables: object} {
@@ -41,7 +41,7 @@ export abstract class Router {
             }
         });
 
-        this.navigate(route, pathVariables);
+        // this.navigate(route, pathVariables);
         // return {name: route.name, path: route.getPath(pathVariables), pathVariables};
         return {route, pathVariables};
     }
@@ -52,7 +52,7 @@ export abstract class Router {
      * @param route
      * @param pathVariable
      */
-    public abstract navigate(route: Route, pathVariable: object): void;
+    public abstract navigate(route: Route, pathVariable: object): Promise<any>;
 
 
     /**

@@ -3,6 +3,9 @@ import {Route} from './Route';
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {EventManager} from '../EventManager/EventManager';
 import {EventType} from '../EventManager/EventType';
+import {InterceptorType} from '../Interceptor/InterceptorType';
+import {IEventEmitter} from '../EventManager/IEventEmitter';
+import {IEvent} from '../EventManager/IEvent';
 
 
 declare const JSWorks: any;
@@ -10,7 +13,6 @@ declare const JSWorks: any;
 
 @JSWorksInternal
 export class HistoryAPIRouter extends Router {
-
 
     constructor(baseUrl: string) {
         super(baseUrl);
@@ -45,13 +47,21 @@ export class HistoryAPIRouter extends Router {
      * @param route
      * @param pathVariables
      */
-    public navigate(route: Route, pathVariables?: object): void {
+    public navigate(route: Route, pathVariables?: object): Promise<any> {
         const path = route.getPath(pathVariables);
-        route.fire(pathVariables);
+        const interceptorHolder = JSWorks.applicationContext.interceptorHolder;
 
-        const state = {name: route.name, path: path, pathVariables: pathVariables};
+        return interceptorHolder.activateInterceptors(InterceptorType.RouteBeforeNavigateInterceptor, {})
+            .then( () => {
+                route.fire(pathVariables);
+                const state = {name: route.name, path: path, pathVariables: pathVariables};
+                window.history.pushState(state, route.name, this.baseUrl + path);
 
-        window.history.pushState(state, route.name, this.baseUrl + path);
+                return Promise.resolve();
+            })
+            .then( () => interceptorHolder.activateInterceptors(InterceptorType.RouteAfterNavigateInterceptor, {}))
+            .catch( (rejected) => console.error(rejected) )
+        ;
     }
 
 

@@ -104,9 +104,32 @@ const generateController = (path, folder, name, withView, viewExtends, viewTempl
         generateView(path, folder, name, viewExtends || '', viewTemplate);
     }
 
-    const outFolder = folder.slice(folder.indexOf('/'));
+    // const outFolder = folder.slice(folder.indexOf('/'));
     fs.appendFileSync(`${path}/application.js`,
-            `require('./dist/compiled/${outFolder}/${name}Controller/${camelToDash(name)}-controller.js');\n`);
+            `require('./dist/compiled/${folder}/${name}Controller/${camelToDash(name)}-controller.js');\n`);
+};
+
+const generateInterceptor = (path, folder, name, interceptorType, templateFile, reject) => {
+    templateFile = templateFile || 'interceptor.ts';
+
+    let interceptor = fs.readFileSync(`./bin/generators/${templateFile}.template`, 'utf-8');
+    reject = reject || 'false';
+
+    interceptor = interceptor.replace(/%\{NAME}%/g, name);
+    interceptor = interceptor.replace(/%\{INTERCEPTOR_TYPE}%/g, interceptorType);
+
+    if (reject === 'true') {
+        interceptor = interceptor.replace(/%\{RESOLVE_REJECT}%/g, `reject('error')`);
+    } else {
+        interceptor = interceptor.replace(/%\{RESOLVE_REJECT}%/g, 'resolve(1)');
+    }
+
+    mkdirp.sync(`${path}/${folder}/${name}Interceptor/`);
+    fs.writeFileSync(`${path}/${folder}/${name}Interceptor/${camelToDash(name)}-interceptor.ts`, interceptor);
+
+    // const outFolder = folder.slice(folder.indexOf('/'));
+    fs.appendFileSync(`${path}/application.js`,
+        `require('./dist/compiled/${folder}/${name}Interceptor/${camelToDash(name)}-interceptor.js');\n`);
 };
 
 
@@ -137,7 +160,7 @@ const generateComponent = (path, name, withRoute, className, viewExtends, viewTe
     }
 
     fs.appendFileSync(`${path}/application.js`,
-        `require('./dist/compiled/${name}${className}/${camelToDash(name)}-${className.toLowerCase()}.js');\n`);
+        `require('./dist/compiled/${folder}/${name}${className}/${camelToDash(name)}-${className.toLowerCase()}.js');\n`);
 };
 
 
@@ -255,11 +278,17 @@ const generateApplication = (path, name, title, forTesting) => {
     const tsConfig = {
         "compilerOptions": {
             "outDir": "./dist/compiled/",
+            "rootDir": ".",
             "sourceMap": true,
             "alwaysStrict": true,
             "target": "es5",
             "experimentalDecorators": true,
             "emitDecoratorMetadata": true,
+
+            "lib": [
+                "es2016",
+                "dom"
+            ]
         },
 
         "include": [
@@ -311,6 +340,7 @@ const startApp = (name, title, path, forTesting, jsWorksPath) => {
     mkdirp.sync(`${path}/spec`);
     mkdirp.sync(`${path}/dist`);
     mkdirp.sync(`${path}/static`);
+    mkdirp.sync(`${path}/interceptors`);
 
     generateApplication(path, name, title, forTesting);
     generateStaticServer(path, title, jsWorksPath, forTesting);
@@ -335,6 +365,17 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
 
     generateComponent(path, 'Test', '*', 'Page', 'BaseView', 'test-view.html',
         'test-controller.ts', 'test-page.ts');
+
+    generateInterceptor(path, 'interceptors', 'TestBefore1', 'RouteBeforeNavigateInterceptor',
+       'test-interceptor.ts');
+    generateInterceptor(path, 'interceptors', 'TestBefore2', 'RouteBeforeNavigateInterceptor',
+        'test-interceptor.ts');
+    generateInterceptor(path, 'interceptors', 'TestAfter1', 'RouteAfterNavigateInterceptor',
+        'test-interceptor.ts');
+    generateInterceptor(path, 'interceptors', 'TestAfter2', 'RouteAfterNavigateInterceptor',
+        'test-interceptor.ts', 'true');
+    generateInterceptor(path, 'interceptors', 'TestAfter3', 'RouteAfterNavigateInterceptor',
+        'test-interceptor.ts');
 };
 
 
