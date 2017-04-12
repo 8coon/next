@@ -31,7 +31,7 @@ class %{NAME}%Model implements %{NAME}%ModelFields {
 
 
     @JSWorks.ModelReadMethod
-    query(params: object) {
+    query(params?: object) {
     }
 
 
@@ -41,7 +41,7 @@ class %{NAME}%Model implements %{NAME}%ModelFields {
 
 
     @JSWorks.ModelDeleteMethod
-    delete(data: %{NAME}%ModelFields) {
+    delete(data: %{NAME}%ModelFields | any) {
     }
 
 }
