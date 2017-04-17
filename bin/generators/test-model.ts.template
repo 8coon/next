@@ -4,9 +4,10 @@ declare const JSWorks: any;
 
 
 interface %{NAME}%ModelFields {
-    id: number,
-    name: string,
-    price: number,
+    id: number;
+    name: string;
+    age: number;
+    important?: boolean;
 }
 
 
@@ -16,32 +17,62 @@ class %{NAME}%Model implements %{NAME}%ModelFields {
     @JSWorks.ModelPrimaryKey
     public id: number;
 
-
     @JSWorks.ModelField
     public name: string;
 
+    @JSWorks.ModelField
+    public age: number;
 
     @JSWorks.ModelField
-    public price: number;
+    public important: boolean;
+
+
+    @JSWorks.ModelQueryMethod
+    public query(params?: object): Promise<%{NAME}%Model[]> {
+        params = params || {};
+        const sort = String(params['sort'] || 'ASC');
+        let url = String(params['url'] || '/persons/all');
+        url = `${url}?sort=${sort}`;
+
+        return new Promise<%{NAME}%Model[]>((resolve, reject) => {
+            this.jsonParser.parseURLAsync(url, JSWorks.HTTPMethod.POST).then((data) => {
+                const models: %{NAME}%Model[] = [];
+
+                data.forEach((item: %{NAME}%ModelFields) => {
+                    models.push(this.from(item));
+                });
+
+                resolve(models);
+            });
+        });
+    }
 
 
     @JSWorks.ModelCreateMethod
-    create(data: %{NAME}%ModelFields) {
+    public create(): Promise<%{NAME}%Model> {
+        return undefined;
     }
 
 
     @JSWorks.ModelReadMethod
-    query(params?: object) {
+    public read(): Promise<%{NAME}%Model> {
+        return undefined;
     }
 
 
     @JSWorks.ModelUpdateMethod
-    update(data: %{NAME}%ModelFields) {
+    public update(): Promise<%{NAME}%Model> {
+        return undefined;
     }
 
 
     @JSWorks.ModelDeleteMethod
-    delete(data: %{NAME}%ModelFields | any) {
+    public delete(): Promise<%{NAME}%Model> {
+        return undefined;
     }
+
+
+    public jsonParser;
+    public from(data?: object): %{NAME}%Model { return undefined; };
 
 }

@@ -15,6 +15,8 @@ import {JSWorksModelCreateMethod} from './Model/Decorators/ModelCreateMethodDeco
 import {JSWorksModelReadMethod} from './Model/Decorators/ModelReadMethodDecorator';
 import {JSWorksModelUpdateMethod} from './Model/Decorators/ModelUpdateMethodDecorator';
 import {JSWorksModelDeleteMethod} from './Model/Decorators/ModelDeleteMethodDecorator';
+import {JSWorksModelQueryMethod} from './Model/Decorators/ModelQueryMethodDecorator';
+import {HTTPMethod} from './Network/HTTPMethod';
 
 
 declare const JSWorks: any;
@@ -36,6 +38,7 @@ JSWorks.__init__ = () => {
     JSWorks.EventManager = JSWorks.Internal.EventManager;
     JSWorks.EventType = EventType;
     JSWorks.InterceptorType = InterceptorType;
+    JSWorks.HTTPMethod = HTTPMethod;
 
     JSWorks.Service = JSWorksService;
     JSWorks.Controller = JSWorksController;
@@ -52,6 +55,7 @@ JSWorks.__init__ = () => {
     JSWorks.ModelReadMethod = JSWorksModelReadMethod;
     JSWorks.ModelUpdateMethod = JSWorksModelUpdateMethod;
     JSWorks.ModelDeleteMethod = JSWorksModelDeleteMethod;
+    JSWorks.ModelQueryMethod = JSWorksModelQueryMethod;
 };
 
 

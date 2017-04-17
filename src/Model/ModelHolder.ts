@@ -1,36 +1,11 @@
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {DuplicateModelError} from '../Error/DuplicateModelError';
-import {CollectionProperty} from '../Component/CollectionProperty';
+import {IModel} from './IModel';
 
 
+declare const JSWorks: any;
 declare const __JSWorks_models__: object;
 
-
-/**
- * Метаданные модели
- */
-interface IModelMetadata {
-    createMethod?: string;
-    readMethod?: string;
-    updateMethod?: string;
-    deleteMethod?: string;
-
-    primaryKey?: string;
-    fields?: string[];
-}
-
-
-/**
- * Интерфейс модели
- */
-interface IModel {
-    items: CollectionProperty;
-    modelMetadata: IModelMetadata;
-    proto: object;
-
-    query(params?: object): IModel;
-    one(pk: number | string): IModel;
-}
 
 
 @JSWorksInternal
@@ -62,6 +37,16 @@ export class ModelHolder {
     }
 
 
+    /**
+     * Возвращает модель по её имени
+     * @param name
+     * @returns {any}
+     */
+    public getModel(name: string): IModel {
+        return this.models[name];
+    }
+
+
     private initModel(model: IModel): void {
         this.initModelFields(model);
         this.initModelMethods(model);
@@ -77,11 +62,11 @@ export class ModelHolder {
                 enumerable: false,
 
                 /* tslint:disable */
-                get(): void {
+                get: function(): void {
                     return this[name];
                 },
 
-                set(value: any): void {
+                set: function(value: any): void {
                     this[name] = value;
                     this.__dirty__ = true;
 
@@ -93,23 +78,58 @@ export class ModelHolder {
     }
 
 
-
     private initModelMethods(model: IModel) {
+        const modelHolder: ModelHolder = this;
 
-        /* tslint:disable */
-        model.query = function(params: object = {}): IModel {
-            const newModel: IModel = new (this.proto)();
-            newModel.items = this[this.modelMetadata.readMethod](params);
+        model['__create__'] = model[model.modelMetadata.createMethod];
+        model['__read__'] = model[model.modelMetadata.readMethod];
+        model['__update__'] = model[model.modelMetadata.updateMethod];
+        model['__delete__'] = model[model.modelMetadata.deleteMethod];
+        model['__query__'] = model[model.modelMetadata.queryMethod];
+
+        model.create = model['__create__'];
+        model.read = model['__read__'];
+        model.update = model['__update__'];
+        model['delete'] = model['__delete__'];
+        model.query = model['__query__'];
+
+        model.remove = model['delete'];
+        model.save = model.update;
+
+        model.jsonParser = JSWorks.applicationContext.serviceHolder.getServiceByName('JSONParser');
+
+
+        // tslint:disable
+        model.isDirty = function(): boolean {
+            return this['__dirty__'] === true;
+        };
+
+        model.setDirty = function(value: boolean = false): void {
+            this['__dirty__'] = value;
+        };
+
+        model.from = function(data?: object): IModel {
+            if (typeof data !== 'object') {
+                data = undefined;
+            }
+
+            const newModel: IModel = new this.proto();
+
+            newModel.modelMetadata = this.modelMetadata;
+            newModel.proto = this.proto;
+            modelHolder.initModel(newModel);
+
+            if (!data) {
+                return newModel;
+            }
+
+            Object.keys(data).forEach((field: string) => {
+                newModel[field] = data[field];
+            });
 
             return newModel;
         };
-
-
-        model.one = function(pk: number | string): IModel {
-            return this.query({ pk });
-        };
-        /* tslint:enable */
-
+        // tslint:enable
     }
 
 

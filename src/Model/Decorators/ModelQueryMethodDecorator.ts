@@ -9,13 +9,13 @@ declare const __JSWorks_models__: any[];
  * @param name
  * @constructor
  */
-export function JSWorksModelReadMethod(target: any, name: string) {
-    let className = target.name;
+export function JSWorksModelQueryMethod(target: any, name: string) {
+    let className: string = target.name;
 
     if (target.constructor && target.constructor.name) {
         className = target.constructor.name;
     }
 
     __JSWorks_models__[className] = __JSWorks_models__[className] || {};
-    __JSWorks_models__[className].readMethod = name;
+    __JSWorks_models__[className].queryMethod = name;
 }

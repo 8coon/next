@@ -12,6 +12,7 @@ import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {CustomElementHolder} from '../CustomElements/CustomElementHolder';
 import {HistoryAPIRouter} from '../Router/HistoryAPIRouter';
 import {InterceptorHolder} from '../Interceptor/InterceptorHolder';
+import {ModelHolder} from '../Model/ModelHolder';
 
 
 declare const JSWorks: any;
@@ -91,6 +92,15 @@ export class ApplicationContext implements IEventEmitter {
 
 
     /**
+     * Все модели хранятся тут
+     * @returns {ModelHolder}
+     */
+    public get modelHolder(): ModelHolder {
+        return this._modelHolder;
+    }
+
+
+    /**
      * Все роуты хранятся тут
      * @returns {RouteHolder}
      */
@@ -107,6 +117,7 @@ export class ApplicationContext implements IEventEmitter {
     private _interceptorHolder: InterceptorHolder;
     private _componentHolder: ComponentHolder;
     private _customElementHolder: CustomElementHolder;
+    private _modelHolder: ModelHolder;
     private _loaded: boolean = false;
 
 
@@ -122,6 +133,7 @@ export class ApplicationContext implements IEventEmitter {
         this._customElementHolder = new CustomElementHolder();
         this._routeHolder = new RouteHolder();
         this._interceptorHolder = new InterceptorHolder();
+        this._modelHolder = new ModelHolder();
     }
 
 
@@ -169,6 +181,7 @@ export class ApplicationContext implements IEventEmitter {
         this.customElementHolder.load();
         this.viewHolder.load();
         this.controllerHolder.load();
+        this.modelHolder.load();
     }
 
 
