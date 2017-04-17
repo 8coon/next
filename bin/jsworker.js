@@ -183,6 +183,7 @@ const generateStaticServer = (path, title, jsWorksPath, forTesting) => {
 
     if (forTesting === 'true') {
         testsPath = '/../../spec';
+        server = fs.readFileSync('./bin/generators/test-server.js.template', 'utf-8');
     }
 
     server = server.replace(/%\{TITLE}%/g, title);
@@ -282,7 +283,8 @@ const generateApplication = (path, name, title, forTesting) => {
             'extract-loader': 'latest',
             'file-loader': 'latest',
             'css-loader': 'latest',
-            'extract-text-webpack-plugin': 'latest'
+            'extract-text-webpack-plugin': 'latest',
+            'body-parser': 'latest'
         }
     };
 

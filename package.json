@@ -53,6 +53,7 @@
     "express": "latest",
     "chai-as-promised": "latest",
     "reflect-metadata": "latest",
-    "cssauron": "latest"
+    "cssauron": "latest",
+    "body-parser": "latest"
   }
 }

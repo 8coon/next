@@ -10,5 +10,5 @@ declare const __JSWorks_models__: any[];
  */
 export function JSWorksModel(target: any) {
     __JSWorks_models__[target.name] = __JSWorks_models__[target.name] || {};
-    __JSWorks_models__[target.name].fields = __JSWorks_models__[target.name].fields || [];
+    __JSWorks_models__[target.name].proto = target;
 }
