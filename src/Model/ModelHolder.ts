@@ -89,12 +89,9 @@ export class ModelHolder {
 
         model.create = model['__create__'];
         model.read = model['__read__'];
-        model.update = model['__update__'];
         model['delete'] = model['__delete__'];
         model.query = model['__query__'];
-
         model.remove = model['delete'];
-        model.save = model.update;
 
         model.jsonParser = JSWorks.applicationContext.serviceHolder.getServiceByName('JSONParser');
 
@@ -108,6 +105,12 @@ export class ModelHolder {
             this['__dirty__'] = value;
         };
 
+        model.update = function(): Promise<IModel> {
+            return this['__update__']().then(() => {
+                this.setDirty(false);
+            });
+        };
+
         model.from = function(data?: object): IModel {
             if (typeof data !== 'object') {
                 data = undefined;
@@ -119,15 +122,46 @@ export class ModelHolder {
             newModel.proto = this.proto;
             modelHolder.initModel(newModel);
 
-            if (!data) {
-                return newModel;
-            }
-
-            Object.keys(data).forEach((field: string) => {
-                newModel[field] = data[field];
-            });
+            newModel.apply(data);
+            newModel.setDirty(false);
 
             return newModel;
+        };
+
+        model.persist = function(): Promise<IModel> {
+            if (this.id) {
+                return this.update();
+            }
+
+            return this.create();
+        };
+
+        model.save = function(): Promise<IModel> {
+            if (!this.isDirty()) {
+                return Promise.resolve(this);
+            }
+
+            return this.persist();
+        };
+
+        model.gist = function(): object {
+            const fields: object = {};
+
+            (model.modelMetadata.fields || []).forEach((fieldName: string) => {
+                fields[fieldName] = this[fieldName];
+            });
+
+            return fields;
+        };
+
+        model.apply = function(fields?: object): void {
+            if (typeof fields !== 'object') {
+                return;
+            }
+
+            Object.keys(fields).forEach((fieldName: string) => {
+                this[fieldName] = fields[fieldName];
+            });
         };
         // tslint:enable
     }

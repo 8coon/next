@@ -29,10 +29,11 @@ export abstract class ParserService {
      * Загружает данные по удалённому адресу.
      * @param url
      * @param method
+     * @param data
      * @returns {undefined}
      */
-    public parseURL(url: string, method: HTTPMethod = HTTPMethod.GET): object {
-        return this.parseString(this.network.fetch(url, method).data);
+    public parseURL(url: string, method: HTTPMethod = HTTPMethod.GET, data?: any): object {
+        return this.parseString(this.network.fetch(url, method, data).data);
     }
 
 
@@ -41,10 +42,11 @@ export abstract class ParserService {
      * @param url
      * @param callback
      * @param method
+     * @param data
      */
     public parseURLCallback(url: string, callback: (parsed: object) => void,
-                            method: HTTPMethod = HTTPMethod.GET): void {
-        this.network.fetchAsync(url, method).then((response: HTTPResponse) => {
+                            method: HTTPMethod = HTTPMethod.GET, data?: any): void {
+        this.network.fetchAsync(url, method, data).then((response: HTTPResponse) => {
             callback(this.parseString(response.data));
         });
     }
@@ -54,12 +56,13 @@ export abstract class ParserService {
      * Возвращает Promise, который разрешается данными, загруженными с сервера.
      * @param url
      * @param method
+     * @param data
      */
-    public parseURLAsync(url: string, method: HTTPMethod = HTTPMethod.GET): Promise<object> {
+    public parseURLAsync(url: string, method: HTTPMethod = HTTPMethod.GET, data?: any): Promise<object> {
         return new Promise((resolve, reject) => {
             this.parseURLCallback(url, (parsed: object) => {
                 resolve(parsed);
-            }, method);
+            }, method, data);
         });
     }
 
