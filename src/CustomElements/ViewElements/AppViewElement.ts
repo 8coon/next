@@ -13,6 +13,12 @@ import {IVirtualDOMElement} from '../../VirtualDOM/IVirtualDOMElement';
 declare const JSWorks: any;
 
 
+type renderCallback = (viewName: string, view: View) => void;
+type resolveCallback = (viewName: string, view: View, rendered: object, render: renderCallback) => void;
+type successCallback = () => void;
+type errorCallback = () => void;
+
+
 @JSWorksInternal
 @JSWorksCustomElement(ViewConfig.VIEW_TAG)
 export class AppViewElement extends SimpleVirtualDOMElementExt {
@@ -21,7 +27,8 @@ export class AppViewElement extends SimpleVirtualDOMElementExt {
     private static listening: boolean = false;
 
 
-    private static renderViewInheritance(viewHolder: ViewHolder): void {
+    private static resolveCircular(viewHolder: ViewHolder, callback: resolveCallback,
+            success: successCallback, error: errorCallback): void {
         const rendered = {};
         const viewNames: string[] = Object.keys(viewHolder.views);
         let renderedCount = 0;
@@ -32,11 +39,30 @@ export class AppViewElement extends SimpleVirtualDOMElementExt {
                     return;
                 }
 
-                const view: View = viewHolder.getView(viewName);
+                callback(viewName, viewHolder.getView(viewName), rendered,
+                    (renderViewName: string, view: View): void => {
+                        rendered[renderViewName] = view;
+                        renderedCount++;
+                    });
+            });
 
+            if (renderedCount === viewNames.length) {
+                success();
+                return;
+            }
+        }
+
+        error();
+    }
+
+
+    private static renderViewInheritance(viewHolder: ViewHolder): void {
+
+        AppViewElement.resolveCircular(viewHolder,
+
+            (viewName: string, view: View, rendered: object, render: renderCallback): void => {
                 if (!view.DOMRoot.hasAttribute('extends')) {
-                    rendered[viewName] = view;
-                    renderedCount++;
+                    render(viewName, view);
                     return;
                 }
 
@@ -45,19 +71,24 @@ export class AppViewElement extends SimpleVirtualDOMElementExt {
 
                 if (extendsView) {
                     (<AppViewElement> view.DOMRoot).extend(extendsView);
-                    rendered[viewName] = view;
-                    renderedCount++;
+                    render(viewName, view);
                 }
-            });
+            },
 
-            if (renderedCount === viewNames.length) {
+            (): void => {
                 JSWorks.applicationContext.emitEvent({ type: EventType.ViewsInheritanceRendered, data: undefined });
-                return;
-            }
-        }
+            },
 
-        throw new UnresolvableViewInheritanceError();
+            (): void => {
+                throw new UnresolvableViewInheritanceError();
+            },
+        );
     }
+
+
+    /* private static renderViewIncludes(viewHolder: ViewHolder): void {
+
+    } */
 
 
     /**
@@ -78,7 +109,7 @@ export class AppViewElement extends SimpleVirtualDOMElementExt {
 
 
     /**
-     * Унаследовать текущую View от данной
+     * Унаследовать текущую View от переданной
      * @param extending
      */
     public extend(extending: View): void {

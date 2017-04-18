@@ -31,4 +31,8 @@ export class %{NAME}%%{CLASS}% {
     ];
 
 
+    @JSWorks.ComponentCollectionProperty()
+    public people: any[] = [];
+
+
 }

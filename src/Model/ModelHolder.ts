@@ -69,8 +69,6 @@ export class ModelHolder {
                 set: function(value: any): void {
                     this[name] = value;
                     this.__dirty__ = true;
-
-                    // ToDo: Event emit
                 }
                 /* tslint:enable */
             });
