@@ -38,24 +38,31 @@ export class ViewEvalElement extends SimpleVirtualDOMElementExt {
         }
 
         super.propagateView(view);
+    }
 
-        const virtualDOM: SimpleVirtualDOM = JSWorks.applicationContext.serviceHolder.
-                getServiceByName('SimpleVirtualDOM');
 
-        this.removeChildren();
-        this.appendChild(<SimpleVirtualDOMElement> virtualDOM.createTextElement(''));
-
+    /**
+     * Обновляет значение
+     */
+    public customUpdate(): void {
         if (!this.hasAttribute('value')) {
             return;
         }
 
-        if (this.view && this.view.component) {
+        if (this.view && this.view.component && this.ready) {
             const value = this.execStatement(this.getAttribute('value'));
 
             if (value === this.lastValue) {
                 return;
             }
 
+            this.lastValue = value;
+
+            const virtualDOM: SimpleVirtualDOM = JSWorks.applicationContext.serviceHolder.
+                getServiceByName('SimpleVirtualDOM');
+
+            this.removeChildren();
+            this.appendChild(<SimpleVirtualDOMElement> virtualDOM.createTextElement(''));
             this.valueChange(value);
         }
     }

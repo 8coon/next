@@ -2,7 +2,7 @@
 
     <h2>This is %{NAME}%View.</h2>
 
-    <view-if condition="$.color1 === 'green'">
+    <view-if condition="$.color1 === 'green'" debug>
         <view-then>
             Color is green
         </view-then>
@@ -65,6 +65,25 @@
             </view-case>
 
         </view-switch>
+
+    </view-for>
+
+
+    <view-for variable="person" in="$.people" debug>
+
+        <view-eval value="console.log('person outside is ', person), ''"></view-eval>
+
+        <view-include name="PersonView">
+
+            <view-param name="person-name">
+                <view-eval value="person.name"></view-eval>
+            </view-param>
+
+            <view-param name="person-age">
+                <view-eval value="person.age"></view-eval>
+            </view-param>
+
+        </view-include>
 
     </view-for>
 

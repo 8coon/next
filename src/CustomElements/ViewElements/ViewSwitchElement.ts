@@ -42,6 +42,27 @@ export class ViewSwitchElement extends AbstractListeningElement {
 
 
     /**
+     * Сбросить шаблон
+     */
+    public customClear(): void {
+        super.customClear();
+
+        if (this.conditions.length === 0) {
+            return;
+        }
+
+        this.removeChildren();
+
+        this.conditions.forEach((condition: string) => {
+            this.appendChild(this.switches[condition]);
+        });
+
+        this.conditions = [];
+        this.switches = {};
+    }
+
+
+    /**
      * См. View.propagateView
      * @param view
      */
@@ -50,7 +71,6 @@ export class ViewSwitchElement extends AbstractListeningElement {
             return;
         }
 
-        // console.log(this.getOuterHTML(), 'view propagated', view);
         super.propagateView(view);
 
         Object.keys(this.switches).forEach((condition) => {
@@ -98,6 +118,13 @@ export class ViewSwitchElement extends AbstractListeningElement {
      * </view-switch>
      */
     public propertyChange(): void {
+        // if (this.conditions.length === 0) {
+        //     const view: View = this.view;
+        //     this.view = undefined;
+        //
+        //     this.propagateView(view);
+        // }
+
         this.removeChildren();
         let found = false;
 
@@ -120,6 +147,8 @@ export class ViewSwitchElement extends AbstractListeningElement {
 
 
     protected customCloneNode(node: ViewSwitchElement): void {
+        super.customCloneNode(node);
+
         Object.keys(this.switches).forEach((condition) => {
             node.switches[condition] = this.switches[condition].cloneNode();
             node.conditions.push(condition);

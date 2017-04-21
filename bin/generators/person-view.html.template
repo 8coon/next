@@ -1,0 +1,21 @@
+<app-view id="%{NAME}%View">
+
+    <div class="person">
+        This is a person<br>
+        <view-eval value="console.log('person inside is ', person), Math.random()" debug></view-eval>
+
+        <div class="person-name">
+            <view-param name="person-name"></view-param>
+        </div>
+
+        <div class="person-age">
+            <view-param name="person-age"></view-param>
+        </div>
+
+        <view-if condition="console.log(person), person.important" static debug><view-then>
+            <div class="person-important">This person is important!</div>
+        </view-then><view-else></view-else></view-if>
+
+    </div>
+
+</app-view>

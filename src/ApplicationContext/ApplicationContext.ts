@@ -144,17 +144,19 @@ export class ApplicationContext implements IEventEmitter {
         this.serviceHolder.instantiateServices();
 
         EventManager.subscribe({}, this.viewHolder, EventType.LOAD, (event: IEvent) => {
-            this.componentHolder.load(this.viewHolder, this.controllerHolder);
 
             EventManager.subscribe({}, this, undefined, (event2) => {
                 switch (event2.type) {
 
                     default: break;
 
-                    case EventType.ViewsInheritanceRendered: {
+                    /* case EventType.ViewIncludesRendered: {
+                        this.componentHolder.load(this.viewHolder, this.controllerHolder);
+                        this.customElementHolder.load();
+
                         this.emitEvent({ type: EventType.InstallViewsListeners, data: this });
                         this.emitEvent({ type: EventType.ViewsListenersInstalled, data: this });
-                    } break;
+                    } break; */
 
                     case EventType.ViewsListenersInstalled: {
                         this._loaded = true;
@@ -175,10 +177,17 @@ export class ApplicationContext implements IEventEmitter {
                 }
             });
 
+            this.componentHolder.load(this.viewHolder, this.controllerHolder);
+            this.viewHolder.renderCustomElements();
+            this.customElementHolder.load();
+            this.viewHolder.renderViews();
+
+            this.emitEvent({ type: EventType.InstallViewsListeners, data: this });
+            this.emitEvent({ type: EventType.ViewsListenersInstalled, data: this });
             this.emitEvent({ type: EventType.LOAD, data: this });
         });
 
-        this.customElementHolder.load();
+        // this.customElementHolder.load();
         this.viewHolder.load();
         this.controllerHolder.load();
         this.modelHolder.load();

@@ -22,6 +22,8 @@ describe('ViewIfElement', () => {
         const page = JSWorks.applicationContext.componentHolder.getPage('TestPage');
         let fired = false;
 
+        console.log(page.view.DOMRoot.getOuterHTML());
+
         JSWorks.EventManager.subscribe({}, page, JSWorks.EventType.PostUpdate, (event) => {
             if (fired) {
                 return;

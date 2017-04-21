@@ -32,7 +32,9 @@ export class %{NAME}%%{CLASS}% {
 
 
     @JSWorks.ComponentCollectionProperty()
-    public people: any[] = [];
+    public people: any[] = [
+        { name: "Catty", age: 22, important: true },
+    ];
 
 
 }

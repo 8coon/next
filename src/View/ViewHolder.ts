@@ -9,6 +9,8 @@ import {JSWorksInternal} from '../Common/InternalDecorator';
 import {ViewConfig} from './ViewConfig';
 import {IDOMParsed} from '../Parser/HTML/IDOMParsed';
 import {VirtualDOM} from '../VirtualDOM/VirtualDOM';
+import {AppViewElement} from '../CustomElements/ViewElements/AppViewElement';
+import {SimpleVirtualDOMElement} from '../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
 
 
 declare const JSWorks: any;
@@ -50,6 +52,37 @@ export class ViewHolder implements IEventEmitter {
             });
 
             this.emitEvent({ type: EventType.LOAD, data: this });
+        });
+    }
+
+
+    /**
+     * Отрисовать пользовательские элементы
+     */
+    public renderCustomElements(): void {
+        AppViewElement.renderViewInheritance(this);
+        AppViewElement.renderViewIncludes(this);
+
+        /* Object.keys(JSWorks.applicationContext.viewHolder.views).forEach((viewName: string) => {
+            const view: View = JSWorks.applicationContext.viewHolder.getView(viewName);
+            (<SimpleVirtualDOMElement> view.DOMRoot).propagateView(view);
+            console.log((<SimpleVirtualDOMElement> view.DOMRoot).getOuterHTML());
+        }); */
+
+        // JSWorks.applicationContext.emitEvent({ type: EventType.ViewIncludesRendered, data: undefined });
+    }
+
+
+    /**
+     * Отрисовать пользовательские элементы во вьюхах
+     */
+    public renderViews(): void {
+        Object.keys(JSWorks.applicationContext.viewHolder.views).forEach((viewName: string) => {
+            const view: View = JSWorks.applicationContext.viewHolder.getView(viewName);
+
+            (<any> view.DOMRoot).ready = false;
+            view.cloneDOMRoot(view);
+            view.DOMRoot.render();
         });
     }
 

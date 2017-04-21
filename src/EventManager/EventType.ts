@@ -21,6 +21,8 @@ export enum EventType {
     ViewsListenersInstalled,
     ApplicationLoaded,
     PostUpdate,
+    ViewIncludesRendered,
+    RenderCustomElements,
 }
 
 

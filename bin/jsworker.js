@@ -375,6 +375,7 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
     // generateRoute(path, 'Posts')
 
     generateView(path, 'views', 'Base', '', 'base-view.html');
+    generateView(path, 'views', 'Person', '', 'person-view.html');
     generateComponent(path, 'Sample', '*', 'Page', 'BaseView');
 
     generateComponent(path, 'Test', '*', 'Page', 'BaseView', 'test-view.html',

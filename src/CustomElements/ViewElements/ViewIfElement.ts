@@ -27,6 +27,31 @@ export class ViewIfElement extends AbstractConditionElement {
 
 
     /**
+     * Сбросить шаблон
+     */
+    public customClear(): void {
+        super.customClear();
+
+        if (!this.thenTemplate && !this.elseTemplate) {
+            return;
+        }
+
+        this.removeChildren();
+
+        if (this.thenTemplate) {
+            this.appendChild(this.thenTemplate);
+        }
+
+        if (this.elseTemplate) {
+            this.appendChild(this.elseTemplate);
+        }
+
+        this.thenTemplate = undefined;
+        this.elseTemplate = undefined;
+    }
+
+
+    /**
      * Обновить все ноды в ветках условия
      */
     public customUpdate(): void {
@@ -53,12 +78,24 @@ export class ViewIfElement extends AbstractConditionElement {
 
         super.propagateView(view);
 
+        if (this.hasAttribute('debug')) {
+            console.log('if propagate', (view || { id: '' }).id, this.getAttribute('condition'));
+        }
+
         if (this.thenTemplate) {
             this.thenTemplate.propagateView(view);
         }
 
         if (this.elseTemplate) {
             this.elseTemplate.propagateView(view);
+        }
+
+        if (this.thenTemplate || this.elseTemplate) {
+            return;
+        }
+
+        if (this.hasAttribute('debug')) {
+            console.log('if template');
         }
 
         this._children.forEach((child: SimpleVirtualDOMElement) => {
@@ -97,6 +134,13 @@ export class ViewIfElement extends AbstractConditionElement {
      * @param newValue
      */
     public conditionChange(newValue: any): void {
+        /* if (!this.thenTemplate && !this.elseTemplate) {
+            const view: View = this.view;
+            this.view = undefined;
+
+            this.propagateView(view);
+        } */
+
         this.removeChildren();
 
         if (newValue) {
@@ -108,6 +152,8 @@ export class ViewIfElement extends AbstractConditionElement {
 
 
     protected customCloneNode(node: ViewIfElement): void {
+        super.customCloneNode(node);
+
         if (this.thenTemplate) {
             node.thenTemplate = this.thenTemplate.cloneNode();
         }
