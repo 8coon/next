@@ -389,6 +389,9 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
     generateComponent(path, 'Test', '*', 'Page', 'BaseView', 'test-view.html',
         'test-controller.ts', 'test-page.ts');
 
+    generateComponent(path, 'TestInset', '*', 'Component', '', 'test-inset-view.html',
+        'test-inset-controller.ts', 'test-inset-component.ts');
+
     generateInterceptor(path, 'interceptors', 'TestBefore1', 'RouteBeforeNavigateInterceptor',
        'test-interceptor.ts');
     generateInterceptor(path, 'interceptors', 'TestBefore2', 'RouteBeforeNavigateInterceptor',

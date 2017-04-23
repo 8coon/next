@@ -59,17 +59,9 @@ export class ViewHolder implements IEventEmitter {
     /**
      * Отрисовать пользовательские элементы
      */
-    public renderCustomElements(): void {
+    public renderIncludesAndInheritance(): void {
         AppViewElement.renderViewInheritance(this);
         AppViewElement.renderViewIncludes(this);
-
-        /* Object.keys(JSWorks.applicationContext.viewHolder.views).forEach((viewName: string) => {
-            const view: View = JSWorks.applicationContext.viewHolder.getView(viewName);
-            (<SimpleVirtualDOMElement> view.DOMRoot).propagateView(view);
-            console.log((<SimpleVirtualDOMElement> view.DOMRoot).getOuterHTML());
-        }); */
-
-        // JSWorks.applicationContext.emitEvent({ type: EventType.ViewIncludesRendered, data: undefined });
     }
 
 

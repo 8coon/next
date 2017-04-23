@@ -178,7 +178,7 @@ export class ApplicationContext implements IEventEmitter {
             });
 
             this.componentHolder.load(this.viewHolder, this.controllerHolder);
-            this.viewHolder.renderCustomElements();
+            this.viewHolder.renderIncludesAndInheritance();
             this.customElementHolder.load();
             this.viewHolder.renderViews();
 
