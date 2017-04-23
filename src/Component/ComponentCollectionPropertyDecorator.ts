@@ -16,9 +16,6 @@ declare const JSWorks: any;
  */
 export function JSWorksComponentCollectionProperty(data?: IComponentPropertyDecoratorData) {
     return (target: any, name: string) => {
-        target.__collections__ = target.__collections__ || [];
-        target.__collections__.push(`__${name}_collection__`);
-
         return {
             configurable: false,
             enumerable: false,

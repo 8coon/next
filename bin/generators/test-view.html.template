@@ -85,4 +85,9 @@
 
     </view-for>
 
+
+    <view-component id="inset1" name="TestInsetComponent" person_name="Margaret"></view-component>
+    <view-component id="inset2" name="TestInsetComponent" person_name="Gregg"></view-component>
+    <view-component id="inset3" name="TestInsetComponent" person_name="Beatrice"></view-component>
+
 </app-view>

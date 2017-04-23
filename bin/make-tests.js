@@ -5,7 +5,7 @@ const process = require('child_process');
 // ToDo: Fix for Windows
 
 const exec = (cmd) => {
-    process.execSync(cmd, { stdio: 'inherit', stdio2: ['pipe', process.stdout, process.stderr] });
+    process.execSync(cmd, { stdio: 'inherit' });
 };
 
 

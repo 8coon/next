@@ -1,0 +1,16 @@
+'use strict';
+
+
+declare const JSWorks: any;
+
+
+@JSWorks.%{CLASS}%({ view: '%{NAME}%View', controller: '%{NAME}%Controller' })
+export class %{NAME}%%{CLASS}% {
+
+    @JSWorks.ComponentProperty()
+    public person_name: string = '';
+
+    @JSWorks.ComponentCollectionProperty()
+    public numbers: any[] = [ 3, 5, 7, 52 ];
+
+}

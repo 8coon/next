@@ -1,4 +1,3 @@
-import {AbstractConditionElement} from './AbstractConditionElement';
 import {JSWorksInternal} from '../../Common/InternalDecorator';
 import {JSWorksCustomElement} from '../CustomElementDecorator';
 import {ViewConfig} from '../../View/ViewConfig';

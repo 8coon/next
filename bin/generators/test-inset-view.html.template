@@ -1,0 +1,13 @@
+<app-view id="%{NAME}%View" %{EXTENDS}%>
+
+    <view-for variable="number" in="$.numbers">
+        <view-eval value="`${$.id} ${$.person_name}`"></view-eval>
+        <view-eval value="number"></view-eval>
+
+        <view-if static condition="number > 10"><view-then>
+            Number is bigger than 10!
+        </view-then><view-else>
+        </view-else></view-if>
+    </view-for>
+
+</app-view>

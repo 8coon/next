@@ -4,6 +4,7 @@ import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 
 
 declare const JSWorks: any;
+declare const __JSWorks_component_fields__: any;
 
 
 /**
@@ -14,6 +15,11 @@ declare const JSWorks: any;
  */
 export function JSWorksComponentProperty(data?: IComponentPropertyDecoratorData) {
     return (target: any, name: string) => {
+        const targetName: string = target.constructor.name;
+
+        __JSWorks_component_fields__[targetName] = __JSWorks_component_fields__[targetName] || [];
+        __JSWorks_component_fields__[targetName].push(name);
+
         return {
             configurable: false,
             enumerable: false,
@@ -33,14 +39,22 @@ export function JSWorksComponentProperty(data?: IComponentPropertyDecoratorData)
                     }
                 };
 
+                const pushField = () => {
+                    this.fields = this.fields || [];
+                    this.fields.push(name);
+                };
+
                 const appContext: ApplicationContext = JSWorks.applicationContext;
 
                 if (appContext.loaded) {
+                    pushField();
                     emit();
+
                     return;
                 }
 
                 JSWorks.EventManager.subscribe(this, appContext, EventType.ViewsListenersInstalled, (ev) => {
+                    pushField();
                     emit();
                 });
             },

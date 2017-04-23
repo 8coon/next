@@ -160,13 +160,4 @@ export class SimpleVirtualDOM implements VirtualDOM {
     }
 
 
-    /**
-     * Сливает виртуальный DOM с реальным
-     * @param realRoot
-     * @param virtualRoot
-     */
-    /* public merge(realRoot: Element, virtualRoot: SimpleVirtualDOM): void {
-
-    } */
-
 }

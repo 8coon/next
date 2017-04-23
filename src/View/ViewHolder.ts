@@ -10,7 +10,6 @@ import {ViewConfig} from './ViewConfig';
 import {IDOMParsed} from '../Parser/HTML/IDOMParsed';
 import {VirtualDOM} from '../VirtualDOM/VirtualDOM';
 import {AppViewElement} from '../CustomElements/ViewElements/AppViewElement';
-import {SimpleVirtualDOMElement} from '../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
 
 
 declare const JSWorks: any;
@@ -59,17 +58,22 @@ export class ViewHolder implements IEventEmitter {
     /**
      * Отрисовать пользовательские элементы
      */
-    public renderCustomElements(): void {
+    public renderIncludesAndInheritance(): void {
         AppViewElement.renderViewInheritance(this);
         AppViewElement.renderViewIncludes(this);
+    }
 
-        /* Object.keys(JSWorks.applicationContext.viewHolder.views).forEach((viewName: string) => {
-            const view: View = JSWorks.applicationContext.viewHolder.getView(viewName);
-            (<SimpleVirtualDOMElement> view.DOMRoot).propagateView(view);
-            console.log((<SimpleVirtualDOMElement> view.DOMRoot).getOuterHTML());
-        }); */
 
-        // JSWorks.applicationContext.emitEvent({ type: EventType.ViewIncludesRendered, data: undefined });
+    /**
+     * Создать дубликат View, зарегистрировать и вернуть его имя
+     * @param oldName
+     * @returns {string}
+     */
+    public duplicateView(oldName: string): string {
+        const newName = ApplicationContext.UniqueName(oldName, (name: string) => { return this.views[name]; });
+        this.views[newName] = this.getView(oldName).clone(newName);
+
+        return newName;
     }
 
 

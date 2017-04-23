@@ -101,4 +101,11 @@ export class ViewConfig {
      */
     public static readonly ROOT_TAG: string = 'APP-MAIN';
 
+
+    /**
+     * Тэг, встраивающий в страницу компонент
+     * @type {string}
+     */
+    public static readonly COMPONENT_TAG = 'VIEW-COMPONENT';
+
 }
