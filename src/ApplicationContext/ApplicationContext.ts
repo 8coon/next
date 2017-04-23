@@ -177,7 +177,7 @@ export class ApplicationContext implements IEventEmitter {
                 }
             });
 
-            this.componentHolder.load(this.viewHolder, this.controllerHolder);
+            this.componentHolder.load();
             this.viewHolder.renderIncludesAndInheritance();
             this.customElementHolder.load();
             this.viewHolder.renderViews();
@@ -187,7 +187,6 @@ export class ApplicationContext implements IEventEmitter {
             this.emitEvent({ type: EventType.LOAD, data: this });
         });
 
-        // this.customElementHolder.load();
         this.viewHolder.load();
         this.controllerHolder.load();
         this.modelHolder.load();

@@ -32,7 +32,6 @@ export class View implements IEventEmitter, IEventReceiver {
 
 
     private _id: string;
-    private template: IVirtualDOMElement;
     private _DOMRoot: IVirtualDOMElement;
 
     private appContext: ApplicationContext;
@@ -42,22 +41,11 @@ export class View implements IEventEmitter, IEventReceiver {
 
     constructor(data: IViewParsed) {
         this._id = data.id;
-        // this.template = data.template;
 
         this.appContext = JSWorks.applicationContext;
         this.virtualDOM = this.appContext.serviceHolder.getService('VirtualDOM');
 
         this._DOMRoot = data.template;
-        // (<SimpleVirtualDOMElement> this._DOMRoot).propagateView(this);
-        // Мы сделаем это позже
-
-        /* this._DOMRoot = this.virtualDOM.createElement(ViewConfig.VIEW_TAG);
-        this._DOMRoot.id = this._id;
-        this._DOMRoot.view = this;
-        this._DOMRoot.innerHTML = this.template.innerHTML; */
-
-        // this._DOMRoot = this.template.cloneNode();
-        // this._DOMRoot.view = this;
     }
 
 
@@ -87,6 +75,15 @@ export class View implements IEventEmitter, IEventReceiver {
     public cloneDOMRoot(view: View): void {
         this._DOMRoot.view = view;
         this._DOMRoot = this._DOMRoot.cloneNode();
+    }
+
+
+    /**
+     * Создать копию текущей View
+     * @returns {View}
+     */
+    public clone(): View {
+        return new View({ id: this._id, template: this._DOMRoot.cloneNode() });
     }
 
 

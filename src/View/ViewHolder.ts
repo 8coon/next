@@ -66,6 +66,24 @@ export class ViewHolder implements IEventEmitter {
 
 
     /**
+     * Создать дубликат View, зарегистрировать и вернуть его имя
+     * @param oldName
+     * @returns {string}
+     */
+    public duplicateView(oldName: string): string {
+        const view: View = this.getView(oldName).clone();
+        let name = oldName;
+
+        while (this.views[name]) {
+            name = `${oldName}@${Math.floor(Math.random() * 100000000)}`;
+        }
+
+        this.views[name] = view;
+        return name;
+    }
+
+
+    /**
      * Отрисовать пользовательские элементы во вьюхах
      */
     public renderViews(): void {

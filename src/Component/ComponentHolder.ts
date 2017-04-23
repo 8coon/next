@@ -18,102 +18,116 @@ export class ComponentHolder {
 
     private components: object = {};
     private pages: object = {};
+    private prototypes: object = {};
 
 
     /**
      * Загрузить все компоненты. Должен быть вызван после загрузки всех View.
      */
-    public load(views: ViewHolder, controllers: ControllerHolder): void {
+    public load(): void {
         __JSWorks_components__.forEach((componentProto) => {
-            const component = new componentProto();
-            component.variables = {};
+            this.prototypes[componentProto.name] = componentProto;
+            this.initComponent(componentProto);
+        });
+    }
 
 
-            component.setVariable = (name: string, value: any) => {
-                component.variables[name] = value;
+    /**
+     * Инициализировать компонент из прототипа
+     * @param componentProto
+     */
+    public initComponent(componentProto) {
+        const views: ViewHolder = JSWorks.applicationContext.viewHolder;
+        const controllers: ControllerHolder = JSWorks.applicationContext.controllerHolder;
 
-                if (component.emitEvent) {
-                    component.emitEvent({ type: EventType.UPDATE, data: undefined });
-                }
-            };
+        const component = new componentProto();
+        component.variables = {};
 
 
-            component.getVariable = (name: string) => {
-                return component.variables[name];
-            };
+        component.setVariable = (name: string, value: any) => {
+            component.variables[name] = value;
 
-            component.subscribeCollection = (name: string) => {
-                if (component[name].__subscribed__) {
+            if (component.emitEvent) {
+                component.emitEvent({ type: EventType.UPDATE, data: undefined });
+            }
+        };
+
+
+        component.getVariable = (name: string) => {
+            return component.variables[name];
+        };
+
+        component.subscribeCollection = (name: string) => {
+            if (component[name].__subscribed__) {
+                return;
+            }
+
+            const oldCollection: CollectionProperty = component[name];
+            component[name] = new CollectionProperty();
+            component[name].__subscribed__ = true;
+
+            EventManager.subscribe({}, component[name], EventType.UPDATE, (event: IEvent) => {
+                const emit = () => {
+
+                    if (component.emitEvent) {
+                        component.emitEvent({ type: EventType.UPDATE, data: {} });
+                        component.emitEvent({ type: EventType.PostUpdate, data: {} });
+                    }
+                };
+
+                const appContext: ApplicationContext = JSWorks.applicationContext;
+
+                if (appContext.loaded) {
+                    emit();
                     return;
                 }
 
-                const oldCollection: CollectionProperty = component[name];
-                component[name] = new CollectionProperty();
-                component[name].__subscribed__ = true;
-
-                EventManager.subscribe({}, component[name], EventType.UPDATE, (event: IEvent) => {
-                    const emit = () => {
-
-                        if (component.emitEvent) {
-                            component.emitEvent({ type: EventType.UPDATE, data: {} });
-                            component.emitEvent({ type: EventType.PostUpdate, data: {} });
-                        }
-                    };
-
-                    const appContext: ApplicationContext = JSWorks.applicationContext;
-
-                    if (appContext.loaded) {
-                        emit();
-                        return;
-                    }
-
-                    JSWorks.EventManager.subscribe(this, appContext, EventType.ViewsListenersInstalled, (ev) => {
-                        emit();
-                    });
+                JSWorks.EventManager.subscribe(this, appContext, EventType.ViewsListenersInstalled, (ev) => {
+                    emit();
                 });
-
-                if (oldCollection && oldCollection.length > 0) {
-                    component[name].setValues(oldCollection.getValues());
-                }
-            };
-
-
-            (componentProto.__collections__ || []).forEach((name) => {
-                component.subscribeCollection(name);
             });
 
-            const view = views.getView(componentProto.__view_name__);
-            view.component = component;
-            view.applicationContext = JSWorks.applicationContext;
-
-            component.view = view;
-            component.controller = controllers.getController(componentProto.__controller_name__);
-            component.applicationContext = JSWorks.applicationContext;
-            component.type = componentProto.__type__;
-
-            component.controller.component = component;
-            component.controller.applicationContext = JSWorks.applicationContext;
-
-            switch (componentProto.__type__) {
-
-                case ComponentConfig.Types.PAGE: {
-                    this.pages[componentProto.name] = component;
-                } break;
-
-                case ComponentConfig.Types.COMPONENT: {
-                    this.components[componentProto.name] = component;
-                } break;
-
-                default: {
-                    throw new Error(`Unknown component type: ${componentProto.__type__}`);
-                }
-
+            if (oldCollection && oldCollection.length > 0) {
+                component[name].setValues(oldCollection.getValues());
             }
+        };
 
-            if (component.emitEvent) {
-                component.emitEvent({ type: EventType.CREATE, data: component });
-            }
+
+        (componentProto.__collections__ || []).forEach((name) => {
+            component.subscribeCollection(name);
         });
+
+        const view = views.getView(componentProto.__view_name__);
+        view.component = component;
+        view.applicationContext = JSWorks.applicationContext;
+
+        component.view = view;
+        component.controller = controllers.getController(componentProto.__controller_name__);
+        component.applicationContext = JSWorks.applicationContext;
+        component.type = componentProto.__type__;
+
+        component.controller.component = component;
+        component.controller.applicationContext = JSWorks.applicationContext;
+
+        switch (componentProto.__type__) {
+
+            case ComponentConfig.Types.PAGE: {
+                this.pages[componentProto.name] = component;
+            } break;
+
+            case ComponentConfig.Types.COMPONENT: {
+                this.components[componentProto.name] = component;
+            } break;
+
+            default: {
+                throw new Error(`Unknown component type: ${componentProto.__type__}`);
+            }
+
+        }
+
+        if (component.emitEvent) {
+            component.emitEvent({ type: EventType.CREATE, data: component });
+        }
     }
 
 
@@ -124,6 +138,16 @@ export class ComponentHolder {
      */
     public getComponent(name: string) {
         return this.components[name];
+    }
+
+
+    /**
+     * Получить прототип компонента по имени
+     * @param name
+     * @returns {any}
+     */
+    public getComponentPrototype(name: string) {
+        return this.prototypes[name];
     }
 
 
