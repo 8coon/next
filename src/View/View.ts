@@ -82,8 +82,11 @@ export class View implements IEventEmitter, IEventReceiver {
      * Создать копию текущей View
      * @returns {View}
      */
-    public clone(): View {
-        return new View({ id: this._id, template: this._DOMRoot.cloneNode() });
+    public clone(id: string = this.id): View {
+        const view: View = new View({ id, template: this._DOMRoot.cloneNode() });
+        (<SimpleVirtualDOMElement> view.DOMRoot).propagateView(view);
+
+        return view;
     }
 
 

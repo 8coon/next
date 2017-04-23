@@ -78,6 +78,17 @@ export class ComponentElement extends SimpleVirtualDOMElementExt {
      */
     public render(): void {
         super.render();
+
+        if (!this.component) {
+            return;
+        }
+
+        if (this.rendered.firstChild) {
+            this.rendered.removeChild(this.rendered.firstChild);
+        }
+
+        this.component.view.DOMRoot.render();
+        this.rendered.appendChild(this.component.view.DOMRoot.rendered);
     }
 
 

@@ -205,24 +205,21 @@ export class AppViewElement extends SimpleVirtualDOMElementExt {
      * @returns {AppViewElement}
      */
     public createElement(): AppViewElement {
-        /* if (!AppViewElement.listening) {
-            AppViewElement.listening = true;
-
-            JSWorks.EventManager.subscribe({}, JSWorks.applicationContext, EventType.LOAD, (event) => {
-                AppViewElement.renderViewInheritance(JSWorks.applicationContext.viewHolder);
-                AppViewElement.renderViewIncludes(JSWorks.applicationContext.viewHolder);
-
-                Object.keys(JSWorks.applicationContext.viewHolder.views).forEach((viewName: string) => {
-                    const view: View = JSWorks.applicationContext.viewHolder.getView(viewName);
-                    (<SimpleVirtualDOMElement> view.DOMRoot).propagateView(view);
-                    console.log((<SimpleVirtualDOMElement> view.DOMRoot).getOuterHTML());
-                });
-
-                JSWorks.applicationContext.emitEvent({ type: EventType.ViewIncludesRendered, data: undefined });
-            });
-        } */
-
         return new AppViewElement(SimpleVirtualDOM.NextHash());
+    }
+
+
+    /**
+     * См. SimpleVirtualDOMElement.render
+     */
+    public render(): void {
+        super.render();
+
+        if (this.tagName === undefined) {
+            return;
+        }
+
+        (<HTMLElement> this.rendered).removeAttribute('id');
     }
 
 }

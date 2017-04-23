@@ -189,7 +189,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         this.customCloneNode(element);
 
         element.propagateView(this.view);
-        element.emitEvent({ type: EventType.CREATE, data: element });
+        element.emitMutilationEvent({ type: EventType.CREATE, data: element });
 
         return element;
     }

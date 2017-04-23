@@ -70,12 +70,10 @@ export class ViewHolder implements IEventEmitter {
      * @returns {string}
      */
     public duplicateView(oldName: string): string {
-        const view: View = this.getView(oldName).clone();
-
         const newName = ApplicationContext.UniqueName(oldName, (name: string) => { return this.views[name]; });
-        this.views[newName] = view;
+        this.views[newName] = this.getView(oldName).clone(newName);
 
-        return name;
+        return newName;
     }
 
 
