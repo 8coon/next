@@ -109,8 +109,8 @@ export class ViewForElement extends AbstractListeningElement {
                 this.appendChild(this.template.cloneNode());
 
             } else if (this._children[index]['__for_value__'] === undefined ||
-                this._children[index]['__for_value__'] !== value) {
-                this.replaceChild(this.template.cloneNode(), this._children[index]);
+                    this._children[index]['__for_value__'] !== value) {
+                // this.replaceChild(this.template.cloneNode(), this._children[index]);
 
             } else {
                 return;

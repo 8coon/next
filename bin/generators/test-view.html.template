@@ -2,7 +2,7 @@
 
     <h2>This is %{NAME}%View.</h2>
 
-    <view-if condition="$.color1 === 'green'" debug>
+    <view-if condition="$.color1 === 'green'">
         <view-then>
             Color is green
         </view-then>
@@ -69,9 +69,7 @@
     </view-for>
 
 
-    <view-for variable="person" in="$.people" debug>
-
-        <view-eval value="console.log('person outside is ', person), ''"></view-eval>
+    <view-for variable="person" in="$.people">
 
         <view-include name="PersonView">
 

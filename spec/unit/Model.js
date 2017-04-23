@@ -62,6 +62,36 @@ describe('Model', () => {
 
 
 
+    it('should be able to put response data in a collection with view-for tag updating', (done) => {
+        const page = JSWorks.applicationContext.componentHolder.getPage('TestPage');
+
+        JSWorks.applicationContext.modelHolder.getModel('TestModel').query({ sort: 'ASC' }).then((result) => {
+            const srcValues = page.people.getValues();
+            page.people.setValues(result);
+
+            const html = page.view.DOMRoot.querySelector('view-for[in="$.people"]').getOuterHTML();
+
+            expect(html).to.contain('Mae Borowski');
+            expect(html).to.contain('<view-eval value="person.age">20</view-eval>');
+
+            expect(html).to.contain('Goubar');
+            expect(html).to.contain('<view-eval value="person.age">9000</view-eval>');
+
+            expect(html).to.contain('Mr. Skeltal');
+            expect(html).to.contain('<view-eval value="person.age">-1</view-eval>');
+
+            expect(html).to.contain('Kek Kek');
+            expect(html).to.contain('<view-eval value="person.age">0</view-eval>');
+
+            page.people.setValues(srcValues);
+            done();
+
+        }).catch((error) => {
+            console.error(error);
+            done();
+        })
+
+    });
 
 
 });

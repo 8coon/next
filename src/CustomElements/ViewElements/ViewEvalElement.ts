@@ -72,7 +72,11 @@ export class ViewEvalElement extends SimpleVirtualDOMElementExt {
      * @param newValue
      */
     public valueChange(newValue: any): void {
-        this._children[0].text = String(newValue || '');
+        if (newValue === undefined) {
+            newValue = '';
+        }
+
+        this._children[0].text = String(newValue);
     }
 
 }
