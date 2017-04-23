@@ -29,7 +29,6 @@ describe('ViewHolder', () => {
         const appContext = JSWorks.applicationContext;
         const view = appContext.viewHolder.getView('SampleView');
         const virtualRoot = view.DOMRoot;
-        console.log(virtualRoot.getOuterHTML());
         const renderedRoot = virtualRoot.rendered;
 
         JSWorks.EventManager.subscribe({}, view, JSWorks.EventType.UPDATE, (event) => {

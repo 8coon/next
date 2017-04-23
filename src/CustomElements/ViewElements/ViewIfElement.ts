@@ -21,8 +21,10 @@ export class ViewIfElement extends AbstractConditionElement {
      * @returns {undefined}
      */
     public createElement(): ViewIfElement {
-        super.createElement();
-        return new ViewIfElement(SimpleVirtualDOM.NextHash());
+        const element: ViewIfElement = new ViewIfElement(SimpleVirtualDOM.NextHash());
+        element.superCreateElement();
+
+        return element;
     }
 
 
@@ -78,10 +80,6 @@ export class ViewIfElement extends AbstractConditionElement {
 
         super.propagateView(view);
 
-        if (this.hasAttribute('debug')) {
-            console.log('if propagate', (view || { id: '' }).id, this.getAttribute('condition'));
-        }
-
         if (this.thenTemplate) {
             this.thenTemplate.propagateView(view);
         }
@@ -92,10 +90,6 @@ export class ViewIfElement extends AbstractConditionElement {
 
         if (this.thenTemplate || this.elseTemplate) {
             return;
-        }
-
-        if (this.hasAttribute('debug')) {
-            console.log('if template');
         }
 
         this._children.forEach((child: SimpleVirtualDOMElement) => {
@@ -116,9 +110,9 @@ export class ViewIfElement extends AbstractConditionElement {
                 }
 
             }
-
-            this.removeChild(child);
         });
+
+        this.removeChildren();
     }
 
 
@@ -161,6 +155,11 @@ export class ViewIfElement extends AbstractConditionElement {
         if (this.elseTemplate) {
             node.elseTemplate = this.elseTemplate.cloneNode();
         }
+    }
+
+
+    protected superCreateElement(): void {
+        super.createElement();
     }
 
 }

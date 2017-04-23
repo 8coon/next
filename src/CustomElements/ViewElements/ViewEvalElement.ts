@@ -23,7 +23,6 @@ export class ViewEvalElement extends SimpleVirtualDOMElementExt {
      * @returns {ViewEvalElement}
      */
     public createElement(): ViewEvalElement {
-        // super.createElement();
         return new ViewEvalElement(SimpleVirtualDOM.NextHash());
     }
 

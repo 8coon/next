@@ -18,7 +18,6 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
      */
     public subscribeOnComponent(component: any): void {
         this.updateDescriptor = EventManager.subscribe(this, component, EventType.UPDATE, (event: IEvent) => {
-            console.log('property change');
             this.propertyChange();
         });
     }
@@ -38,15 +37,9 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
      * @returns {undefined}
      */
     public createElement(): AbstractListeningElement {
-        // ToDo: Откуда берётся this? переделать
-        console.log('subscribe', this);
-
         EventManager.subscribe(this, JSWorks.applicationContext, EventType.InstallViewsListeners, (ev) => {
-            console.log('subscribing', this.view, (this.view || { component: undefined }).component);
-
             if (this.view && this.view.component && !this.hasAttribute('static')) {
                 this.subscribeOnComponent(this.view.component);
-                console.log('subscribed', this);
             }
         });
 
@@ -58,10 +51,6 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
      * Пересчитать условие
      */
     public customUpdate(): void {
-        if (this.hasAttribute('debug')) {
-            console.log('custom abstract update', this);
-        }
-
         super.customUpdate();
 
         if (this.view && this.view.component) {

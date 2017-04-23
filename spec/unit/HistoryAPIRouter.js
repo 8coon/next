@@ -2,7 +2,6 @@
 
 
 describe('Router(History API)', () => {
-    return;
 
     const baseUrl = `${location.href.split(':')[0]}://${location.host}`;
 

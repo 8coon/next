@@ -25,8 +25,10 @@ export class ViewForElement extends AbstractListeningElement {
      * @returns {undefined}
      */
     public createElement(): ViewForElement {
-        super.createElement();
-        return new ViewForElement(SimpleVirtualDOM.NextHash());
+        const element: ViewForElement = new ViewForElement(SimpleVirtualDOM.NextHash());
+        element.superCreateElement();
+
+        return element;
     }
 
 
@@ -53,7 +55,6 @@ export class ViewForElement extends AbstractListeningElement {
             });
 
             this.removeChildren();
-            return;
         }
     }
 
@@ -148,6 +149,11 @@ export class ViewForElement extends AbstractListeningElement {
         if (this.template) {
             node.template = this.template.cloneNode();
         }
+    }
+
+
+    protected superCreateElement(): void {
+        super.createElement();
     }
 
 }

@@ -20,12 +20,14 @@ export class ViewSwitchElement extends AbstractListeningElement {
 
 
     /**
-     * Фабрика ViewSwitchElement
+     * Фабрика ViewForElement
      * @returns {undefined}
      */
     public createElement(): ViewSwitchElement {
-        super.createElement();
-        return new ViewSwitchElement(SimpleVirtualDOM.NextHash());
+        const element: ViewSwitchElement = new ViewSwitchElement(SimpleVirtualDOM.NextHash());
+        element.superCreateElement();
+
+        return element;
     }
 
 
@@ -98,9 +100,9 @@ export class ViewSwitchElement extends AbstractListeningElement {
                 }
 
             }
-
-            this.removeChild(child);
         });
+
+        this.removeChildren();
     }
 
 
@@ -153,6 +155,11 @@ export class ViewSwitchElement extends AbstractListeningElement {
             node.switches[condition] = this.switches[condition].cloneNode();
             node.conditions.push(condition);
         });
+    }
+
+
+    protected superCreateElement(): void {
+        super.createElement();
     }
 
 }
