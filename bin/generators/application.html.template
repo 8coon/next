@@ -6,6 +6,7 @@
 
     <!-- JSWorks import -->
     <script src="/jsworks/jsworks.js"></script>
+    <link rel="stylesheet" href="/jsworks/jsworks.css">
     <!-- JSWorks import end -->
 
     <script src="/application.js"></script>

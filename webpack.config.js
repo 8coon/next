@@ -1,4 +1,3 @@
-//const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const path = require('path');
 
@@ -17,21 +16,12 @@ module.exports = {
 
     devtool: 'source-map',
 
-    /*resolve: {
-        plugins: [
-            new TsConfigPathsPlugin({
-                configFileName: './../tsconfig.json'
-            })
-        ]
-    },*/
+    resolve: {
+        extensions: ['.js', '.css', '.scss', '.html']
+    },
 
     module: {
         loaders: [
-            /*{
-                test: /\.ts$/,
-                loader: "ts-loader",//"awesome-typescript-loader",
-                exclude: /(node_modules|bower_components|spec)/
-            },*/
             {
                 test: /\.js$/,
                 loader: "source-map-loader",
@@ -40,19 +30,16 @@ module.exports = {
 
             {
                 test: /\.css$/,
-                loader: cssExtractTextPlugin.extract({fallback: "style-loader", use: "css-loader"}),
-                exclude: /(node_modules|bower_components|spec)/
+                loader: cssExtractTextPlugin.extract({fallback: "style-loader", use: "css-loader"})
             },
             {
                 test: /\.scss$/,
-                loader: cssExtractTextPlugin.extract({fallback: "style-loader", use: "css-loader!sass-loader"}),
-                exclude: /(node_modules|bower_components|spec)/
+                loader: cssExtractTextPlugin.extract({fallback: "style-loader", use: "css-loader!sass-loader"})
             },
 
             {
                 test: /\.html$/,
-                loader: htmlExtractTextPlugin.extract({fallback: "html-loader", use: "html-loader"}),
-                exclude: /(node_modules|bower_components|spec)/
+                loader: htmlExtractTextPlugin.extract({fallback: "html-loader", use: "html-loader"})
             },
         ],
 
