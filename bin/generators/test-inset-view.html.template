@@ -1,6 +1,6 @@
 <app-view id="%{NAME}%View" %{EXTENDS}%>
 
-    <view-for variable="number" in="$.numbers>
+    <view-for variable="number" in="$.numbers">
         <view-eval value="number"></view-eval>
 
         <view-if static condition="number > 10"><view-then>

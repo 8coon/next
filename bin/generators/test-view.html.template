@@ -85,4 +85,7 @@
 
     </view-for>
 
+
+    <view-component name="TestInsetComponent" person_name="Margaret"></view-component>
+
 </app-view>

@@ -11,6 +11,7 @@ import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 
 declare const JSWorks: any;
 declare const __JSWorks_components__: any[];
+declare const __JSWorks_component_fields__: any;
 
 
 @JSWorksInternal
@@ -43,7 +44,7 @@ export class ComponentHolder {
                 componentProto.__controller_name__);
 
         const name: string = ApplicationContext.UniqueName(componentProto.name,
-                (cname: string) => { return this.components[cname] || this.pages[cname]; });
+                (cname: string) => { return this.components[cname]; });
 
         this.initComponent(componentProto, name, viewName, controllerName);
 
@@ -69,6 +70,8 @@ export class ComponentHolder {
         this.prototypes[name] = componentProto;
         const component = new componentProto();
         component.variables = {};
+        component.id = name;
+        component.fields = (__JSWorks_component_fields__[componentProto.name] || []).map((nm) => { return nm; } );
 
 
         component.setVariable = (cname: string, value: any) => {

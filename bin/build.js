@@ -10,50 +10,56 @@ const exec = (cmd) => {
     child_process.execSync(cmd, [], { stdio: 'inherit' });
 };
 
+const create = () => {
+    console.log('Running TypeScript linter...');
+    try {
+        exec("node ./node_modules/tslint/bin/tslint './src/**/*.ts?(x)' --type-check --project ./tsconfig.json -o ./tslint.log");
+    } catch (err) {
+        if (!fs.existsSync('./tslint.log')) {
+            throw err;
+        }
 
-console.log('Cleaning up...');
-rmdir('./release');
-rmdir('./dist');
+        const log = fs.readFileSync('./tslint.log', 'utf-8');
+        console.log(log);
 
-console.log('Running TypeScript linter...');
-try {
-    exec("node ./node_modules/tslint/bin/tslint './src/**/*.ts?(x)' --type-check --project ./tsconfig.json -o ./tslint.log");
-} catch (err) {
-    if (!fs.existsSync('./tslint.log')) {
-        throw err;
+        fs.unlinkSync('./tslint.log');
+        process.exit(1);
     }
 
-    const log = fs.readFileSync('./tslint.log', 'utf-8');
-    console.log(log);
+    console.log('Compiling TypeScript...');
+    exec("node ./node_modules/typescript/bin/tsc");
 
-    fs.unlinkSync('./tslint.log');
-    process.exit(1);
-}
+    const includeFile = `
+        JSWorks = {};
+        __JSWorks_services__ = [];
+        __JSWorks_controllers__ = [];
+        __JSWorks_components__ = [];
+        __JSWorks_interceptors__ = [];
+        __JSWorks_custom_elements__ = [];
+        __JSWorks_models__ = {};
+        __JSWorks_component_fields__ = {};
+        
+        function a(r) {
+            r.keys().forEach(r);
+        };
+        
+        a(require.context('./',true,/\.js$/));
+        CSSauron = require('../node_modules/cssauron/index.js');
+        require('../src/Assets/default-tags.css');
+    `.split('\n').map((l) => {
+        return l.trim();
+    }).join('');
 
-console.log('Compiling TypeScript...');
-exec("node ./node_modules/typescript/bin/tsc");
+    console.log('Creating Webpack require file...');
+    fs.writeFileSync('./release/entry.js', includeFile);
 
-const includeFile = `
-    JSWorks = {};
-    __JSWorks_services__ = [];
-    __JSWorks_controllers__ = [];
-    __JSWorks_components__ = [];
-    __JSWorks_interceptors__ = [];
-    __JSWorks_custom_elements__ = [];
-    __JSWorks_models__ = {};
-    
-    function a(r) {
-        r.keys().forEach(r);
-    };
-    
-    a(require.context('./',true,/\.js$/));
-    CSSauron = require('../node_modules/cssauron/index.js');
-    require('../src/Assets/default-tags.css');
-`.split('\n').map((l) => { return l.trim(); }).join('');
+    console.log('Running Webpack...');
+    exec("node ./node_modules/webpack/bin/webpack.js");
+};
 
-console.log('Creating Webpack require file...');
-fs.writeFileSync('./release/entry.js', includeFile);
 
-console.log('Running Webpack...');
-exec("node ./node_modules/webpack/bin/webpack.js");
+console.log('Cleaning up...');
+rmdir('./release', () => {
+    rmdir('./dist', () => { fs.mkdirSync('./dist'); create(); });
+});
 
