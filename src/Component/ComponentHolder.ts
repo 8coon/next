@@ -26,26 +26,53 @@ export class ComponentHolder {
      */
     public load(): void {
         __JSWorks_components__.forEach((componentProto) => {
-            this.prototypes[componentProto.name] = componentProto;
             this.initComponent(componentProto);
         });
     }
 
 
     /**
-     * Инициализировать компонент из прототипа
+     * Создать дубликат компонента из прототипа и вернуть его имя
      * @param componentProto
      */
-    public initComponent(componentProto) {
+    public duplicateComponent(componentProto): string {
+        const appContext: ApplicationContext = JSWorks.applicationContext;
+
+        const viewName: string = appContext.viewHolder.duplicateView(componentProto.__view_name__);
+        const controllerName: string = appContext.controllerHolder.duplicateController(
+                componentProto.__controller_name__);
+
+        const name: string = ApplicationContext.UniqueName(componentProto.name,
+                (cname: string) => { return this.components[cname] || this.pages[cname]; });
+
+        this.initComponent(componentProto, name, viewName, controllerName);
+
+        return name;
+    }
+
+
+    /**
+     * Инициализировать компонент из прототипа
+     * @param componentProto
+     * @param name
+     * @param viewName
+     * @param controllerName
+     */
+    public initComponent(componentProto, name?: string, viewName?: string, controllerName?: string) {
         const views: ViewHolder = JSWorks.applicationContext.viewHolder;
         const controllers: ControllerHolder = JSWorks.applicationContext.controllerHolder;
 
+        name = name || componentProto.name;
+        viewName = viewName || componentProto.__view_name__;
+        controllerName = controllerName || componentProto.__controller_name__;
+
+        this.prototypes[name] = componentProto;
         const component = new componentProto();
         component.variables = {};
 
 
-        component.setVariable = (name: string, value: any) => {
-            component.variables[name] = value;
+        component.setVariable = (cname: string, value: any) => {
+            component.variables[cname] = value;
 
             if (component.emitEvent) {
                 component.emitEvent({ type: EventType.UPDATE, data: undefined });
@@ -53,20 +80,20 @@ export class ComponentHolder {
         };
 
 
-        component.getVariable = (name: string) => {
-            return component.variables[name];
+        component.getVariable = (cname: string) => {
+            return component.variables[cname];
         };
 
-        component.subscribeCollection = (name: string) => {
-            if (component[name].__subscribed__) {
+        component.subscribeCollection = (cname: string) => {
+            if (component[cname].__subscribed__) {
                 return;
             }
 
-            const oldCollection: CollectionProperty = component[name];
-            component[name] = new CollectionProperty();
-            component[name].__subscribed__ = true;
+            const oldCollection: CollectionProperty = component[cname];
+            component[cname] = new CollectionProperty();
+            component[cname].__subscribed__ = true;
 
-            EventManager.subscribe({}, component[name], EventType.UPDATE, (event: IEvent) => {
+            EventManager.subscribe({}, component[cname], EventType.UPDATE, (event: IEvent) => {
                 const emit = () => {
 
                     if (component.emitEvent) {
@@ -93,16 +120,16 @@ export class ComponentHolder {
         };
 
 
-        (componentProto.__collections__ || []).forEach((name) => {
-            component.subscribeCollection(name);
+        (componentProto.__collections__ || []).forEach((cname) => {
+            component.subscribeCollection(cname);
         });
 
-        const view = views.getView(componentProto.__view_name__);
+        const view = views.getView(viewName);
         view.component = component;
         view.applicationContext = JSWorks.applicationContext;
 
         component.view = view;
-        component.controller = controllers.getController(componentProto.__controller_name__);
+        component.controller = controllers.getController(controllerName);
         component.applicationContext = JSWorks.applicationContext;
         component.type = componentProto.__type__;
 
@@ -112,11 +139,11 @@ export class ComponentHolder {
         switch (componentProto.__type__) {
 
             case ComponentConfig.Types.PAGE: {
-                this.pages[componentProto.name] = component;
+                this.pages[name] = component;
             } break;
 
             case ComponentConfig.Types.COMPONENT: {
-                this.components[componentProto.name] = component;
+                this.components[name] = component;
             } break;
 
             default: {

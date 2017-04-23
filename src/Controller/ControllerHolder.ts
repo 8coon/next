@@ -1,6 +1,7 @@
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {ControllerAlreadyRegisteredError} from '../Error/ControllerAlreadyRegisteredError';
 import {UnknownControllerError} from '../Error/UnknownControllerError';
+import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 
 
 declare const __JSWorks_controllers__: any[];
@@ -10,6 +11,7 @@ declare const __JSWorks_controllers__: any[];
 export class ControllerHolder {
 
     private controllers: object = {};
+    private prototypes: object = {};
     private controllerCount: number = 0;
 
 
@@ -26,14 +28,30 @@ export class ControllerHolder {
     /**
      * Зарегистрировать контроллер
      * @param controllerProto экземпляр контролера имеет поле namе, оно же тип класса контроллера
+     * @param name
      */
-    public registerController(controllerProto): void {
-        if (this.controllers[controllerProto.name]) {
-            throw new ControllerAlreadyRegisteredError(controllerProto.name);
+    public registerController(controllerProto, name?: string): void {
+        name = name || controllerProto.name;
+
+        if (this.controllers[name]) {
+            throw new ControllerAlreadyRegisteredError(name);
         }
 
-        this.controllers[controllerProto.name] = new controllerProto();
+        this.controllers[name] = new controllerProto();
+        this.prototypes[name] = controllerProto;
         this.controllerCount++;
+    }
+
+
+    /**
+     * Создать дубликат контроллера и вернуть его имя
+     * @param oldName
+     */
+    public duplicateController(oldName: string): string {
+        const newName = ApplicationContext.UniqueName(oldName, (name: string) => { return this.controllers[name]; });
+        this.registerController(this.prototypes[oldName], newName);
+
+        return newName;
     }
 
 

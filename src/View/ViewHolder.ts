@@ -10,7 +10,6 @@ import {ViewConfig} from './ViewConfig';
 import {IDOMParsed} from '../Parser/HTML/IDOMParsed';
 import {VirtualDOM} from '../VirtualDOM/VirtualDOM';
 import {AppViewElement} from '../CustomElements/ViewElements/AppViewElement';
-import {SimpleVirtualDOMElement} from '../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
 
 
 declare const JSWorks: any;
@@ -72,13 +71,10 @@ export class ViewHolder implements IEventEmitter {
      */
     public duplicateView(oldName: string): string {
         const view: View = this.getView(oldName).clone();
-        let name = oldName;
 
-        while (this.views[name]) {
-            name = `${oldName}@${Math.floor(Math.random() * 100000000)}`;
-        }
+        const newName = ApplicationContext.UniqueName(oldName, (name: string) => { return this.views[name]; });
+        this.views[newName] = view;
 
-        this.views[name] = view;
         return name;
     }
 

@@ -7,15 +7,28 @@ const rmdir = require('rmdir');
 
 
 const exec = (cmd) => {
-    child_process.execSync(cmd, [], { stdio: 'inherit', stdio2: ['pipe', process.stdout, process.stderr] });
+    child_process.execSync(cmd, [], { stdio: 'inherit' });
 };
 
 
 console.log('Cleaning up...');
 rmdir('./release');
+rmdir('./dist');
 
 console.log('Running TypeScript linter...');
-exec("node ./node_modules/tslint/bin/tslint './src/**/*.ts?(x)' --type-check --project ./tsconfig.json");
+try {
+    exec("node ./node_modules/tslint/bin/tslint './src/**/*.ts?(x)' --type-check --project ./tsconfig.json -o ./tslint.log");
+} catch (err) {
+    if (!fs.existsSync('./tslint.log')) {
+        throw err;
+    }
+
+    const log = fs.readFileSync('./tslint.log', 'utf-8');
+    console.log(log);
+
+    fs.unlinkSync('./tslint.log');
+    process.exit(1);
+}
 
 console.log('Compiling TypeScript...');
 exec("node ./node_modules/typescript/bin/tsc");

@@ -18,8 +18,29 @@ import {ModelHolder} from '../Model/ModelHolder';
 declare const JSWorks: any;
 
 
+type NameLookup = (name: string) => boolean;
+
+
 @JSWorksInternal
 export class ApplicationContext implements IEventEmitter {
+
+
+    /**
+     * Возвращает уникальное сгенерированное имя на основе данного
+     * @param origName
+     * @param lookup
+     * @constructor
+     */
+    public static UniqueName(origName: string, lookup: NameLookup): string {
+        let name: string = origName;
+
+        while (lookup(name)) {
+            name = `${origName}@${Math.floor(Math.random() * 100000000)}`;
+        }
+
+        return name;
+    }
+
 
     /**
      * Флаг, устанавливающийся в true при полной загрузке приложения.
