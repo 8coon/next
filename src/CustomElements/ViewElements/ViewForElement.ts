@@ -25,8 +25,10 @@ export class ViewForElement extends AbstractListeningElement {
      * @returns {undefined}
      */
     public createElement(): ViewForElement {
-        super.createElement();
-        return new ViewForElement(SimpleVirtualDOM.NextHash());
+        const element: ViewForElement = new ViewForElement(SimpleVirtualDOM.NextHash());
+        element.superCreateElement();
+
+        return element;
     }
 
 
@@ -46,16 +48,29 @@ export class ViewForElement extends AbstractListeningElement {
 
         if (!this.template) {
             this.template = <SimpleVirtualDOMElement> this.virtualDOM.createElement(ViewConfig.VIEW_ITEM);
+            this.template.ready = false;
 
             this._children.forEach((child) => {
                 this.template.appendChild(child.cloneNode());
             });
 
             this.removeChildren();
-            return;
+        }
+    }
+
+
+    /**
+     * Сбросить шаблон
+     */
+    public customClear(): void {
+        super.customClear();
+
+        if (this.template) {
+            this.removeChildren();
+            this.appendChild((<any> this.template)._children);
         }
 
-        // this.template.propagateView(view);
+        this.template = undefined;
     }
 
 
@@ -68,6 +83,13 @@ export class ViewForElement extends AbstractListeningElement {
      * </view-for>
      */
     public propertyChange(): void {
+        // if (!this.template) {
+        //     const view: View = this.view;
+        //     this.view = undefined;
+        //
+        //     this.propagateView(view);
+        // }
+
         const collection: CollectionProperty = this.execStatement(this.getAttribute('in'));
 
         if (!(collection instanceof CollectionProperty)) {
@@ -79,23 +101,22 @@ export class ViewForElement extends AbstractListeningElement {
         }
 
         collection.cleanForTag[this.hash] = true;
+        this['__view__'] = this.view;
+        // this.view = undefined;
 
         collection.getValues().forEach((value, index) => {
-            const view = this.view;
-            this.view = undefined;
-
             if (!this._children[index]) {
-                this.appendChild(this.renderTemplate(value));
-                // return;
+                this.appendChild(this.template.cloneNode());
+
             } else if (this._children[index]['__for_value__'] === undefined ||
                     this._children[index]['__for_value__'] !== value) {
-                // this.replaceChild(this.renderTemplate(value), this._children[index]);
-                // return;
+                // this.replaceChild(this.template.cloneNode(), this._children[index]);
+
+            } else {
+                return;
             }
 
             const varName = this.getAttribute('variable');
-
-            this.view = view;
             this.propagateValue(this._children[index], varName, value);
         });
 
@@ -104,39 +125,35 @@ export class ViewForElement extends AbstractListeningElement {
                 this.removeChild(this._children[this._children.length - 1]);
             }
         }
+
+        // this.view = this['__view__'];
     }
 
 
     protected propagateValue(node: SimpleVirtualDOMElement, varName: string, value: any): void {
-        this.view.component.variables[varName] = value;
+        node['__for_value__'] = value;
+        this['__view__'].component.variables[varName] = value;
 
-        // node.propagateView(undefined);
-        node.propagateView(this.view);
+        node.ready = true;
+        // node.propagateView(this['__view__']);
         node.customUpdate();
+        node.ready = false;
 
-        this.view.component.variables[varName] = undefined;
-    }
-
-
-    protected renderTemplate(value: any): SimpleVirtualDOMElement {
-        // const varName = this.getAttribute('variable');
-
-        // this.view.component.variables[varName] = value;
-
-        const node = this.template.cloneNode();
-        // node['__for_value__'] = value;
-        // this.propagateValue(node, varName, value);
-
-        // this.view.component.variables[varName] = undefined;
-
-        return node;
+        this['__view__'].component.variables[varName] = undefined;
     }
 
 
     protected customCloneNode(node: ViewForElement): void {
+        super.customCloneNode(node);
+
         if (this.template) {
             node.template = this.template.cloneNode();
         }
+    }
+
+
+    protected superCreateElement(): void {
+        super.createElement();
     }
 
 }

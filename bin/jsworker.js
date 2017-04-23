@@ -164,12 +164,26 @@ const generateComponent = (path, name, withRoute, className, viewExtends, viewTe
 };
 
 
+const generateModel = (path, name, modelFile) => {
+    modelFile = modelFile || 'model.ts';
+    let model = fs.readFileSync(`./bin/generators/${modelFile}.template`, 'utf-8');
+
+    model = model.replace(/%\{NAME}%/g, name);
+
+    mkdirp.sync(`${path}/models/${name}Model/`);
+    fs.writeFileSync(`${path}/models/${name}Model/${camelToDash(name)}-model.ts`, model);
+    fs.appendFileSync(`${path}/application.js`,
+        `require('./dist/compiled/models/${name}Model/${camelToDash(name)}-model.js');\n`);
+};
+
+
 const generateStaticServer = (path, title, jsWorksPath, forTesting) => {
     let server = fs.readFileSync('./bin/generators/server.js.template', 'utf-8');
     let testsPath = `/spec`;
 
     if (forTesting === 'true') {
         testsPath = '/../../spec';
+        server = fs.readFileSync('./bin/generators/test-server.js.template', 'utf-8');
     }
 
     server = server.replace(/%\{TITLE}%/g, title);
@@ -269,7 +283,8 @@ const generateApplication = (path, name, title, forTesting) => {
             'extract-loader': 'latest',
             'file-loader': 'latest',
             'css-loader': 'latest',
-            'extract-text-webpack-plugin': 'latest'
+            'extract-text-webpack-plugin': 'latest',
+            'body-parser': 'latest'
         }
     };
 
@@ -336,7 +351,6 @@ const startApp = (name, title, path, forTesting, jsWorksPath) => {
     mkdirp.sync(`${path}/components`);
     mkdirp.sync(`${path}/pages`);
     mkdirp.sync(`${path}/models`);
-    mkdirp.sync(`${path}/helpers`);
     mkdirp.sync(`${path}/spec`);
     mkdirp.sync(`${path}/dist`);
     mkdirp.sync(`${path}/static`);
@@ -361,6 +375,7 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
     // generateRoute(path, 'Posts')
 
     generateView(path, 'views', 'Base', '', 'base-view.html');
+    generateView(path, 'views', 'Person', '', 'person-view.html');
     generateComponent(path, 'Sample', '*', 'Page', 'BaseView');
 
     generateComponent(path, 'Test', '*', 'Page', 'BaseView', 'test-view.html',
@@ -376,6 +391,8 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
         'test-interceptor.ts', 'true');
     generateInterceptor(path, 'interceptors', 'TestAfter3', 'RouteAfterNavigateInterceptor',
         'test-interceptor.ts');
+
+    generateModel(path, 'Test', 'test-model.ts');
 };
 
 

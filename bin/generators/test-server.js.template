@@ -1,0 +1,135 @@
+'use strict';
+
+const fs = require('fs');
+const express = require('express');
+const bodyParser = require('body-parser');
+
+const path = `${__dirname}%{JSWORKS_PATH}%`;
+const testsPath = `${__dirname}%{TESTS_PATH}%`;
+const app = express();
+
+
+app.use('/', express.static(`${__dirname}/dist/out`));
+app.use('/static', express.static(`${__dirname}/static`));
+app.use('/jsworks', express.static(path));
+app.use('/mocha', express.static('./node_modules/mocha'));
+app.use('/chai', express.static('./node_modules/chai'));
+app.use('/chai-as-promised', express.static('./node_modules/chai-as-promised/lib'));
+app.use('/tests', express.static(testsPath));
+
+
+
+const mockPersons = [
+    {
+        id: 0,
+        name: "Mae Borowski",
+        age: 20,
+        important: true,
+    },
+    {
+        id: 1,
+        name: "Goubar",
+        age: 9000,
+    },
+    {
+        id: 2,
+        name: "Mr. Skeltal",
+        age: -1,
+        important: true,
+    },
+    {
+        id: 3,
+        name: "Kek Kek",
+        age: 0,
+        important: false,
+    }
+];
+
+
+
+app.post('/persons/create', bodyParser.json(), (req, res) => {
+    const id = mockPersons.length;
+
+    const person = {
+        id,
+        name: req.body.name || '',
+        age: req.body.age || 0,
+        important: req.body.important === true,
+    };
+
+    mockPersons.push(person);
+    res.send(JSON.stringify(person));
+});
+
+
+app.post('/persons/read', bodyParser.json(), (req, res) => {
+    res.send(JSON.stringify(mockPersons[Number.parseInt(req.body.id)]));
+});
+
+
+app.post('/persons/update', bodyParser.json(), (req, res) => {
+    const person = {
+        id: Number.parseInt(req.body.id),
+        name: req.body.name || '',
+        age: req.body.age || 0,
+        important: req.body.important === true,
+    };
+
+    if (person.id < 0 || person.id >= mockPersons.length) {
+        res.error();
+    }
+
+    mockPersons[person.id] = person;
+    res.send(JSON.stringify(person));
+});
+
+
+app.post('/persons/delete', bodyParser.json(), (req, res) => {
+    mockPersons[Number.parseInt(req.body.id)] = undefined;
+    res.send('');
+});
+
+
+app.post('/persons/all', (req, res) => {
+    const sorting = req.query.sort || 'ASC';
+    const map = [];
+
+    mockPersons.forEach((_, index) => {
+        map.push(index);
+    });
+
+    map.sort((left, right) => {
+        let res = 1;
+
+        if (mockPersons[left].age > mockPersons[right].age) {
+            res = -1;
+        }
+
+        if (sorting === 'ASC') {
+            res *= -1;
+        }
+
+        return res;
+    });
+
+    const result = [];
+
+    map.forEach((index) => {
+        result.push(mockPersons[index]);
+    });
+
+    res.send(JSON.stringify(result));
+});
+
+
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/application.html');
+});
+
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`%{TITLE}% test server listening on port ${PORT}!`);
+    console.log(`JSWorks is in ${path}`);
+});

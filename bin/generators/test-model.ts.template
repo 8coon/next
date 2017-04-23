@@ -1,0 +1,103 @@
+
+
+declare const JSWorks: any;
+
+
+interface %{NAME}%ModelFields {
+    id: number;
+    name: string;
+    age: number;
+    important?: boolean;
+}
+
+
+@JSWorks.Model
+class %{NAME}%Model implements %{NAME}%ModelFields {
+
+    @JSWorks.ModelPrimaryKey
+    public id: number;
+
+    @JSWorks.ModelField
+    public name: string;
+
+    @JSWorks.ModelField
+    public age: number;
+
+    @JSWorks.ModelField
+    public important: boolean;
+
+
+    @JSWorks.ModelQueryMethod
+    public query(params?: object): Promise<%{NAME}%Model[]> {
+        params = params || {};
+        const sort = String(params['sort'] || 'ASC');
+
+        return new Promise<%{NAME}%Model[]>((resolve, reject) => {
+            this.jsonParser.parseURLAsync(`/persons/all?sort=${sort}`, JSWorks.HTTPMethod.POST).then((data) => {
+                const models: %{NAME}%Model[] = [];
+
+                data.forEach((item: %{NAME}%ModelFields) => {
+                    models.push(this.from(item));
+                });
+
+                resolve(models);
+            });
+        });
+    }
+
+
+    @JSWorks.ModelCreateMethod
+    public create(): Promise<%{NAME}%Model> {
+        return new Promise<%{NAME}%Model>((resolve, reject) => {
+            this.jsonParser.parseURLAsync('/persons/create', JSWorks.HTTPMethod.POST, this.gist()).then((data) => {
+                resolve(this.from(data));
+            });
+        });
+    }
+
+
+    @JSWorks.ModelReadMethod
+    public read(id?: number): Promise<%{NAME}%Model> {
+        return new Promise<%{NAME}%Model>((resolve, reject) => {
+            this.jsonParser.parseURLAsync('/persons/read', JSWorks.HTTPMethod.POST,
+                        { id: id || this.id }
+                    ).then((data) => {
+                this.apply(data);
+                resolve(this);
+            });
+        });
+    }
+
+
+    @JSWorks.ModelUpdateMethod
+    public update(): Promise<%{NAME}%Model> {
+        return new Promise<%{NAME}%Model>((resolve, reject) => {
+            this.jsonParser.parseURLAsync('/persons/update', JSWorks.HTTPMethod.POST, this.gist()).then((data) => {
+                this.apply(data);
+                this.setDirty(false);
+
+                resolve(this);
+            });
+        });
+    }
+
+
+    @JSWorks.ModelDeleteMethod
+    public delete(): Promise<%{NAME}%Model> {
+        return new Promise<%{NAME}%Model>((resolve, reject) => {
+            this.jsonParser.parseURLAsync('/persons/delete', JSWorks.HTTPMethod.POST,
+                        { id: this.id }
+                    ).then((data) => {
+                resolve(this);
+            });
+        });
+    }
+
+
+    public jsonParser;
+    public from(data?: object): %{NAME}%Model { return undefined; };
+    public gist(): object { return undefined; };
+    public apply(data?: object) {};
+    public setDirty(value: boolean) {};
+
+}

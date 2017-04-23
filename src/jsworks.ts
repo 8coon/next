@@ -8,6 +8,15 @@ import {JSWorksComponentCollectionProperty} from './Component/ComponentCollectio
 import {EventType} from './EventManager/EventType';
 import {InterceptorType} from './Interceptor/InterceptorType';
 import {JSWorksInterceptor} from './Interceptor/InterceptorDecorator';
+import {JSWorksModel} from './Model/Decorators/ModelDecorator';
+import {JSWorksModelField} from './Model/Decorators/ModelFieldDecorator';
+import {JSWorksModelPrimaryKey} from './Model/Decorators/ModelPrimaryKeyDecorator';
+import {JSWorksModelCreateMethod} from './Model/Decorators/ModelCreateMethodDecorator';
+import {JSWorksModelReadMethod} from './Model/Decorators/ModelReadMethodDecorator';
+import {JSWorksModelUpdateMethod} from './Model/Decorators/ModelUpdateMethodDecorator';
+import {JSWorksModelDeleteMethod} from './Model/Decorators/ModelDeleteMethodDecorator';
+import {JSWorksModelQueryMethod} from './Model/Decorators/ModelQueryMethodDecorator';
+import {HTTPMethod} from './Network/HTTPMethod';
 
 
 declare const JSWorks: any;
@@ -29,6 +38,7 @@ JSWorks.__init__ = () => {
     JSWorks.EventManager = JSWorks.Internal.EventManager;
     JSWorks.EventType = EventType;
     JSWorks.InterceptorType = InterceptorType;
+    JSWorks.HTTPMethod = HTTPMethod;
 
     JSWorks.Service = JSWorksService;
     JSWorks.Controller = JSWorksController;
@@ -38,6 +48,14 @@ JSWorks.__init__ = () => {
     JSWorks.ComponentProperty = JSWorksComponentProperty;
     JSWorks.CustomElement = JSWorksCustomElement;
     JSWorks.ComponentCollectionProperty = JSWorksComponentCollectionProperty;
+    JSWorks.Model = JSWorksModel;
+    JSWorks.ModelField = JSWorksModelField;
+    JSWorks.ModelPrimaryKey = JSWorksModelPrimaryKey;
+    JSWorks.ModelCreateMethod = JSWorksModelCreateMethod;
+    JSWorks.ModelReadMethod = JSWorksModelReadMethod;
+    JSWorks.ModelUpdateMethod = JSWorksModelUpdateMethod;
+    JSWorks.ModelDeleteMethod = JSWorksModelDeleteMethod;
+    JSWorks.ModelQueryMethod = JSWorksModelQueryMethod;
 };
 
 

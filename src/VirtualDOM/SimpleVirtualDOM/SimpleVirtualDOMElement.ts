@@ -44,6 +44,28 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
     public view: View;
 
 
+    /**
+     * Флаг, указывающий на то, что окружение данного элемента готово
+     * @returns {boolean}
+     */
+    public get ready(): boolean {
+        return this._ready;
+    }
+
+
+    /**
+     * Флаг, указывающий на то, что окружение данного элемента готово
+     * @param value
+     */
+    public set ready(value: boolean) {
+        this._ready = value;
+
+        this._children.forEach((child: SimpleVirtualDOMElement) => {
+            child.ready = value;
+        });
+    }
+
+
     protected _tagName: string;
     protected _parentNode: SimpleVirtualDOMElement;
     protected _children: SimpleVirtualDOMElement[] = [];
@@ -53,6 +75,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
     protected handlers: object = {};
     protected selectorCache: object = {};
     protected _hash: any;
+    protected _ready: boolean = true;
 
     protected readonly HASH_KEY: string = '__jsworks_hash__';
     protected readonly HANDLERS_KEY: string = '__jsworks_handlers__';
@@ -148,6 +171,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
 
         // element.view = this.view;
         // element.propagateView(this.view);
+        element.ready = this.ready;
 
         Object.keys(this.attributes).forEach((attr) => {
             element.setAttribute(attr, this.getAttribute(attr));
@@ -165,6 +189,16 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         this.customCloneNode(element);
         element.propagateView(this.view);
         return element;
+    }
+
+
+    /**
+     * Сбросить параметры всех пользовательских узлов
+     */
+    public customClear(): void {
+        this._children.forEach((child) => {
+            child.customClear();
+        });
     }
 
 
@@ -431,6 +465,8 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         this._children.push(child);
 
         (<any> child)._parentNode = this;
+
+        child.ready = this.ready;
         child.propagateView(this.view);
 
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
@@ -454,6 +490,8 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         this._children.splice(index, 0, child);
 
         (<any> child)._parentNode = this;
+
+        child.ready = this.ready;
         child.propagateView(this.view);
 
         this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });
@@ -515,7 +553,9 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
 
         newChild.forEach((child, pos) => {
             this._children.splice(index + pos + 1, 0, child);
+
             child._parentNode = this;
+            child.ready = this.ready;
             child.propagateView(this.view);
 
             this.emitMutilationEvent({ type: EventType.DOMChildAppend, data: { parent: this, child: child } });

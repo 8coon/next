@@ -23,7 +23,6 @@ export class ViewEvalElement extends SimpleVirtualDOMElementExt {
      * @returns {ViewEvalElement}
      */
     public createElement(): ViewEvalElement {
-        // super.createElement();
         return new ViewEvalElement(SimpleVirtualDOM.NextHash());
     }
 
@@ -38,24 +37,31 @@ export class ViewEvalElement extends SimpleVirtualDOMElementExt {
         }
 
         super.propagateView(view);
+    }
 
-        const virtualDOM: SimpleVirtualDOM = JSWorks.applicationContext.serviceHolder.
-                getServiceByName('SimpleVirtualDOM');
 
-        this.removeChildren();
-        this.appendChild(<SimpleVirtualDOMElement> virtualDOM.createTextElement(''));
-
+    /**
+     * Обновляет значение
+     */
+    public customUpdate(): void {
         if (!this.hasAttribute('value')) {
             return;
         }
 
-        if (this.view && this.view.component) {
+        if (this.view && this.view.component && this.ready) {
             const value = this.execStatement(this.getAttribute('value'));
 
             if (value === this.lastValue) {
                 return;
             }
 
+            this.lastValue = value;
+
+            const virtualDOM: SimpleVirtualDOM = JSWorks.applicationContext.serviceHolder.
+                getServiceByName('SimpleVirtualDOM');
+
+            this.removeChildren();
+            this.appendChild(<SimpleVirtualDOMElement> virtualDOM.createTextElement(''));
             this.valueChange(value);
         }
     }
@@ -66,7 +72,11 @@ export class ViewEvalElement extends SimpleVirtualDOMElementExt {
      * @param newValue
      */
     public valueChange(newValue: any): void {
-        this._children[0].text = String(newValue || '');
+        if (newValue === undefined) {
+            newValue = '';
+        }
+
+        this._children[0].text = String(newValue);
     }
 
 }

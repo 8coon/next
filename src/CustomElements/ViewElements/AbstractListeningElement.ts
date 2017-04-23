@@ -51,7 +51,13 @@ export abstract class AbstractListeningElement extends SimpleVirtualDOMElementEx
      * Пересчитать условие
      */
     public customUpdate(): void {
+        super.customUpdate();
+
         if (this.view && this.view.component) {
+            if (this.hasAttribute('static') && !this.ready) {
+                return;
+            }
+
             this.propertyChange();
         }
     }

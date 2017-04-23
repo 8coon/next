@@ -68,4 +68,21 @@
 
     </view-for>
 
+
+    <view-for variable="person" in="$.people">
+
+        <view-include name="PersonView">
+
+            <view-param name="person-name">
+                <view-eval value="person.name"></view-eval>
+            </view-param>
+
+            <view-param name="person-age">
+                <view-eval value="person.age"></view-eval>
+            </view-param>
+
+        </view-include>
+
+    </view-for>
+
 </app-view>

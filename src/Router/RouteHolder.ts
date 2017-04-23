@@ -5,7 +5,7 @@ import {HTMLParserService} from '../Parser/HTML/HTMLParserService';
 import {IDOMParsed} from '../Parser/HTML/IDOMParsed';
 import {Route} from './Route';
 import {WrongRouterNameError} from '../Error/WrongRouterNameError';
-import {AttributeNotFound} from '../Error/AttributeNotFound';
+import {AttributeNotFoundError} from '../Error/AttributeNotFoundError';
 import {RouteAlreadyExistError} from '../Error/RouteAlreadyExistError';
 import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {IEvent} from '../EventManager/IEvent';
@@ -79,7 +79,7 @@ export class RouteHolder implements IEventEmitter {
             if (typeof parsedRoute.attributes['default'] === 'string') {
                 parsedRoute.attributes['match'] = '';
             } else {
-                throw new AttributeNotFound('match');
+                throw new AttributeNotFoundError('match');
             }
 
         }
@@ -97,7 +97,7 @@ export class RouteHolder implements IEventEmitter {
 
         if (parsedRoute.id) {
             if (!parsedRoute.attributes['page']) {
-                throw new AttributeNotFound('page');
+                throw new AttributeNotFoundError('page');
             }
 
             route = new Route(match, path, pathVariableName, parsedRoute.id, parsedRoute.attributes['page']);

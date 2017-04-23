@@ -12,6 +12,7 @@ import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {CustomElementHolder} from '../CustomElements/CustomElementHolder';
 import {HistoryAPIRouter} from '../Router/HistoryAPIRouter';
 import {InterceptorHolder} from '../Interceptor/InterceptorHolder';
+import {ModelHolder} from '../Model/ModelHolder';
 
 
 declare const JSWorks: any;
@@ -91,6 +92,15 @@ export class ApplicationContext implements IEventEmitter {
 
 
     /**
+     * Все модели хранятся тут
+     * @returns {ModelHolder}
+     */
+    public get modelHolder(): ModelHolder {
+        return this._modelHolder;
+    }
+
+
+    /**
      * Все роуты хранятся тут
      * @returns {RouteHolder}
      */
@@ -107,6 +117,7 @@ export class ApplicationContext implements IEventEmitter {
     private _interceptorHolder: InterceptorHolder;
     private _componentHolder: ComponentHolder;
     private _customElementHolder: CustomElementHolder;
+    private _modelHolder: ModelHolder;
     private _loaded: boolean = false;
 
 
@@ -122,6 +133,7 @@ export class ApplicationContext implements IEventEmitter {
         this._customElementHolder = new CustomElementHolder();
         this._routeHolder = new RouteHolder();
         this._interceptorHolder = new InterceptorHolder();
+        this._modelHolder = new ModelHolder();
     }
 
 
@@ -132,17 +144,19 @@ export class ApplicationContext implements IEventEmitter {
         this.serviceHolder.instantiateServices();
 
         EventManager.subscribe({}, this.viewHolder, EventType.LOAD, (event: IEvent) => {
-            this.componentHolder.load(this.viewHolder, this.controllerHolder);
 
             EventManager.subscribe({}, this, undefined, (event2) => {
                 switch (event2.type) {
 
                     default: break;
 
-                    case EventType.ViewsInheritanceRendered: {
+                    /* case EventType.ViewIncludesRendered: {
+                        this.componentHolder.load(this.viewHolder, this.controllerHolder);
+                        this.customElementHolder.load();
+
                         this.emitEvent({ type: EventType.InstallViewsListeners, data: this });
                         this.emitEvent({ type: EventType.ViewsListenersInstalled, data: this });
-                    } break;
+                    } break; */
 
                     case EventType.ViewsListenersInstalled: {
                         this._loaded = true;
@@ -163,12 +177,20 @@ export class ApplicationContext implements IEventEmitter {
                 }
             });
 
+            this.componentHolder.load(this.viewHolder, this.controllerHolder);
+            this.viewHolder.renderCustomElements();
+            this.customElementHolder.load();
+            this.viewHolder.renderViews();
+
+            this.emitEvent({ type: EventType.InstallViewsListeners, data: this });
+            this.emitEvent({ type: EventType.ViewsListenersInstalled, data: this });
             this.emitEvent({ type: EventType.LOAD, data: this });
         });
 
-        this.customElementHolder.load();
+        // this.customElementHolder.load();
         this.viewHolder.load();
         this.controllerHolder.load();
+        this.modelHolder.load();
     }
 
 

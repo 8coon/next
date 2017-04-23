@@ -48,7 +48,8 @@ export class View implements IEventEmitter, IEventReceiver {
         this.virtualDOM = this.appContext.serviceHolder.getService('VirtualDOM');
 
         this._DOMRoot = data.template;
-        (<SimpleVirtualDOMElement> this._DOMRoot).propagateView(this);
+        // (<SimpleVirtualDOMElement> this._DOMRoot).propagateView(this);
+        // Мы сделаем это позже
 
         /* this._DOMRoot = this.virtualDOM.createElement(ViewConfig.VIEW_TAG);
         this._DOMRoot.id = this._id;
@@ -76,6 +77,16 @@ export class View implements IEventEmitter, IEventReceiver {
      */
     public get DOMRoot(): IVirtualDOMElement {
         return this._DOMRoot;
+    }
+
+
+    /**
+     * Склонировать текущий корневой элемент, присвоим ему переданный view
+     * @param view
+     */
+    public cloneDOMRoot(view: View): void {
+        this._DOMRoot.view = view;
+        this._DOMRoot = this._DOMRoot.cloneNode();
     }
 
 

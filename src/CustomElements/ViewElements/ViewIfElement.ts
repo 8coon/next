@@ -21,8 +21,35 @@ export class ViewIfElement extends AbstractConditionElement {
      * @returns {undefined}
      */
     public createElement(): ViewIfElement {
-        super.createElement();
-        return new ViewIfElement(SimpleVirtualDOM.NextHash());
+        const element: ViewIfElement = new ViewIfElement(SimpleVirtualDOM.NextHash());
+        element.superCreateElement();
+
+        return element;
+    }
+
+
+    /**
+     * Сбросить шаблон
+     */
+    public customClear(): void {
+        super.customClear();
+
+        if (!this.thenTemplate && !this.elseTemplate) {
+            return;
+        }
+
+        this.removeChildren();
+
+        if (this.thenTemplate) {
+            this.appendChild(this.thenTemplate);
+        }
+
+        if (this.elseTemplate) {
+            this.appendChild(this.elseTemplate);
+        }
+
+        this.thenTemplate = undefined;
+        this.elseTemplate = undefined;
     }
 
 
@@ -61,6 +88,10 @@ export class ViewIfElement extends AbstractConditionElement {
             this.elseTemplate.propagateView(view);
         }
 
+        if (this.thenTemplate || this.elseTemplate) {
+            return;
+        }
+
         this._children.forEach((child: SimpleVirtualDOMElement) => {
             switch (child.tagName) {
 
@@ -79,9 +110,9 @@ export class ViewIfElement extends AbstractConditionElement {
                 }
 
             }
-
-            this.removeChild(child);
         });
+
+        this.removeChildren();
     }
 
 
@@ -97,6 +128,13 @@ export class ViewIfElement extends AbstractConditionElement {
      * @param newValue
      */
     public conditionChange(newValue: any): void {
+        /* if (!this.thenTemplate && !this.elseTemplate) {
+            const view: View = this.view;
+            this.view = undefined;
+
+            this.propagateView(view);
+        } */
+
         this.removeChildren();
 
         if (newValue) {
@@ -108,6 +146,8 @@ export class ViewIfElement extends AbstractConditionElement {
 
 
     protected customCloneNode(node: ViewIfElement): void {
+        super.customCloneNode(node);
+
         if (this.thenTemplate) {
             node.thenTemplate = this.thenTemplate.cloneNode();
         }
@@ -115,6 +155,11 @@ export class ViewIfElement extends AbstractConditionElement {
         if (this.elseTemplate) {
             node.elseTemplate = this.elseTemplate.cloneNode();
         }
+    }
+
+
+    protected superCreateElement(): void {
+        super.createElement();
     }
 
 }
