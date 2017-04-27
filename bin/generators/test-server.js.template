@@ -22,8 +22,8 @@ app.use('/tests', express.static(testsPath));
 const mockPersons = [
     {
         id: 0,
-        name: "Mae Borowski",
-        age: 20,
+        name: "M_a_e___B_o_r_o_w_s_k_i",
+        age: 19,
         important: true,
     },
     {

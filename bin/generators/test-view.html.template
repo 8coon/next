@@ -23,7 +23,7 @@
         </view-case>
     </view-switch>
 
-    <view-for variable="person" in="$.persons">
+    <view-for id="test" variable="person" in="$.persons">
         <view-eval value="person.name"></view-eval>
         <view-eval value="person.age"></view-eval>
         <br>

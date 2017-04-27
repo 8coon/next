@@ -1,7 +1,7 @@
 
 
 app-view, view-yield, view-include, view-param, view-if, view-then, view-else, view-switch,
-view-case, view-for, view-item, view-eval, app-main, view-component {
+view-case, view-for, view-item, view-eval, app-main, view-component, form-for {
     display: block;
 }
 
