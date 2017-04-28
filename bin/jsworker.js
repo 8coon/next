@@ -109,19 +109,38 @@ const generateController = (path, folder, name, withView, viewExtends, viewTempl
             `require('./dist/compiled/${folder}/${name}Controller/${camelToDash(name)}-controller.js');\n`);
 };
 
-const generateInterceptor = (path, folder, name, interceptorType, templateFile, reject) => {
+const generateInterceptor = (path, folder, name, interceptorType, templateFile, reject, type, validator) => {
     templateFile = templateFile || 'interceptor.ts';
+    type = type || 'Interceptor';
 
     let interceptor = fs.readFileSync(`./bin/generators/${templateFile}.template`, 'utf-8');
     reject = reject || 'false';
 
     interceptor = interceptor.replace(/%\{NAME}%/g, name);
+    interceptor = interceptor.replace(/%\{TYPE}%/g, type);
     interceptor = interceptor.replace(/%\{INTERCEPTOR_TYPE}%/g, interceptorType);
 
     if (reject === 'true') {
         interceptor = interceptor.replace(/%\{RESOLVE_REJECT}%/g, `reject('error')`);
     } else {
-        interceptor = interceptor.replace(/%\{RESOLVE_REJECT}%/g, 'resolve(1)');
+        switch (validator) {
+
+            case 'NumericValidator': {
+                interceptor = interceptor.replace(/%\{RESOLVE_REJECT}%/g,
+                    `{ if (!isNaN(args['value'])) { resolve(); } else { reject('Value should be a number!'); } }`);
+            } break;
+
+            case 'AgeValidator': {
+                interceptor = interceptor.replace(/%\{RESOLVE_REJECT}%/g,
+                    `{ if (+args['value'] >= 18) { resolve('You spin me right round, baby, right round'); }
+                        else { reject('Too young to fall in love!'); } }`);
+            } break;
+
+            default: {
+                interceptor = interceptor.replace(/%\{RESOLVE_REJECT}%/g, 'resolve(1)');
+            } break;
+
+        }
     }
 
     mkdirp.sync(`${path}/${folder}/${name}Interceptor/`);
@@ -363,6 +382,7 @@ const startApp = (name, title, path, forTesting, jsWorksPath) => {
     mkdirp.sync(`${path}/dist`);
     mkdirp.sync(`${path}/static`);
     mkdirp.sync(`${path}/interceptors`);
+    mkdirp.sync(`${path}/validators`);
 
     generateApplication(path, name, title, forTesting);
     generateStaticServer(path, title, jsWorksPath, forTesting);
@@ -402,6 +422,11 @@ const sampleApp = (path, forTesting, jsWorksPath) => {
         'test-interceptor.ts', 'true');
     generateInterceptor(path, 'interceptors', 'TestAfter3', 'RouteAfterNavigateInterceptor',
         'test-interceptor.ts');
+
+    generateInterceptor(path, 'validators', 'Numeric', 'ValidatorInterceptor',
+        'test-interceptor.ts', 'false', 'Validator', 'NumericValidator');
+    generateInterceptor(path, 'validators', 'Age', 'ValidatorInterceptor',
+        'test-interceptor.ts', 'false', 'Validator', 'AgeValidator');
 
     generateModel(path, 'Test', 'test-model.ts');
 };

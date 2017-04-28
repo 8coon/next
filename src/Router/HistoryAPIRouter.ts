@@ -51,7 +51,7 @@ export class HistoryAPIRouter extends Router {
         const path = route.getPath(pathVariables);
         const interceptorHolder = JSWorks.applicationContext.interceptorHolder;
 
-        return interceptorHolder.activateInterceptors(InterceptorType.RouteBeforeNavigateInterceptor, {})
+        return interceptorHolder.triggerByType(InterceptorType.RouteBeforeNavigateInterceptor, {})
             .then( () => {
                 route.fire(pathVariables);
                 const state = {name: route.name, path: path, pathVariables: pathVariables};
@@ -59,7 +59,7 @@ export class HistoryAPIRouter extends Router {
 
                 return Promise.resolve();
             })
-            .then( () => interceptorHolder.activateInterceptors(InterceptorType.RouteAfterNavigateInterceptor, {}))
+            .then( () => interceptorHolder.triggerByType(InterceptorType.RouteAfterNavigateInterceptor, {}))
             .catch( (rejected) => console.error(rejected) )
         ;
     }

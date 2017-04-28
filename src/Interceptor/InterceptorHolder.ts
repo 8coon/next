@@ -1,7 +1,7 @@
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {IInterceptor} from './IInterceptor';
 import {InterceptorType} from './InterceptorType';
-import {InterceptorNotFound} from '../Error/InterceptorNotFound';
+import {InterceptorNotFoundError} from '../Error/InterceptorNotFound';
 
 
 declare const __JSWorks_interceptors__: any[];
@@ -11,6 +11,7 @@ declare const __JSWorks_interceptors__: any[];
 export class InterceptorHolder {
 
     private _interceptors: object = {};
+    private interceptorsByName: object = {};
 
 
     /**
@@ -53,18 +54,61 @@ export class InterceptorHolder {
      * @param args объект аргументов, необходимый для работы каждого перехватчика
      * @returns {Promise<any>} возвращает промис
      */
-    public activateInterceptors(interceptorType: InterceptorType, args: object): Promise<any> {
-
+    public triggerByType(interceptorType: InterceptorType, args: object): Promise<any> {
         if (!this._interceptors[interceptorType]) {
-            throw new InterceptorNotFound(interceptorType.toString());
+            throw new InterceptorNotFoundError(interceptorType.toString());
         }
 
-        return this._interceptors[interceptorType]
-            .reduce((prevVal: Promise<any>, cur: IInterceptor) =>
-                    prevVal
-                        .then(() => cur.intercept(args))
-                        .catch((reject) => Promise.reject(reject))
-                , Promise.resolve() );
+        return this.trigger(this._interceptors[interceptorType], args);
+    }
+
+
+    /**
+     * Активировать список данных перехватчиков
+     * @param interceptors
+     * @param args
+     * @returns {IInterceptor}
+     */
+    public trigger(interceptors: IInterceptor[], args: object): Promise<any> {
+        return interceptors.reduce((prevVal: Promise<any>, cur: IInterceptor) =>
+                prevVal
+                    .then(() => cur.intercept(args))
+                    .catch((reject) => Promise.reject(reject))
+            , Promise.resolve() );
+    }
+
+
+    /**
+     * Получить список перехватчиков по списку имён
+     * @param names
+     * @returns {IInterceptor[]}
+     */
+    public getInterceptors(names: string | string[]): IInterceptor[] {
+        const result: IInterceptor[] = [];
+
+        if (typeof names === 'string') {
+            names = [names];
+        }
+
+        names.forEach((name: string) => {
+            if (!this.interceptorsByName[name]) {
+                throw new InterceptorNotFoundError(name);
+            }
+
+            result.push(this.interceptorsByName[name]);
+        });
+
+        return result;
+    }
+
+
+    /**
+     * Получить перехватчик по имени
+     * @param name
+     * @returns {IInterceptor}
+     */
+    public getInterceptor(name: string): IInterceptor {
+        return this.getInterceptors(name)[0];
     }
 
 
@@ -78,6 +122,7 @@ export class InterceptorHolder {
         }
 
         this._interceptors[interceptor.type].push(interceptor);
+        this.interceptorsByName[interceptor.name] = interceptor;
     }
 
 

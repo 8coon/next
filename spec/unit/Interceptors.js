@@ -73,7 +73,7 @@ describe('Interceptors', () => {
             const holder = JSWorks.applicationContext.interceptorHolder;
 
             holder
-                .activateInterceptors(JSWorks.InterceptorType.RouteBeforeNavigateInterceptor, {})
+                .triggerByType(JSWorks.InterceptorType.RouteBeforeNavigateInterceptor, {})
                 .then(res => {
                     expect(res).to.equal(1);
                     done();
@@ -85,7 +85,7 @@ describe('Interceptors', () => {
             const holder = JSWorks.applicationContext.interceptorHolder;
 
             holder
-                .activateInterceptors(JSWorks.InterceptorType.RouteAfterNavigateInterceptor, {})
+                .triggerByType(JSWorks.InterceptorType.RouteAfterNavigateInterceptor, {})
                 .catch(error => {
                     expect(error).to.equal('error');
                     done();
