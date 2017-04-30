@@ -27,16 +27,15 @@ describe('FormFieldElement', () => {
         elem.propagateView(JSWorks.applicationContext.viewHolder.getView('TestView'));
 
         elem.render();
-        elem.rendered.querySelector('input').value = 'kek';
-        // elem.rendered.querySelector('input').dispatchEvent(new Event('change'));
+        elem.rendered.querySelector('input').setAttribute('value', 'kek');
+        elem.rendered.querySelector('input').dispatchEvent(new Event('change'));
 
-        /* window.setTimeout(() => {
+        window.setTimeout(() => {
             expect(elem.lastValidationResult).to.be.ok;
             expect(elem.lastValidationResult.value).to.equal('kek');
 
             done();
-        }, 100); */
-        done();
+        }, 2);
     });
 
 

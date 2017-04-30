@@ -158,10 +158,14 @@ export class FormFieldElement extends SimpleVirtualDOMElementExt {
                 throw new ElementNotFoundError('element with value binding');
             }
 
+            const attrName: string = valueElem.getAttribute('form-bind-attribute');
+            const value = (<HTMLElement> valueElem.rendered).getAttribute(attrName);
+            (<any> valueElem).attributes[attrName] = value;
+
             if (this.validators.length === 0) {
                 this.lastValidationResult = {
                     success: true,
-                    value: valueElem.getAttribute(valueElem.getAttribute('form-bind-attribute')),
+                    value,
                     messages: [],
                 };
 
@@ -170,12 +174,12 @@ export class FormFieldElement extends SimpleVirtualDOMElementExt {
             }
 
             interceptors.trigger(this.validators, {
-                    value: valueElem.getAttribute(valueElem.getAttribute('form-bind-attribute')),
+                    value,
                 })
                 .then((result) => {
                     this.lastValidationResult = {
                         success: true,
-                        value: valueElem.getAttribute(valueElem.getAttribute('form-bind-attribute')),
+                        value,
                         messages: promiseResult(result, 'OK'),
                     };
 
