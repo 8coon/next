@@ -53,19 +53,7 @@ export class FormFieldElement extends SimpleVirtualDOMElementExt {
      * @returns {FormFieldElement}
      */
     public createElement(): SimpleVirtualDOMElementExt {
-        const element = new FormFieldElement(SimpleVirtualDOM.NextHash());
-
-        EventManager.subscribe(element, element, EventType.CREATE, (ev) => {
-            if (!this.hasAttribute('validates')) {
-                return;
-            }
-
-            const validators: string[] = this.getAttribute('validates').replace(' ', '').split(',');
-            const interceptors: InterceptorHolder = JSWorks.applicationContext.interceptorHolder;
-            this.validators = interceptors.getInterceptors(validators);
-        });
-
-        return element;
+        return new FormFieldElement(SimpleVirtualDOM.NextHash());
     }
 
 
@@ -73,22 +61,6 @@ export class FormFieldElement extends SimpleVirtualDOMElementExt {
      * Возвращает первый элемент с атрибутом form-bind-attribute
      */
     public getBoundElement(): SimpleVirtualDOMElement {
-        /* const findElement = (root: SimpleVirtualDOMElement): SimpleVirtualDOMElement => {
-            if (root.hasAttribute('form-bind-attribute')) {
-                return root;
-            }
-
-            (<any> root)._children.forEach((child: SimpleVirtualDOMElement) => {
-                const found = findElement(child);
-
-                if (found) {
-                    return found;
-                }
-            });
-        };
-
-        return findElement(this); */
-
         return this.querySelector('[form-bind-attribute]');
     }
 
@@ -123,7 +95,7 @@ export class FormFieldElement extends SimpleVirtualDOMElementExt {
             return;
         }
 
-        ViewForElement.init(this.messagesRoot, this.messageTemplate);
+        this.messageTemplate = ViewForElement.init(this.messagesRoot, this.messageTemplate);
     }
 
 
@@ -161,6 +133,11 @@ export class FormFieldElement extends SimpleVirtualDOMElementExt {
             const attrName: string = valueElem.getAttribute('form-bind-attribute');
             const value = (<HTMLElement> valueElem.rendered).getAttribute(attrName);
             (<any> valueElem).attributes[attrName] = value;
+
+            if (this.hasAttribute('validates')) {
+                const validators: string[] = this.getAttribute('validates').split(',').map((s) => s.trim());
+                this.validators = interceptors.getInterceptors(validators);
+            }
 
             if (this.validators.length === 0) {
                 this.lastValidationResult = {
@@ -200,7 +177,7 @@ export class FormFieldElement extends SimpleVirtualDOMElementExt {
 
     private updateMessagesCollection(): void {
         ViewForElement.iterateCollection(this.messagesRoot, this.messageTemplate,
-            this.lastValidationResult.messages, this.hash, this.view);
+            this.lastValidationResult.messages, this.hash, this.view, 'error');
     }
 
 }

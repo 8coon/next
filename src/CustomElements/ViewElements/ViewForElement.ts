@@ -49,9 +49,10 @@ export class ViewForElement extends AbstractListeningElement {
      * @param collection
      * @param hash
      * @param view
+     * @param varName
      */
     public static iterateCollection(root: SimpleVirtualDOMElement, template: SimpleVirtualDOMElement,
-            collection: any[] | CollectionProperty, hash: number = -1, view?: View): void {
+            collection: any[] | CollectionProperty, hash: number = -1, view?: View, varName?: string): void {
         let values = collection;
 
         if (collection instanceof CollectionProperty) {
@@ -74,7 +75,7 @@ export class ViewForElement extends AbstractListeningElement {
                 return;
             }
 
-            const varName = root.getAttribute('variable');
+            varName = varName || root.getAttribute('variable');
             ViewForElement.propagateValue(root, (<any> root)._children[index], varName, value);
         });
 
