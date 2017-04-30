@@ -4,14 +4,11 @@ import {ViewConfig} from '../../../View/ViewConfig';
 import {SimpleVirtualDOMElementExt} from '../../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElementExt';
 import {SimpleVirtualDOM} from '../../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOM';
 import {IInterceptor} from '../../../Interceptor/IInterceptor';
-import {EventManager} from '../../../EventManager/EventManager';
-import {EventType} from '../../../EventManager/EventType';
 import {InterceptorHolder} from '../../../Interceptor/InterceptorHolder';
-import {IValidationResult} from './IValidationResult';
 import {SimpleVirtualDOMElement} from '../../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
 import {ElementNotFoundError} from '../../../Error/ElementNotFoundError';
 import {View} from '../../../View/View';
-import {ViewForElement} from '../ViewForElement';
+import {MessageListElement} from './MessageListElement';
 
 
 declare const JSWorks: any;
@@ -19,7 +16,7 @@ declare const JSWorks: any;
 
 @JSWorksInternal
 @JSWorksCustomElement(ViewConfig.FORM_FIELD_TAG)
-export class FormFieldElement extends SimpleVirtualDOMElementExt {
+export class FormFieldElement extends MessageListElement {
 
 
     /**
@@ -36,14 +33,6 @@ export class FormFieldElement extends SimpleVirtualDOMElementExt {
     // public validate: Promise<any> = Promise.resolve();
 
 
-    /**
-     * Результат последней валидации
-     */
-    public lastValidationResult: IValidationResult;
-
-
-    private messageTemplate: SimpleVirtualDOMElement;
-    private messagesRoot: SimpleVirtualDOMElement;
     private input: SimpleVirtualDOMElement;
     private listening: boolean = false;
 
@@ -76,10 +65,6 @@ export class FormFieldElement extends SimpleVirtualDOMElementExt {
 
         super.propagateView(view);
 
-        if (this.messageTemplate) {
-            this.messageTemplate.propagateView(view);
-        }
-
         if (!this.input) {
             this.input = this.getBoundElement();
         }
@@ -88,14 +73,6 @@ export class FormFieldElement extends SimpleVirtualDOMElementExt {
             this.installListener(this.input);
             this.listening = true;
         }
-
-        this.messagesRoot = this.querySelector('form-messages');
-
-        if (!this.messagesRoot) {
-            return;
-        }
-
-        this.messageTemplate = ViewForElement.init(this.messagesRoot, this.messageTemplate);
     }
 
 
@@ -174,10 +151,5 @@ export class FormFieldElement extends SimpleVirtualDOMElementExt {
 
     }
 
-
-    private updateMessagesCollection(): void {
-        ViewForElement.iterateCollection(this.messagesRoot, this.messageTemplate,
-            this.lastValidationResult.messages, this.hash, this.view, 'error');
-    }
 
 }
