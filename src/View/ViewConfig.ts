@@ -108,4 +108,25 @@ export class ViewConfig {
      */
     public static readonly COMPONENT_TAG = 'VIEW-COMPONENT';
 
+
+    /**
+     * Тэг, встраивающий в страницу форму
+     * @type {string}
+     */
+    public static readonly FORM_FOR_TAG = 'FORM-FOR';
+
+
+    /**
+     * Тэг, указывающий на поле формы
+     * @type {string}
+     */
+    public static readonly FORM_FIELD_TAG = 'FORM-FIELD';
+
+
+    /**
+     * Тэг, указывающий на блок сообщений формы или поля
+     * @type {string}
+     */
+    public static readonly FORM_MESSAGES_TAG = 'FORM-MESSAGES';
+
 }

@@ -177,9 +177,11 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
             element.setAttribute(attr, this.getAttribute(attr));
         });
 
-        Object.keys(this.handlers).forEach((handler) => {
-            element.addEventListener(handler, this.handlers[handler].callback,
-                this.handlers[handler].useCapture);
+        Object.keys(this.handlers).forEach((type) => {
+            this.handlers[type].forEach((handler) => {
+                element.addEventListener(type, this.handlers[handler].callback,
+                    this.handlers[handler].useCapture);
+            });
         });
 
         this._children.forEach((child) => {
@@ -765,11 +767,20 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         });
 
         const handlers = this.handlers;
-        this.handlers = {};
+        this.rendered[this.HANDLERS_KEY] = [];
 
         Object.keys(handlers).forEach((type) => {
             handlers[type].forEach((handler) => {
-                this.addEventListener(type, handler.callback, handler.useCapture);
+
+                this.rendered.addEventListener(type, (event) => {
+                    handler.callback(event);
+                },  handler.useCapture);
+
+                this.rendered[this.HANDLERS_KEY].push({
+                    type,
+                    callback: handler.callback,
+                    useCapture: handler.useCapture,
+                });
             });
         });
     }

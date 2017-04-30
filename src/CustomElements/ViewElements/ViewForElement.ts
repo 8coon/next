@@ -69,7 +69,8 @@ export class ViewForElement extends AbstractListeningElement {
             if (!(<any> root)._children[index]) {
                 root.appendChild(template.cloneNode());
 
-            } else {
+            } else if (!(!(<any> root)._children[index]['__for_value__'] ||
+                    ((<any> root)._children[index]['__for_value__'] !== value))) {
                 return;
             }
 

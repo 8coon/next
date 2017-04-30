@@ -71,8 +71,10 @@ describe('Model', () => {
 
             const html = page.view.DOMRoot.querySelector('view-for[in="$.people"]').getOuterHTML();
 
-            expect(html).to.contain('Mae Borowski');
-            expect(html).to.contain('<view-eval value="person.age">20</view-eval>');
+            expect(html).to.not.contain('Catty');
+
+            expect(html).to.contain('M_a_e___B_o_r_o_w_s_k_i');
+            expect(html).to.contain('<view-eval value="person.age">19</view-eval>');
 
             expect(html).to.contain('Goubar');
             expect(html).to.contain('<view-eval value="person.age">9000</view-eval>');
@@ -85,11 +87,7 @@ describe('Model', () => {
 
             page.people.setValues(srcValues);
             done();
-
-        }).catch((error) => {
-            console.error(error);
-            done();
-        })
+        });
 
     });
 
