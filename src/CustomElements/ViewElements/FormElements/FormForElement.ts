@@ -2,14 +2,13 @@ import {JSWorksInternal} from '../../../Common/InternalDecorator';
 import {JSWorksCustomElement} from '../../CustomElementDecorator';
 import {ViewConfig} from '../../../View/ViewConfig';
 import {SimpleVirtualDOM} from '../../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOM';
-import {EventManager} from '../../../EventManager/EventManager';
-import {EventType} from '../../../EventManager/EventType';
 import {AttributeNotFoundError} from '../../../Error/AttributeNotFoundError';
 import {MessageListElement} from './MessageListElement';
 import {FormFieldElement} from './FormFieldElement';
 import {IModel} from '../../../Model/IModel';
 import {IInterceptor} from '../../../Interceptor/IInterceptor';
 import {SimpleVirtualDOMElement} from '../../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
+import {View} from '../../../View/View';
 
 
 declare const JSWorks: any;
@@ -97,18 +96,27 @@ export class FormForElement extends MessageListElement {
      * @returns {ViewEvalElement}
      */
     public createElement(): FormForElement {
-        const form: FormForElement = new FormForElement(SimpleVirtualDOM.NextHash());
+        return new FormForElement(SimpleVirtualDOM.NextHash());
+    }
 
-        EventManager.subscribe(this, this, EventType.CREATE, (ev) => {
-            if (!this.hasAttribute('model')) {
-                throw new AttributeNotFoundError('model', 'form-for');
-            }
 
-            this.model =  JSWorks.applicationContext.modelHolder.getModel(this.getAttribute('model')).from();
-            this.customUpdate();
-        });
+    /**
+     * См. SimpleVirtualDOMElement.PropagateView
+     * @param view
+     */
+    public propagateView(view: View): void {
+        if (this.view === view) {
+            return;
+        }
 
-        return form;
+        super.propagateView(view);
+
+        if (!this.hasAttribute('model')) {
+            throw new AttributeNotFoundError('model', 'form-for');
+        }
+
+        this.model =  JSWorks.applicationContext.modelHolder.getModel(this.getAttribute('model')).from();
+        this.customUpdate();
     }
 
 
