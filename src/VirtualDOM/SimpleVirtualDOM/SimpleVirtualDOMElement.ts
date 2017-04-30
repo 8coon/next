@@ -407,6 +407,10 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
      * @param name
      */
     public removeAttribute(name: string): void {
+        if (!this.attributes[name]) {
+            return;
+        }
+
         delete this.attributes[name];
         this.emitMutilationEvent({ type: EventType.DOMPropertyChange, data: this });
     }

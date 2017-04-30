@@ -1,13 +1,7 @@
 import {JSWorksInternal} from '../../../Common/InternalDecorator';
-import {JSWorksCustomElement} from '../../CustomElementDecorator';
-import {ViewConfig} from '../../../View/ViewConfig';
 import {SimpleVirtualDOMElementExt} from '../../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElementExt';
-import {SimpleVirtualDOM} from '../../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOM';
-import {IInterceptor} from '../../../Interceptor/IInterceptor';
-import {InterceptorHolder} from '../../../Interceptor/InterceptorHolder';
 import {IValidationResult} from './IValidationResult';
 import {SimpleVirtualDOMElement} from '../../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
-import {ElementNotFoundError} from '../../../Error/ElementNotFoundError';
 import {View} from '../../../View/View';
 import {ViewForElement} from '../ViewForElement';
 
@@ -17,6 +11,35 @@ declare const JSWorks: any;
 
 @JSWorksInternal
 export abstract class MessageListElement extends SimpleVirtualDOMElementExt {
+
+
+    /**
+     * Форматировать результат обработки данных с сервера
+     * @param result
+     * @param status
+     * @param array
+     * @returns {any}
+     */
+    public static formatPromiseResult(result, status, array = true) {
+        if (result instanceof Array) {
+            return result.map((message) => {
+                return MessageListElement.formatPromiseResult(message, status, false);
+            });
+        }
+
+        if (typeof result !== 'object') {
+            result = {
+                status,
+                text: String(result || ''),
+            };
+        }
+
+        if (array) {
+            result = [result];
+        }
+
+        return result;
+    };
 
 
     /**

@@ -13,7 +13,7 @@ describe('FormFieldElement', () => {
         const html = `
             <form-field for="undefined">
                 <form-messages>
-                    <div class="form-field-message"><form-message-yield /></div>
+                    <view-eval value="error.text"></view-eval>
                 </form-messages>
 
                 <input form-bind-attribute="value">

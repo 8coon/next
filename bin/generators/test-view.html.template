@@ -94,26 +94,28 @@
     <form-for model="TestModel" id="EditForm">
 
         <form-messages>
-            <div class="form-message"><form-message-yield /></div>
+            <view-eval value="error.text"></view-eval>
         </form-messages>
 
-        <form-field for="$.name">
-            <form-messages>
-                <div class="form-field-message"><form-message-yield /></div>
-            </form-messages>
+        <form>
+            <form-field for="$.name">
+                <form-messages>
+                    <view-eval value="error.text"></view-eval>
+                </form-messages>
 
-            <input form-bind-attribute="value">
-        </form-field>
+                <input form-bind-attribute="value">
+            </form-field>
 
-        <form-field for="$.age" validates="NumericValidator, AgeValidator">
-            <form-messages>
-                <div class="form-field-message"><form-message-yield /></div>
-            </form-messages>
+            <form-field for="$.age" validates="NumericValidator, AgeValidator">
+                <form-messages>
+                    <view-eval value="error.text"></view-eval>
+                </form-messages>
 
-            <input form-bind-attribute="value">
-        </form-field>
+                <input form-bind-attribute="value">
+            </form-field>
 
-        <button type="button" form-bind-submit>Submit form</button>
+            <button type="submit" form-submit>Submit</button>
+        </form>
 
     </form-for>
 

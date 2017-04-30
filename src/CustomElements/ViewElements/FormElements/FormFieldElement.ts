@@ -9,6 +9,7 @@ import {SimpleVirtualDOMElement} from '../../../VirtualDOM/SimpleVirtualDOM/Simp
 import {ElementNotFoundError} from '../../../Error/ElementNotFoundError';
 import {View} from '../../../View/View';
 import {MessageListElement} from './MessageListElement';
+import {FormForElement} from './FormForElement';
 
 
 declare const JSWorks: any;
@@ -26,11 +27,9 @@ export class FormFieldElement extends MessageListElement {
 
 
     /**
-     * Промис валидации. Сбрасывается при каждом изменении значения, резолвится при каждой
-     * успешной или неуспешной валидации.
-     * @type {Promise<T>|Promise<void>}
+     * Форма
      */
-    // public validate: Promise<any> = Promise.resolve();
+    public form: FormForElement;
 
 
     private input: SimpleVirtualDOMElement;
@@ -76,29 +75,17 @@ export class FormFieldElement extends MessageListElement {
     }
 
 
+    protected updateMessagesCollection(): void {
+        super.updateMessagesCollection();
+
+        if (this.form) {
+            this.form.validateField();
+        }
+    }
+
+
     private installListener(input: SimpleVirtualDOMElement): void {
         const interceptors: InterceptorHolder = JSWorks.applicationContext.interceptorHolder;
-
-        const promiseResult = (result, status, array = true) => {
-            if (result instanceof Array) {
-                return result.map((message) => {
-                    return promiseResult(message, status, false);
-                });
-            }
-
-            if (typeof result !== 'object') {
-                result = {
-                    status,
-                    text: String(result || ''),
-                };
-            }
-
-            if (array) {
-                result = [result];
-            }
-
-            return result;
-        };
 
         input.addEventListener('change', (event) => {
             const valueElem: SimpleVirtualDOMElement = input;
@@ -134,7 +121,7 @@ export class FormFieldElement extends MessageListElement {
                     this.lastValidationResult = {
                         success: true,
                         value,
-                        messages: promiseResult(result, 'OK'),
+                        messages: MessageListElement.formatPromiseResult(result, 'OK'),
                     };
 
                     this.updateMessagesCollection();
@@ -142,7 +129,7 @@ export class FormFieldElement extends MessageListElement {
                 .catch((result) => {
                     this.lastValidationResult = {
                         success: false,
-                        messages: promiseResult(result, 'ERROR'),
+                        messages: MessageListElement.formatPromiseResult(result, 'ERROR'),
                     };
 
                     this.updateMessagesCollection();
