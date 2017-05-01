@@ -59,15 +59,23 @@ export class Route implements IEventEmitter {
      * @param pathVariables
      */
     public fire(pathVariables: object): void {
-        this.emitEvent({ type: EventType.ROUTE_FIRED, data: this });
+        // ToDo: fire component method with pathVariables
 
+        this.emitEvent({ type: EventType.ROUTE_FIRED, data: this });
         const componentHolder: ComponentHolder = JSWorks.applicationContext.componentHolder;
 
         if (this.pageName && componentHolder.getPage(this.pageName)) {
             const page = componentHolder.getPage(this.pageName);
             const root: Element = document.querySelector(ViewConfig.ROOT_TAG);
 
-            // page.ren
+            if (root.firstChild !== page.view.DOMRoot.rendered) {
+                root.innerHTML = '';
+                root.appendChild(page.view.DOMRoot.rendered);
+            }
+
+            if (page.onNavigate) {
+                page.onNavigate(pathVariables);
+            }
         }
     }
 

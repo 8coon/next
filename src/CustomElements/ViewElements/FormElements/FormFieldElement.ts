@@ -117,13 +117,21 @@ export class FormFieldElement extends MessageListElement {
         }
 
         const attrName: string = valueElem.getAttribute('form-bind-attribute');
-        let value = (<HTMLElement> valueElem.rendered).getAttribute(attrName);
+        let value;
 
         if (this.customValue) {
             value = this._value;
 
             this.customValue = false;
             this._value = undefined;
+
+            valueElem.setAttribute(attrName, value);
+        } else {
+            if (attrName.toLowerCase() === 'value') {
+                value = (<any> valueElem.rendered).value;
+            } else {
+                value = (<HTMLElement> valueElem.rendered).getAttribute(attrName);
+            }
         }
 
         (<any> valueElem).attributes[attrName] = value;

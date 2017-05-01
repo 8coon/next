@@ -174,7 +174,11 @@ export class FormForElement extends MessageListElement {
      * Отправить форму
      * @returns {Promise<any>}
      */
-    public submit(): void {
+    public submit(force: boolean = false): void {
+        if (!(force || this.canSubmit())) {
+            return;
+        }
+
         this.fields.forEach((field: FormFieldElement) => {
             if (!field.hasAttribute('for')) {
                 return;
@@ -204,6 +208,8 @@ export class FormForElement extends MessageListElement {
                     success: true,
                     messages: MessageListElement.formatPromiseResult(result, 'OK'),
                 };
+
+                this.updateMessagesCollection();
             })
             .catch((err) => {
                 if (this.onError && !this.onError(this, err)) {
@@ -214,6 +220,8 @@ export class FormForElement extends MessageListElement {
                     success: false,
                     messages: MessageListElement.formatPromiseResult(err, 'ERROR'),
                 };
+
+                this.updateMessagesCollection();
             });
     }
 
@@ -235,7 +243,7 @@ export class FormForElement extends MessageListElement {
             if (this.canSubmit()) {
                 button.removeAttribute('disabled');
             } else {
-                button.setAttribute('disabled', '');
+                button.setAttribute('disabled', 'true');
             }
         }
     }

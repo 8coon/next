@@ -28,7 +28,7 @@ const create = () => {
     }
 
     console.log('Compiling TypeScript...');
-    exec("node ./node_modules/typescript/bin/tsc");
+    exec('node ./node_modules/typescript/bin/tsc');
 
     const includeFile = `
         JSWorks = {};

@@ -37,4 +37,8 @@ export class %{NAME}%%{CLASS}% {
     ];
 
 
+     @JSWorks.ComponentCollectionProperty()
+    public currentPerson: any[] = ['no data'];
+
+
 }

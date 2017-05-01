@@ -14,6 +14,7 @@ interface %{NAME}%ModelFields {
 @JSWorks.Model
 class %{NAME}%Model implements %{NAME}%ModelFields {
 
+    @JSWorks.ModelField
     @JSWorks.ModelPrimaryKey
     public id: number;
 

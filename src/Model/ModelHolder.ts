@@ -105,8 +105,10 @@ export class ModelHolder {
         };
 
         model.update = function(): Promise<IModel> {
-            return this['__update__']().then(() => {
+            return this['__update__']().then((result: IModel) => {
                 this.setDirty(false);
+
+                return Promise.resolve(result);
             });
         };
 
@@ -147,6 +149,10 @@ export class ModelHolder {
             const fields: object = {};
 
             (model.modelMetadata.fields || []).forEach((fieldName: string) => {
+                if (this[fieldName] === undefined) {
+                    return;
+                }
+
                 fields[fieldName] = this[fieldName];
             });
 

@@ -392,7 +392,7 @@ const startApp = (name, title, path, forTesting, jsWorksPath) => {
 const sampleApp = (path, forTesting, jsWorksPath) => {
     startApp('sample', 'Sample Application', path, forTesting, jsWorksPath);
 
-    generateRoute(path, 'Default', 'Default', '', '');
+    generateRoute(path, 'Default', 'Test', '', '');
     generateRoute(path, undefined, undefined, 'api', '');
     generateRoute(path, 'Users', 'Users', 'users', 'api');
     generateRoute(path, 'Profile', 'Profile', ':id', 'users');

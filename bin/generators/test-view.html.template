@@ -90,6 +90,18 @@
     <view-component id="inset2" name="TestInsetComponent" person_name="Gregg"></view-component>
     <view-component id="inset3" name="TestInsetComponent" person_name="Beatrice"></view-component>
 
+    <br><hr><br><br><br>
+
+    <strong>Сейчас модель выглядит следующим образом:</strong>
+    <br>
+
+    <view-for variable="person" in="$.currentPerson">
+        <view-eval value="person" style="white-space: pre;"></view-eval>
+    </view-for>
+
+    <br>
+    <strong>Изменить модель можно с помощью данной формы:</strong>
+    <br><br>
 
     <form-for model="TestModel" id="EditForm">
 
@@ -99,19 +111,19 @@
 
         <form>
             <form-field for="name">
-                <form-messages>
+                <form-messages style="color: red; font-size: 0.9em;">
                     <view-eval value="error.text"></view-eval>
                 </form-messages>
 
-                <input form-bind-attribute="value">
+                Имя: <input form-bind-attribute="value"><br><br>
             </form-field>
 
             <form-field for="age" validates="NumericValidator, AgeValidator">
-                <form-messages>
+                <form-messages style="color: red; font-size: 0.9em;">
                     <view-eval value="error.text"></view-eval>
                 </form-messages>
 
-                <input form-bind-attribute="value">
+                Возраст: <input form-bind-attribute="value"><br><br>
             </form-field>
 
             <button type="submit" form-submit="true">Submit</button>

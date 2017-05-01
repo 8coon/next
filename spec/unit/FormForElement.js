@@ -11,7 +11,7 @@ describe('FormForElement', () => {
 
     it('should load sample form', () => {
         const page = JSWorks.applicationContext.componentHolder.getPage('TestPage');
-        const form = page.view.DOMRoot.querySelector('form-for');
+        const form = page.view.DOMRoot.querySelector('form-for#EditForm');
 
         expect(form).to.be.ok;
         expect(form.model).to.be.ok;
@@ -27,7 +27,7 @@ describe('FormForElement', () => {
 
     it('should allow submission only if all fields are valid', () => {
         const page = JSWorks.applicationContext.componentHolder.getPage('TestPage');
-        const form = page.view.DOMRoot.querySelector('form-for');
+        const form = page.view.DOMRoot.querySelector('form-for#EditForm');
 
         expect(form.canSubmit()).to.be.false;
         expect(form.getSubmitButton().hasAttribute('disabled'));
@@ -77,13 +77,32 @@ describe('FormForElement', () => {
             });
         }).then(() => {
             return new Promise((resolve) => {
-                form.onSuccess = () => {
-                    expect(form.model.name).to.equal('kek');
-                    expect(form.model.age).to.equal('19');
-                    expect(form.model.important).to.be.false;
-                    expect(form.model.id).to.be.ok;
+                let resolved = false;
 
-                    resolve();
+                form.onSubmit = () => {
+                    return true;
+                };
+
+                form.onError = (frm, error) => {
+                    return true;
+                };
+
+                form.onSuccess = () => {
+                    page.currentPerson.setValues([
+                        String(Math.random()) + '\n' + JSON.stringify(form.model.gist())
+                    ]);
+
+                    if (!resolved) {
+                        expect(form.model.name).to.equal('kek');
+                        expect(form.model.age).to.equal('19');
+                        expect(form.model.important).to.be.false;
+                        expect(form.model.id).to.be.ok;
+
+                        resolved = true;
+                        resolve();
+                    }
+
+                    return true;
                 };
 
                 form.submit();

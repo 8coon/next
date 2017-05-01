@@ -78,7 +78,7 @@ export declare class FormForElement extends MessageListElement {
      * Отправить форму
      * @returns {Promise<any>}
      */
-    submit(): void;
+    submit(force?: boolean): void;
     /**
      * Отметить результат валидации поля
      */
