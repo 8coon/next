@@ -1,9 +1,2 @@
-
-
-app-view, view-yield, view-include, view-param, view-if, view-then, view-else, view-switch,
-view-case, view-for, view-item, view-eval, app-main, view-component, form-for {
-    display: block;
-}
-
-
+app-main,app-view,form-for,view-case,view-component,view-else,view-eval,view-for,view-if,view-include,view-item,view-param,view-switch,view-then,view-yield{display:block}
 /*# sourceMappingURL=jsworks.css.map*/
