@@ -17,7 +17,7 @@ declare const JSWorks: any;
 type SubmitCallback = (form?: FormForElement) => Promise<any>;
 type ModelSaveCallback = (form?: FormForElement, model?: IModel) => Promise<any>;
 type UserSubmitCallback = (form?: FormForElement) => boolean;
-type UserSubmittedCallback = (response: object, form?: FormForElement) => boolean;
+type UserSubmittedCallback = (form?: FormForElement, response?: object) => boolean;
 
 
 @JSWorksInternal
@@ -48,7 +48,7 @@ export class FormForElement extends MessageListElement {
      * Имя метода сохранения у модели
      * @type {string}
      */
-    public modelSaveMethod: string = 'save';
+    public modelSaveMethod: string = 'persist';
 
 
     /**
@@ -101,6 +101,15 @@ export class FormForElement extends MessageListElement {
 
 
     /**
+     * Кнопка отправки формы, если такая есть
+     * @returns {SimpleVirtualDOMElement}
+     */
+    public getSubmitButton(): SimpleVirtualDOMElement {
+        return this.querySelector('[form-submit]');
+    }
+
+
+    /**
      * См. SimpleVirtualDOMElement.PropagateView
      * @param view
      */
@@ -115,8 +124,14 @@ export class FormForElement extends MessageListElement {
             throw new AttributeNotFoundError('model', 'form-for');
         }
 
-        this.model =  JSWorks.applicationContext.modelHolder.getModel(this.getAttribute('model')).from();
+        this.model = JSWorks.applicationContext.modelHolder.getModel(this.getAttribute('model')).from();
         this.customUpdate();
+
+        const button: SimpleVirtualDOMElement = this.getSubmitButton();
+
+        if (button) {
+            button.setAttribute('disabled', 'true');
+        }
     }
 
 
@@ -149,13 +164,9 @@ export class FormForElement extends MessageListElement {
      * @returns {boolean}
      */
     public canSubmit(): boolean {
-        this.fields.forEach((field) => {
-            if (!field.lastValidationResult || !field.lastValidationResult.success) {
-                return false;
-            }
+        return this.fields.every((field) => {
+            return !(!field.lastValidationResult || !field.lastValidationResult.success);
         });
-
-        return true;
     }
 
 
@@ -164,6 +175,15 @@ export class FormForElement extends MessageListElement {
      * @returns {Promise<any>}
      */
     public submit(): void {
+        this.fields.forEach((field: FormFieldElement) => {
+            if (!field.hasAttribute('for')) {
+                return;
+            }
+
+            const name = field.getAttribute('for');
+            this.model[name] = field.value;
+        });
+
         if (this.onSubmit && !this.onSubmit(this)) {
             return;
         }
@@ -174,6 +194,8 @@ export class FormForElement extends MessageListElement {
 
         this.submitCallback(this)
             .then((result) => {
+                this.model = result;
+
                 if (this.onSuccess && !this.onSuccess(this, result)) {
                     return;
                 }
@@ -204,7 +226,7 @@ export class FormForElement extends MessageListElement {
 
         if (this.validated === this.fields.length) {
             this.validated = this.fields.length - 1;
-            const button: SimpleVirtualDOMElement = this.querySelector('[form-submit]');
+            const button: SimpleVirtualDOMElement = this.getSubmitButton();
 
             if (!button) {
                 return;

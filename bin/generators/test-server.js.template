@@ -47,8 +47,9 @@ const mockPersons = [
 
 
 
-app.post('/persons/create', bodyParser.json(), (req, res) => {
+app.post('/persons/create', bodyParser.text(), (req, res) => {
     const id = mockPersons.length;
+    req.body = JSON.parse(req.body);
 
     const person = {
         id,
@@ -62,12 +63,15 @@ app.post('/persons/create', bodyParser.json(), (req, res) => {
 });
 
 
-app.post('/persons/read', bodyParser.json(), (req, res) => {
+app.post('/persons/read', bodyParser.text(), (req, res) => {
+    req.body = JSON.parse(req.body);
     res.send(JSON.stringify(mockPersons[Number.parseInt(req.body.id)]));
 });
 
 
-app.post('/persons/update', bodyParser.json(), (req, res) => {
+app.post('/persons/update', bodyParser.text(), (req, res) => {
+    req.body = JSON.parse(req.body);
+
     const person = {
         id: Number.parseInt(req.body.id),
         name: req.body.name || '',
@@ -84,7 +88,9 @@ app.post('/persons/update', bodyParser.json(), (req, res) => {
 });
 
 
-app.post('/persons/delete', bodyParser.json(), (req, res) => {
+app.post('/persons/delete', bodyParser.text(), (req, res) => {
+    req.body = JSON.parse(req.body);
+
     mockPersons[Number.parseInt(req.body.id)] = undefined;
     res.send('');
 });

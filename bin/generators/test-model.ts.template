@@ -49,7 +49,8 @@ class %{NAME}%Model implements %{NAME}%ModelFields {
     @JSWorks.ModelCreateMethod
     public create(): Promise<%{NAME}%Model> {
         return new Promise<%{NAME}%Model>((resolve, reject) => {
-            this.jsonParser.parseURLAsync('/persons/create', JSWorks.HTTPMethod.POST, this.gist()).then((data) => {
+            this.jsonParser.parseURLAsync('/persons/create', JSWorks.HTTPMethod.POST,
+                    JSON.stringify(this.gist())).then((data) => {
                 resolve(this.from(data));
             });
         });
@@ -60,7 +61,7 @@ class %{NAME}%Model implements %{NAME}%ModelFields {
     public read(id?: number): Promise<%{NAME}%Model> {
         return new Promise<%{NAME}%Model>((resolve, reject) => {
             this.jsonParser.parseURLAsync('/persons/read', JSWorks.HTTPMethod.POST,
-                        { id: id || this.id }
+                        JSON.stringify({ id: id || this.id })
                     ).then((data) => {
                 this.apply(data);
                 resolve(this);
@@ -72,7 +73,8 @@ class %{NAME}%Model implements %{NAME}%ModelFields {
     @JSWorks.ModelUpdateMethod
     public update(): Promise<%{NAME}%Model> {
         return new Promise<%{NAME}%Model>((resolve, reject) => {
-            this.jsonParser.parseURLAsync('/persons/update', JSWorks.HTTPMethod.POST, this.gist()).then((data) => {
+            this.jsonParser.parseURLAsync('/persons/update', JSWorks.HTTPMethod.POST,
+                    JSON.stringify(this.gist())).then((data) => {
                 this.apply(data);
                 this.setDirty(false);
 
@@ -86,7 +88,7 @@ class %{NAME}%Model implements %{NAME}%ModelFields {
     public delete(): Promise<%{NAME}%Model> {
         return new Promise<%{NAME}%Model>((resolve, reject) => {
             this.jsonParser.parseURLAsync('/persons/delete', JSWorks.HTTPMethod.POST,
-                        { id: this.id }
+                        JSON.stringify({ id: this.id })
                     ).then((data) => {
                 resolve(this);
             });

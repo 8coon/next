@@ -79,8 +79,7 @@ describe('FormFieldElement', () => {
 
         }).then(() => {
 
-            elem.rendered.querySelector('input').setAttribute('value', '13');
-            elem.rendered.querySelector('input').dispatchEvent(new Event('change'));
+            elem.value = '13';
 
             return new Promise((resolve) => {
                 window.setTimeout(() => {

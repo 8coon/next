@@ -9,8 +9,9 @@ export abstract class SimpleVirtualDOMElementExt extends SimpleVirtualDOMElement
     /**
      * Выполняет выражение в области видимости View
      * @param statement
+     * @param scope
      */
-    public execStatement(statement: string): any {
+    public execStatement(statement: string, scope = this.view.component): any {
         if (!this.view || !this.view.component) {
             return;
         }
@@ -22,7 +23,7 @@ export abstract class SimpleVirtualDOMElementExt extends SimpleVirtualDOMElement
             values.push(this.view.component.variables[varName]);
         });
 
-        values.push(this.view.component);
+        values.push(scope);
         variables.push('$');
 
         const condFunc = new Function(variables.join(','), `return ${statement};`);

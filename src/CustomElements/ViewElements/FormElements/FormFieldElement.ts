@@ -32,8 +32,32 @@ export class FormFieldElement extends MessageListElement {
     public form: FormForElement;
 
 
+    /**
+     * Получить значение поля
+     * @returns {any}
+     */
+    public get value(): any {
+        const attrName: string = this.input.getAttribute('form-bind-attribute');
+        return this.input.getAttribute(attrName);
+    }
+
+
+    /**
+     * Задать значение поля
+     * @param value
+     */
+    public set value(value: any) {
+        this._value = value;
+        this.customValue = true;
+
+        this.changeEvent();
+    }
+
+
     private input: SimpleVirtualDOMElement;
     private listening: boolean = false;
+    private _value: any;
+    private customValue: boolean = false;
 
 
     /**
@@ -69,7 +93,7 @@ export class FormFieldElement extends MessageListElement {
         }
 
         if (this.input && !this.listening) {
-            this.installListener(this.input);
+            this.installListener();
             this.listening = true;
         }
     }
@@ -84,58 +108,69 @@ export class FormFieldElement extends MessageListElement {
     }
 
 
-    private installListener(input: SimpleVirtualDOMElement): void {
+    protected changeEvent(): void {
         const interceptors: InterceptorHolder = JSWorks.applicationContext.interceptorHolder;
+        const valueElem: SimpleVirtualDOMElement = this.input;
 
-        input.addEventListener('change', (event) => {
-            const valueElem: SimpleVirtualDOMElement = input;
+        if (!valueElem) {
+            throw new ElementNotFoundError('element with value binding');
+        }
 
-            if (!valueElem) {
-                throw new ElementNotFoundError('element with value binding');
-            }
+        const attrName: string = valueElem.getAttribute('form-bind-attribute');
+        let value = (<HTMLElement> valueElem.rendered).getAttribute(attrName);
 
-            const attrName: string = valueElem.getAttribute('form-bind-attribute');
-            const value = (<HTMLElement> valueElem.rendered).getAttribute(attrName);
-            (<any> valueElem).attributes[attrName] = value;
+        if (this.customValue) {
+            value = this._value;
 
-            if (this.hasAttribute('validates')) {
-                const validators: string[] = this.getAttribute('validates').split(',').map((s) => s.trim());
-                this.validators = interceptors.getInterceptors(validators);
-            }
+            this.customValue = false;
+            this._value = undefined;
+        }
 
-            if (this.validators.length === 0) {
+        (<any> valueElem).attributes[attrName] = value;
+
+        if (this.hasAttribute('validates')) {
+            const validators: string[] = this.getAttribute('validates').split(',').map((s) => s.trim());
+            this.validators = interceptors.getInterceptors(validators);
+        }
+
+        if (this.validators.length === 0) {
+            this.lastValidationResult = {
+                success: true,
+                value,
+                messages: [],
+            };
+
+            this.updateMessagesCollection();
+            return;
+        }
+
+        interceptors.trigger(this.validators, {
+            value,
+        })
+            .then((result) => {
                 this.lastValidationResult = {
                     success: true,
                     value,
-                    messages: [],
+                    messages: MessageListElement.formatPromiseResult(result, 'OK'),
                 };
 
                 this.updateMessagesCollection();
-                return;
-            }
+            })
+            .catch((result) => {
+                this.lastValidationResult = {
+                    success: false,
+                    messages: MessageListElement.formatPromiseResult(result, 'ERROR'),
+                };
 
-            interceptors.trigger(this.validators, {
-                    value,
-                })
-                .then((result) => {
-                    this.lastValidationResult = {
-                        success: true,
-                        value,
-                        messages: MessageListElement.formatPromiseResult(result, 'OK'),
-                    };
+                this.updateMessagesCollection();
+            });
+    }
 
-                    this.updateMessagesCollection();
-                })
-                .catch((result) => {
-                    this.lastValidationResult = {
-                        success: false,
-                        messages: MessageListElement.formatPromiseResult(result, 'ERROR'),
-                    };
 
-                    this.updateMessagesCollection();
-                });
+    private installListener(): void {
+        this.input.addEventListener('change', (event) => {
+            this.changeEvent();
         });
-
     }
 
 

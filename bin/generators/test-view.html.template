@@ -98,7 +98,7 @@
         </form-messages>
 
         <form>
-            <form-field for="$.name">
+            <form-field for="name">
                 <form-messages>
                     <view-eval value="error.text"></view-eval>
                 </form-messages>
@@ -106,7 +106,7 @@
                 <input form-bind-attribute="value">
             </form-field>
 
-            <form-field for="$.age" validates="NumericValidator, AgeValidator">
+            <form-field for="age" validates="NumericValidator, AgeValidator">
                 <form-messages>
                     <view-eval value="error.text"></view-eval>
                 </form-messages>
@@ -114,7 +114,7 @@
                 <input form-bind-attribute="value">
             </form-field>
 
-            <button type="submit" form-submit>Submit</button>
+            <button type="submit" form-submit="true">Submit</button>
         </form>
 
     </form-for>

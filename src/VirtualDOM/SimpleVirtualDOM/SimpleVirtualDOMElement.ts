@@ -407,7 +407,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
      * @param name
      */
     public removeAttribute(name: string): void {
-        if (!this.attributes[name]) {
+        if (this.attributes[name] === undefined) {
             return;
         }
 
@@ -684,9 +684,10 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
     /**
      * Выбрать все элементы по селектору
      * @param query
+     * @param one
      * @returns {SimpleVirtualDOMElement[]}
      */
-    public querySelectorAll(query: string): SimpleVirtualDOMElement[] {
+    public querySelectorAll(query: string, one: boolean = false): SimpleVirtualDOMElement[] {
         /* if (this.selectorCache[query]) {
             return this.selectorCache[query];
         }*/
@@ -700,11 +701,13 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
                 array = [array];
             }
 
-            array.forEach((node: SimpleVirtualDOMElement) => {
+            array.some((node: SimpleVirtualDOMElement) => {
                 if (!resultHas[node.hash]) {
                     resultHas[node.hash] = true;
                     result.push(node);
                 }
+
+                return one;
             });
         };
 
@@ -713,8 +716,12 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
             concat(queryResult);
         }
 
-        this._children.forEach((child) => {
-            concat(child.querySelectorAll(query));
+        this._children.some((child) => {
+            if (one && result.length > 0) {
+                return true;
+            }
+
+            concat(child.querySelectorAll(query, one));
         });
 
         // this.selectorCache[query] = result;
@@ -728,7 +735,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
      * @returns {SimpleVirtualDOMElement}
      */
     public querySelector(query: string): SimpleVirtualDOMElement {
-        return this.querySelectorAll(query)[0];
+        return this.querySelectorAll(query, true)[0];
     }
 
 
