@@ -23,7 +23,7 @@
         </view-case>
     </view-switch>
 
-    <view-for variable="person" in="$.persons">
+    <view-for id="test" variable="person" in="$.persons">
         <view-eval value="person.name"></view-eval>
         <view-eval value="person.age"></view-eval>
         <br>
@@ -89,5 +89,34 @@
     <view-component id="inset1" name="TestInsetComponent" person_name="Margaret"></view-component>
     <view-component id="inset2" name="TestInsetComponent" person_name="Gregg"></view-component>
     <view-component id="inset3" name="TestInsetComponent" person_name="Beatrice"></view-component>
+
+
+    <form-for model="TestModel" id="EditForm">
+
+        <form-messages>
+            <view-eval value="error.text"></view-eval>
+        </form-messages>
+
+        <form>
+            <form-field for="name">
+                <form-messages>
+                    <view-eval value="error.text"></view-eval>
+                </form-messages>
+
+                <input form-bind-attribute="value">
+            </form-field>
+
+            <form-field for="age" validates="NumericValidator, AgeValidator">
+                <form-messages>
+                    <view-eval value="error.text"></view-eval>
+                </form-messages>
+
+                <input form-bind-attribute="value">
+            </form-field>
+
+            <button type="submit" form-submit="true">Submit</button>
+        </form>
+
+    </form-for>
 
 </app-view>

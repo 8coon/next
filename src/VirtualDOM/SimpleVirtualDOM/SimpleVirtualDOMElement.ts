@@ -177,9 +177,11 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
             element.setAttribute(attr, this.getAttribute(attr));
         });
 
-        Object.keys(this.handlers).forEach((handler) => {
-            element.addEventListener(handler, this.handlers[handler].callback,
-                this.handlers[handler].useCapture);
+        Object.keys(this.handlers).forEach((type) => {
+            this.handlers[type].forEach((handler) => {
+                element.addEventListener(type, this.handlers[handler].callback,
+                    this.handlers[handler].useCapture);
+            });
         });
 
         this._children.forEach((child) => {
@@ -405,6 +407,10 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
      * @param name
      */
     public removeAttribute(name: string): void {
+        if (this.attributes[name] === undefined) {
+            return;
+        }
+
         delete this.attributes[name];
         this.emitMutilationEvent({ type: EventType.DOMPropertyChange, data: this });
     }
@@ -678,9 +684,10 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
     /**
      * Выбрать все элементы по селектору
      * @param query
+     * @param one
      * @returns {SimpleVirtualDOMElement[]}
      */
-    public querySelectorAll(query: string): SimpleVirtualDOMElement[] {
+    public querySelectorAll(query: string, one: boolean = false): SimpleVirtualDOMElement[] {
         /* if (this.selectorCache[query]) {
             return this.selectorCache[query];
         }*/
@@ -694,11 +701,13 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
                 array = [array];
             }
 
-            array.forEach((node: SimpleVirtualDOMElement) => {
+            array.some((node: SimpleVirtualDOMElement) => {
                 if (!resultHas[node.hash]) {
                     resultHas[node.hash] = true;
                     result.push(node);
                 }
+
+                return one;
             });
         };
 
@@ -707,8 +716,12 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
             concat(queryResult);
         }
 
-        this._children.forEach((child) => {
-            concat(child.querySelectorAll(query));
+        this._children.some((child) => {
+            if (one && result.length > 0) {
+                return true;
+            }
+
+            concat(child.querySelectorAll(query, one));
         });
 
         // this.selectorCache[query] = result;
@@ -722,7 +735,7 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
      * @returns {SimpleVirtualDOMElement}
      */
     public querySelector(query: string): SimpleVirtualDOMElement {
-        return this.querySelectorAll(query)[0];
+        return this.querySelectorAll(query, true)[0];
     }
 
 
@@ -765,11 +778,20 @@ export class SimpleVirtualDOMElement implements IVirtualDOMElement {
         });
 
         const handlers = this.handlers;
-        this.handlers = {};
+        this.rendered[this.HANDLERS_KEY] = [];
 
         Object.keys(handlers).forEach((type) => {
             handlers[type].forEach((handler) => {
-                this.addEventListener(type, handler.callback, handler.useCapture);
+
+                this.rendered.addEventListener(type, (event) => {
+                    handler.callback(event);
+                },  handler.useCapture);
+
+                this.rendered[this.HANDLERS_KEY].push({
+                    type,
+                    callback: handler.callback,
+                    useCapture: handler.useCapture,
+                });
             });
         });
     }

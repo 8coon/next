@@ -2,10 +2,10 @@ import {JSWorksError} from './ErrorDecorator';
 
 
 @JSWorksError
-export class InterceptorNotFound extends Error {
+export class InterceptorNotFoundError extends Error {
 
-    constructor(type: string) {
-        super(`Interceptor not found :"${type}"`);
+    constructor(typeOrName: string) {
+        super(`Interceptor not found :"${typeOrName}"`);
     }
 
 }

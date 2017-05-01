@@ -23,6 +23,7 @@ export enum EventType {
     PostUpdate,
     ViewIncludesRendered,
     RenderCustomElements,
+    FormSubmitted,
 }
 
 

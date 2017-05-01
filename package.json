@@ -54,6 +54,7 @@
     "body-parser": "1.17.1",
     "eslint": "3.17.1",
     "express": "4.15.2",
-    "reflect-metadata": "0.1.10"
+    "reflect-metadata": "0.1.10",
+    "webpack-uglify-js-plugin": "1.1.9"
   }
 }

@@ -16,6 +16,97 @@ declare const JSWorks: any;
 @JSWorksCustomElement(ViewConfig.VIEW_FOR_TAG)
 export class ViewForElement extends AbstractListeningElement {
 
+
+    /**
+     * Проинициализировать шаблон итератора
+     * @param root
+     * @param template
+     * @returns {SimpleVirtualDOMElement}
+     */
+    public static init(root: SimpleVirtualDOMElement, template: SimpleVirtualDOMElement): SimpleVirtualDOMElement {
+        const appContext = JSWorks.applicationContext;
+        const virtualDOM: SimpleVirtualDOM = appContext.serviceHolder.getServiceByName('SimpleVirtualDOM');
+
+        if (!template) {
+            template = <SimpleVirtualDOMElement> virtualDOM.createElement(ViewConfig.VIEW_ITEM);
+            template.ready = false;
+
+            (<any> root)._children.forEach((child) => {
+                template.appendChild(child.cloneNode());
+            });
+
+            root.removeChildren();
+        }
+
+        return template;
+    }
+
+
+    /**
+     * Проитерироваться по коллекции, изменяя содержимое root
+     * @param root
+     * @param template
+     * @param collection
+     * @param hash
+     * @param view
+     * @param varName
+     */
+    public static iterateCollection(root: SimpleVirtualDOMElement, template: SimpleVirtualDOMElement,
+            collection: any[] | CollectionProperty, hash: number = -1, view?: View, varName?: string): void {
+        let values = collection;
+
+        if (collection instanceof CollectionProperty) {
+            if (collection.cleanForTag[hash]) {
+                return;
+            }
+
+            collection.cleanForTag[hash] = true;
+            values = collection.getValues();
+        }
+
+        root['__view__'] = view;
+
+        (<any[]> values).forEach((value, index) => {
+            if (!(<any> root)._children[index]) {
+                root.appendChild(template.cloneNode());
+
+            } else if (!(!(<any> root)._children[index]['__for_value__'] ||
+                    ((<any> root)._children[index]['__for_value__'] !== value))) {
+                return;
+            }
+
+            varName = varName || root.getAttribute('variable');
+            ViewForElement.propagateValue(root, (<any> root)._children[index], varName, value);
+        });
+
+        if (collection.length < (<any> root)._children.length) {
+            while (collection.length !== (<any> root)._children.length) {
+                root.removeChild((<any> root)._children[(<any> root)._children.length - 1]);
+            }
+        }
+    }
+
+
+    /**
+     * Задать значение элементу перечисления
+     * @param root
+     * @param node
+     * @param varName
+     * @param value
+     */
+    public static propagateValue(root: SimpleVirtualDOMElement, node: SimpleVirtualDOMElement,
+            varName: string, value: any): void {
+        node['__for_value__'] = value;
+        root['__view__'].component.variables[varName] = value;
+
+        node.ready = true;
+        node.customUpdate();
+        node.ready = false;
+
+        root['__view__'].component.variables[varName] = undefined;
+    }
+
+
     private template: SimpleVirtualDOMElement;
     private virtualDOM: SimpleVirtualDOM;
 
@@ -45,17 +136,7 @@ export class ViewForElement extends AbstractListeningElement {
 
         const appContext = JSWorks.applicationContext;
         this.virtualDOM = appContext.serviceHolder.getServiceByName('SimpleVirtualDOM');
-
-        if (!this.template) {
-            this.template = <SimpleVirtualDOMElement> this.virtualDOM.createElement(ViewConfig.VIEW_ITEM);
-            this.template.ready = false;
-
-            this._children.forEach((child) => {
-                this.template.appendChild(child.cloneNode());
-            });
-
-            this.removeChildren();
-        }
+        this.template = ViewForElement.init(this, this.template);
     }
 
 
@@ -83,63 +164,13 @@ export class ViewForElement extends AbstractListeningElement {
      * </view-for>
      */
     public propertyChange(): void {
-        // if (!this.template) {
-        //     const view: View = this.view;
-        //     this.view = undefined;
-        //
-        //     this.propagateView(view);
-        // }
+        const collection: CollectionProperty | any[] = this.execStatement(this.getAttribute('in'));
 
-        const collection: CollectionProperty = this.execStatement(this.getAttribute('in'));
-
-        if (!(collection instanceof CollectionProperty)) {
+        if (!(collection instanceof CollectionProperty || collection instanceof Array)) {
             throw new CannotIterateOverNonCollectionError(this.getAttribute('in'));
         }
 
-        if (collection.cleanForTag[this.hash]) {
-            return;
-        }
-
-        collection.cleanForTag[this.hash] = true;
-        this['__view__'] = this.view;
-        // this.view = undefined;
-
-        collection.getValues().forEach((value, index) => {
-            if (!this._children[index]) {
-                this.appendChild(this.template.cloneNode());
-
-            } else if (this._children[index]['__for_value__'] === undefined ||
-                    this._children[index]['__for_value__'] !== value) {
-                // this.replaceChild(this.template.cloneNode(), this._children[index]);
-
-            } else {
-                return;
-            }
-
-            const varName = this.getAttribute('variable');
-            this.propagateValue(this._children[index], varName, value);
-        });
-
-        if (collection.length < this._children.length) {
-            while (collection.length !== this._children.length) {
-                this.removeChild(this._children[this._children.length - 1]);
-            }
-        }
-
-        // this.view = this['__view__'];
-    }
-
-
-    protected propagateValue(node: SimpleVirtualDOMElement, varName: string, value: any): void {
-        node['__for_value__'] = value;
-        this['__view__'].component.variables[varName] = value;
-
-        node.ready = true;
-        // node.propagateView(this['__view__']);
-        node.customUpdate();
-        node.ready = false;
-
-        this['__view__'].component.variables[varName] = undefined;
+        ViewForElement.iterateCollection(this, this.template, collection, this.hash, this.view);
     }
 
 

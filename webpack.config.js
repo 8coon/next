@@ -1,8 +1,27 @@
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const WebpackUglifyJsPlugin = require('webpack-uglify-js-plugin');
 const path = require('path');
 
 const cssExtractTextPlugin = new ExtractTextPlugin("jsworks.css");
 const htmlExtractTextPlugin = new ExtractTextPlugin("jsworks.html");
+
+const webpackUglifyJsPlugin = new WebpackUglifyJsPlugin({
+    cacheFolder: path.resolve(__dirname, 'dist/cached_uglify/'),
+
+    debug: false,
+    minimize: true,
+    sourceMap: true,
+
+    output: {
+        comments: false
+    },
+
+    compressor: {
+        warnings: false
+    },
+
+    mangle: false,
+});
 
 
 module.exports = {
@@ -46,6 +65,6 @@ module.exports = {
     },
 
     plugins: [
-        cssExtractTextPlugin, htmlExtractTextPlugin
+        cssExtractTextPlugin, htmlExtractTextPlugin, webpackUglifyJsPlugin
     ],
 };
