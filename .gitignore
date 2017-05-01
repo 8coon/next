@@ -1,6 +1,7 @@
 .idea
 .DS_Store
 spec/app
+dist/cached_uglify
 release
 
 # Logs
