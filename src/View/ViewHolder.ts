@@ -10,9 +10,10 @@ import {ViewConfig} from './ViewConfig';
 import {IDOMParsed} from '../Parser/HTML/IDOMParsed';
 import {VirtualDOM} from '../VirtualDOM/VirtualDOM';
 import {AppViewElement} from '../CustomElements/ViewElements/AppViewElement';
+import {JSWorksLib} from '../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 @JSWorksInternal

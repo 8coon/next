@@ -5,9 +5,10 @@ import {SimpleVirtualDOM} from '../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualD
 import {View} from '../../View/View';
 import {SimpleVirtualDOMElement} from '../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
 import {SimpleVirtualDOMElementExt} from '../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElementExt';
+import {JSWorksLib} from '../../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 @JSWorksInternal

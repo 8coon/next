@@ -1,9 +1,10 @@
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {DuplicateModelError} from '../Error/DuplicateModelError';
 import {IModel} from './IModel';
+import {JSWorksLib} from '../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 declare const __JSWorks_models__: object;
 
 

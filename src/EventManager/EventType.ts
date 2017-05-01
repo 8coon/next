@@ -1,3 +1,4 @@
+import {JSWorksLib} from '../jsworks';
 
 
 export enum EventType {
@@ -27,5 +28,5 @@ export enum EventType {
 }
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 JSWorks.EventType = EventType;

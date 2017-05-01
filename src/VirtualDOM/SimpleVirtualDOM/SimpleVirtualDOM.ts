@@ -10,7 +10,7 @@ import {EventType} from '../../EventManager/EventType';
 import {SimpleVirtualDOMElementExt} from './SimpleVirtualDOMElementExt';
 
 
-type Selector = (IAbstractVirtualDOMElement) => boolean |   // tslint:disable-line
+export type Selector = (IAbstractVirtualDOMElement) => boolean |   // tslint:disable-line
     IVirtualDOMElement |
     IVirtualDOMElement[];
 

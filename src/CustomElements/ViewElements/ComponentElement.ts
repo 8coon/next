@@ -4,13 +4,12 @@ import {JSWorksCustomElement} from '../CustomElementDecorator';
 import {ViewConfig} from '../../View/ViewConfig';
 import {EventManager} from '../../EventManager/EventManager';
 import {EventType} from '../../EventManager/EventType';
-import {IEvent} from '../../EventManager/IEvent';
 import {SimpleVirtualDOM} from '../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOM';
 import {ApplicationContext} from '../../ApplicationContext/ApplicationContext';
-import {AttributeNotFoundError} from '../../Error/AttributeNotFoundError';
+import {JSWorksLib} from '../../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 @JSWorksInternal

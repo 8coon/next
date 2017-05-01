@@ -17,53 +17,67 @@ import {JSWorksModelUpdateMethod} from './Model/Decorators/ModelUpdateMethodDeco
 import {JSWorksModelDeleteMethod} from './Model/Decorators/ModelDeleteMethodDecorator';
 import {JSWorksModelQueryMethod} from './Model/Decorators/ModelQueryMethodDecorator';
 import {HTTPMethod} from './Network/HTTPMethod';
+import {EventManager} from './EventManager/EventManager';
+import {ApplicationContext} from './ApplicationContext/ApplicationContext';
+import {ServiceHolder} from './Service/ServiceHolder';
 
 
-declare const JSWorks: any;
+/* tslint:disable */
+export class JSWorksLib {
+
+    public Internal: object;
+
+    public EventManager = EventManager;
+    public EventType = EventType;
+    public InterceptorType = InterceptorType;
+    public HTTPMethod = HTTPMethod;
+
+    public Service = JSWorksService;
+    public Controller = JSWorksController;
+    public Interceptor = JSWorksInterceptor;
+    public Component = JSWorksComponent;
+    public Page = JSWorksPage;
+    public ComponentProperty = JSWorksComponentProperty;
+    public CustomElement = JSWorksCustomElement;
+    public ComponentCollectionProperty = JSWorksComponentCollectionProperty;
+    public Model = JSWorksModel;
+    public ModelField = JSWorksModelField;
+    public ModelPrimaryKey = JSWorksModelPrimaryKey;
+    public ModelCreateMethod = JSWorksModelCreateMethod;
+    public ModelReadMethod = JSWorksModelReadMethod;
+    public ModelUpdateMethod = JSWorksModelUpdateMethod;
+    public ModelDeleteMethod = JSWorksModelDeleteMethod;
+    public ModelQueryMethod = JSWorksModelQueryMethod;
+
+    public applicationContext: ApplicationContext;
+
+
+    constructor() {
+        this.Internal = JSWorks.Internal;
+    }
+
+
+    public registerServices(): ServiceHolder {
+        const holder = new JSWorks.Internal['ServiceHolder']();
+
+        __JSWorks_services__.forEach((serviceData) => {
+            holder.registerService(serviceData);
+        });
+
+        return holder;
+    };
+}
+
+
+declare let JSWorks: JSWorksLib;
 declare const __JSWorks_services__: any;
 
 
-JSWorks.__registerServices__ = () => {
-    const holder = new JSWorks.Internal.ServiceHolder();
-
-    __JSWorks_services__.forEach((serviceData) => {
-        holder.registerService(serviceData);
-    });
-
-    return holder;
-};
-
-
-JSWorks.__init__ = () => {
-    JSWorks.EventManager = JSWorks.Internal.EventManager;
-    JSWorks.EventType = EventType;
-    JSWorks.InterceptorType = InterceptorType;
-    JSWorks.HTTPMethod = HTTPMethod;
-
-    JSWorks.Service = JSWorksService;
-    JSWorks.Controller = JSWorksController;
-    JSWorks.Interceptor = JSWorksInterceptor;
-    JSWorks.Component = JSWorksComponent;
-    JSWorks.Page = JSWorksPage;
-    JSWorks.ComponentProperty = JSWorksComponentProperty;
-    JSWorks.CustomElement = JSWorksCustomElement;
-    JSWorks.ComponentCollectionProperty = JSWorksComponentCollectionProperty;
-    JSWorks.Model = JSWorksModel;
-    JSWorks.ModelField = JSWorksModelField;
-    JSWorks.ModelPrimaryKey = JSWorksModelPrimaryKey;
-    JSWorks.ModelCreateMethod = JSWorksModelCreateMethod;
-    JSWorks.ModelReadMethod = JSWorksModelReadMethod;
-    JSWorks.ModelUpdateMethod = JSWorksModelUpdateMethod;
-    JSWorks.ModelDeleteMethod = JSWorksModelDeleteMethod;
-    JSWorks.ModelQueryMethod = JSWorksModelQueryMethod;
-};
-
-
-JSWorks.__init__();
+JSWorks = new JSWorksLib();
 
 
 window.addEventListener('load', () => {
-    JSWorks.applicationContext = new JSWorks.Internal.ApplicationContext(JSWorks.__registerServices__());
+    JSWorks.applicationContext = new JSWorks.Internal['ApplicationContext'](JSWorks.registerServices());
     JSWorks.applicationContext.run();
 });
 

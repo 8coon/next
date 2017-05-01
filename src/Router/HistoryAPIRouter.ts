@@ -4,11 +4,10 @@ import {JSWorksInternal} from '../Common/InternalDecorator';
 import {EventManager} from '../EventManager/EventManager';
 import {EventType} from '../EventManager/EventType';
 import {InterceptorType} from '../Interceptor/InterceptorType';
-import {IEventEmitter} from '../EventManager/IEventEmitter';
-import {IEvent} from '../EventManager/IEvent';
+import {JSWorksLib} from '../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 @JSWorksInternal
@@ -18,7 +17,7 @@ export class HistoryAPIRouter extends Router {
         super(baseUrl);
 
         window.addEventListener('popstate', (event) => {
-            if (JSWorks.__router_disabled__) {
+            if ((<any> JSWorks).__router_disabled__) {
                 return;
             }
 

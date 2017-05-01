@@ -4,6 +4,7 @@
 const child_process = require('child_process');
 const fs = require('fs');
 const rmdir = require('rmdir');
+const mkdirp = require('mkdirp');
 
 
 const exec = (cmd) => {
@@ -60,6 +61,12 @@ const create = () => {
 
 console.log('Cleaning up...');
 rmdir('./release', () => {
-    rmdir('./dist', () => { fs.mkdirSync('./dist'); create(); });
+    rmdir('./dist', () => {
+        mkdirp.sync('./dist');
+        mkdirp.sync('./release');
+        mkdirp.sync('./dist/dts');
+
+        create();
+    });
 });
 

@@ -1,4 +1,3 @@
-import {InterceptorType} from './InterceptorType';
 import {IInterceptorDecoratorData} from './IInterceptorDecoratorData';
 
 

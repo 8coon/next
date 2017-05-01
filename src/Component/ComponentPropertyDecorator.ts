@@ -1,9 +1,10 @@
 import {IComponentPropertyDecoratorData} from './IComponentPropertyDecoratorData';
 import {EventType} from '../EventManager/EventType';
 import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
+import {JSWorksLib} from '../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 declare const __JSWorks_component_fields__: any;
 
 

@@ -4,9 +4,10 @@ import {IEvent} from '../EventManager/IEvent';
 import {EventType} from '../EventManager/EventType';
 import {ComponentHolder} from '../Component/ComponentHolder';
 import {ViewConfig} from '../View/ViewConfig';
+import {JSWorksLib} from '../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 @JSWorksInternal

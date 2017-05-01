@@ -1,8 +1,7 @@
-
 import {JSWorksInternal} from '../Common/InternalDecorator';
 
 
-enum RouteMethod {
+export enum RouteMethod {
     HASH,
     HISTORY_API,
 }

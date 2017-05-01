@@ -7,9 +7,10 @@ import {CollectionProperty} from './CollectionProperty';
 import {EventManager} from '../EventManager/EventManager';
 import {IEvent} from '../EventManager/IEvent';
 import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
+import {JSWorksLib} from '../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 declare const __JSWorks_components__: any[];
 declare const __JSWorks_component_fields__: any;
 

@@ -5,14 +5,14 @@ import {IViewParsed} from './IViewParsed';
 import {IVirtualDOMElement} from '../VirtualDOM/IVirtualDOMElement';
 import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 import {VirtualDOM} from '../VirtualDOM/VirtualDOM';
-import {ViewConfig} from './ViewConfig';
 import {JSWorksInternal} from '../Common/InternalDecorator';
 import {ElementNotPoliteError} from '../Error/ElementNotPoliteError';
 import {EventType} from '../EventManager/EventType';
 import {SimpleVirtualDOMElement} from '../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
+import {JSWorksLib} from '../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 @JSWorksInternal

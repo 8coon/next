@@ -12,9 +12,10 @@ import {DuplicateViewParamError} from '../../Error/DuplicateViewParamError';
 import {UnresolvableViewIncludeError} from '../../Error/UnresolvableViewIncludeError';
 import {AttributeNotFoundError} from '../../Error/AttributeNotFoundError';
 import {SimpleVirtualDOMElement} from '../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
+import {JSWorksLib} from '../../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 type renderCallback = (viewName: string, view: View) => void;

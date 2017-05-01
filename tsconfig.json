@@ -11,7 +11,10 @@
         "lib": [
             "es2016",
             "dom"
-        ]
+        ],
+
+        "declaration": true,
+        "declarationDir": "./dist/dts"
     },
 
     "exclude": [

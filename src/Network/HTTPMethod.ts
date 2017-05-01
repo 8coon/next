@@ -1,3 +1,4 @@
+import {JSWorksLib} from '../jsworks';
 
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD' | 'OPTIONS';
@@ -16,5 +17,5 @@ export const HTTPMethod = {  // tslint:disable-line
 };
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 JSWorks.HTTPMethod = HTTPMethod;

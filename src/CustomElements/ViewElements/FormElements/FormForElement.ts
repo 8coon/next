@@ -14,10 +14,10 @@ import {View} from '../../../View/View';
 declare const JSWorks: any;
 
 
-type SubmitCallback = (form?: FormForElement) => Promise<any>;
-type ModelSaveCallback = (form?: FormForElement, model?: IModel) => Promise<any>;
-type UserSubmitCallback = (form?: FormForElement) => boolean;
-type UserSubmittedCallback = (form?: FormForElement, response?: object) => boolean;
+export type SubmitCallback = (form?: FormForElement) => Promise<any>;
+export type ModelSaveCallback = (form?: FormForElement, model?: IModel) => Promise<any>;
+export type UserSubmitCallback = (form?: FormForElement) => boolean;
+export type UserSubmittedCallback = (form?: FormForElement, response?: object) => boolean;
 
 
 @JSWorksInternal

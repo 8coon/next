@@ -13,12 +13,13 @@ import {CustomElementHolder} from '../CustomElements/CustomElementHolder';
 import {HistoryAPIRouter} from '../Router/HistoryAPIRouter';
 import {InterceptorHolder} from '../Interceptor/InterceptorHolder';
 import {ModelHolder} from '../Model/ModelHolder';
+import {JSWorksLib} from '../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
-type NameLookup = (name: string) => boolean;
+export type NameLookup = (name: string) => boolean;
 
 
 @JSWorksInternal
@@ -185,7 +186,7 @@ export class ApplicationContext implements IEventEmitter {
                         this.routeHolder.load();
                         this.interceptorHolder.load();
 
-                        if (!JSWorks.__router_disabled__) {
+                        if (!(<any> JSWorks).__router_disabled__) {
                             const host = `${location.href.split(':')[0]}://${location.host}`;
                             this._router = new HistoryAPIRouter(host);
                         }

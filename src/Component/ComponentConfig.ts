@@ -1,7 +1,7 @@
 import {JSWorksInternal} from '../Common/InternalDecorator';
 
 
-enum ComponentTypes {
+export enum ComponentTypes {
     COMPONENT,
     PAGE,
 }

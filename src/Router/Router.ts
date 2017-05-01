@@ -1,9 +1,10 @@
 import {Route} from './Route';
 import {PathNotFoundError} from '../Error/PathNotFoundError';
 import {JSWorksInternal} from '../Common/InternalDecorator';
+import {JSWorksLib} from '../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 @JSWorksInternal

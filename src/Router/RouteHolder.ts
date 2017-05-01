@@ -10,9 +10,10 @@ import {RouteAlreadyExistError} from '../Error/RouteAlreadyExistError';
 import {IEventEmitter} from '../EventManager/IEventEmitter';
 import {IEvent} from '../EventManager/IEvent';
 import {EventType} from '../EventManager/EventType';
+import {JSWorksLib} from '../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 @JSWorksInternal

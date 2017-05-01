@@ -3,9 +3,10 @@ import {View} from '../../View/View';
 import {EventManager} from '../../EventManager/EventManager';
 import {EventType} from '../../EventManager/EventType';
 import {IEvent} from '../../EventManager/IEvent';
+import {JSWorksLib} from '../../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 export abstract class AbstractListeningElement extends SimpleVirtualDOMElementExt {

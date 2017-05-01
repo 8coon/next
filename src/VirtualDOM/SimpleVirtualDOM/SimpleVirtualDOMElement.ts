@@ -10,9 +10,10 @@ import {IDOMParsed} from '../../Parser/HTML/IDOMParsed';
 import {HTMLParserService} from '../../Parser/HTML/HTMLParserService';
 import {ApplicationContext} from '../../ApplicationContext/ApplicationContext';
 import {View} from '../../View/View';
+import {JSWorksLib} from '../../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 @JSWorksInternal

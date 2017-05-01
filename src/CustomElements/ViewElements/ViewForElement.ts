@@ -7,9 +7,10 @@ import {CannotIterateOverNonCollectionError} from '../../Error/CannotIterateOver
 import {JSWorksInternal} from '../../Common/InternalDecorator';
 import {JSWorksCustomElement} from '../CustomElementDecorator';
 import {ViewConfig} from '../../View/ViewConfig';
+import {JSWorksLib} from '../../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 @JSWorksInternal

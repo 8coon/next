@@ -3,9 +3,10 @@ import {CollectionProperty} from './CollectionProperty';
 import {EventType} from '../EventManager/EventType';
 import {EventManager} from '../EventManager/EventManager';
 import {IEvent} from '../EventManager/IEvent';
+import {JSWorksLib} from '../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 
 
 /**

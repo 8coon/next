@@ -2,9 +2,10 @@ import {JSWorksInternal} from '../Common/InternalDecorator';
 import {SimpleVirtualDOM} from '../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOM';
 import {ApplicationContext} from '../ApplicationContext/ApplicationContext';
 import {UnknownCustomElementError} from '../Error/UnknownCustomElementError';
+import {JSWorksLib} from '../jsworks';
 
 
-declare const JSWorks: any;
+declare const JSWorks: JSWorksLib;
 declare const __JSWorks_custom_elements__: any[];
 
 
