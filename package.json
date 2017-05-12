@@ -1,6 +1,6 @@
 {
   "name": "jsworks",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "3.14rates Framework, but classy and rewritten in TypeScript",
 
   "main": "jsworks-tests.js",
