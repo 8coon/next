@@ -2,8 +2,8 @@ import { IEventEmitter } from '../EventManager/IEventEmitter';
 import { IEventReceiver } from '../EventManager/IEventReceiver';
 import { IEvent } from '../EventManager/IEvent';
 import { IViewParsed } from './IViewParsed';
-import { IVirtualDOMElement } from '../VirtualDOM/IVirtualDOMElement';
 import { ApplicationContext } from '../ApplicationContext/ApplicationContext';
+import { SimpleVirtualDOMElement } from '../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
 export declare class View implements IEventEmitter, IEventReceiver {
     /**
      * Связанный с данной View компонент
@@ -26,10 +26,10 @@ export declare class View implements IEventEmitter, IEventReceiver {
     readonly id: string;
     /**
      * Корневой элемент DOM данной View.
-     * @returns {IVirtualDOMElement}
+     * @returns {SimpleVirtualDOMElement}
      * @constructor
      */
-    readonly DOMRoot: IVirtualDOMElement;
+    readonly DOMRoot: SimpleVirtualDOMElement;
     /**
      * Склонировать текущий корневой элемент, присвоим ему переданный view
      * @param view

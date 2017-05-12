@@ -1,8 +1,8 @@
-import { IVirtualDOMElement } from '../IVirtualDOMElement';
 import { IDOMParsed } from '../../Parser/HTML/IDOMParsed';
+import { SimpleVirtualDOMElement } from './SimpleVirtualDOMElement';
 import { VirtualDOM } from '../VirtualDOM';
 import { SimpleVirtualDOMElementExt } from './SimpleVirtualDOMElementExt';
-export declare type Selector = (IAbstractVirtualDOMElement) => boolean | IVirtualDOMElement | IVirtualDOMElement[];
+export declare type Selector = (IAbstractVirtualDOMElement) => boolean | SimpleVirtualDOMElement | SimpleVirtualDOMElement[];
 export declare class SimpleVirtualDOM implements VirtualDOM {
     /**
      * Получить следующий уникальный номер и последовательности уникальных номеров нод
@@ -24,21 +24,21 @@ export declare class SimpleVirtualDOM implements VirtualDOM {
     /**
      * Создаёт элемент виртуального DOM по образу реального
      * @param element
-     * @returns {IVirtualDOMElement}
+     * @returns {SimpleVirtualDOMElement}
      */
-    createFromDOM(element: HTMLElement): IVirtualDOMElement;
+    createFromDOM(element: HTMLElement): SimpleVirtualDOMElement;
     /**
      * Создаёт текстовый узел виртуального DOM
      * @param text
-     * @returns {IVirtualDOMElement}
+     * @returns {SimpleVirtualDOMElement}
      */
-    createTextElement(text: string): IVirtualDOMElement;
+    createTextElement(text: string): SimpleVirtualDOMElement;
     /**
      * Создать виртуальный DOM элемент
      * @param data IDOMParsed либо tagName элемента
      * @returns {SimpleVirtualDOMElement}
      */
-    createElement(data?: IDOMParsed | string): IVirtualDOMElement;
+    createElement(data?: IDOMParsed | string): SimpleVirtualDOMElement;
     /**
      * Решистрирует прототип пользовательского элемента. Новые элементы будут создаваться с
      * помощью elementProto.createElement(). Также для элемента будет выпущено событие EventType.CREATE.

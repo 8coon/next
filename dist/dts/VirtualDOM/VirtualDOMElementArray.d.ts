@@ -1,5 +1,5 @@
-import { IVirtualDOMElement } from './IVirtualDOMElement';
-export declare class VirtualDOMElementArray implements Iterable<IVirtualDOMElement> {
+import { SimpleVirtualDOMElement } from './SimpleVirtualDOM/SimpleVirtualDOMElement';
+export declare class VirtualDOMElementArray implements Iterable<SimpleVirtualDOMElement> {
     /**
      * длина массива
      * @type {number}
@@ -11,16 +11,16 @@ export declare class VirtualDOMElementArray implements Iterable<IVirtualDOMEleme
      *
      * @param elements
      */
-    constructor(elements: IVirtualDOMElement[]);
+    constructor(elements: SimpleVirtualDOMElement[]);
     /**
      * Итератор
-     * @returns {Iterator<IVirtualDOMElement>}
+     * @returns {Iterator<SimpleVirtualDOMElement>}
      */
-    [Symbol.iterator](): Iterator<IVirtualDOMElement>;
+    [Symbol.iterator](): Iterator<SimpleVirtualDOMElement>;
     /**
      * Возвращает элемент по данному индексу
      * @param index
-     * @returns {IVirtualDOMElement}
+     * @returns {SimpleVirtualDOMElement}
      */
-    item(index: number): IVirtualDOMElement;
+    item(index: number): SimpleVirtualDOMElement;
 }

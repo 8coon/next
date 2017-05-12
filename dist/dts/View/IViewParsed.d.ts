@@ -1,8 +1,8 @@
-import { IVirtualDOMElement } from '../VirtualDOM/IVirtualDOMElement';
+import { SimpleVirtualDOMElement } from '../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
 /**
  * Данные, необходимые для создания View
  */
 export interface IViewParsed {
     id: string;
-    template: IVirtualDOMElement;
+    template: SimpleVirtualDOMElement;
 }

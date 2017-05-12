@@ -1,9 +1,8 @@
-import { IVirtualDOMElement } from '../IVirtualDOMElement';
 import { VirtualDOMElementArray } from '../VirtualDOMElementArray';
 import { IEvent } from '../../EventManager/IEvent';
 import { IEventEmitter } from '../../EventManager/IEventEmitter';
 import { View } from '../../View/View';
-export declare class SimpleVirtualDOMElement implements IVirtualDOMElement {
+export declare class SimpleVirtualDOMElement {
     /**
      * Переводит имена тэгов в нижний регистр в свойстве innerHTML и методе getOuterHTML
      * @type {boolean}

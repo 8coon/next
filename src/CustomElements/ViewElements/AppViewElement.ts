@@ -153,7 +153,7 @@ export class AppViewElement extends SimpleVirtualDOMElementExt {
      * @param extending
      */
     public static extend(source: SimpleVirtualDOMElement, extending: View): void {
-        const viewDOM: IVirtualDOMElement = extending.DOMRoot.cloneNode();
+        const viewDOM: SimpleVirtualDOMElement = extending.DOMRoot.cloneNode();
         const includes = viewDOM.querySelector(ViewConfig.VIEW_YIELD_TAG);
 
         if (includes) {
