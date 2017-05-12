@@ -13,7 +13,7 @@
   "license": "MIT",
 
   "bin": {
-    "jsworker": "bin/jsworker.js"
+    "jsworker": "node ./bin/jsworker.js"
   },
 
   "repository": {
