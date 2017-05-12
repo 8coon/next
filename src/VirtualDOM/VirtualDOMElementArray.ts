@@ -1,7 +1,7 @@
-import {IVirtualDOMElement} from './IVirtualDOMElement';
+import {SimpleVirtualDOMElement} from './SimpleVirtualDOM/SimpleVirtualDOMElement';
 
 
-export class VirtualDOMElementArray implements Iterable<IVirtualDOMElement> {
+export class VirtualDOMElementArray implements Iterable<SimpleVirtualDOMElement> {
 
     /**
      * длина массива
@@ -9,7 +9,7 @@ export class VirtualDOMElementArray implements Iterable<IVirtualDOMElement> {
      */
     public length: number = 0;
 
-    private elements: IVirtualDOMElement[];
+    private elements: SimpleVirtualDOMElement[];
     private lastIndex: number = 0;
 
 
@@ -17,7 +17,7 @@ export class VirtualDOMElementArray implements Iterable<IVirtualDOMElement> {
      *
      * @param elements
      */
-    constructor(elements: IVirtualDOMElement[]) {
+    constructor(elements: SimpleVirtualDOMElement[]) {
         this.elements = elements;
         this.length = elements.length;
     }
@@ -25,10 +25,10 @@ export class VirtualDOMElementArray implements Iterable<IVirtualDOMElement> {
 
     /**
      * Итератор
-     * @returns {Iterator<IVirtualDOMElement>}
+     * @returns {Iterator<SimpleVirtualDOMElement>}
      */
 
-    public [Symbol.iterator](): Iterator<IVirtualDOMElement> {
+    public [Symbol.iterator](): Iterator<SimpleVirtualDOMElement> {
         return {
             next: () => {
                 if (this.lastIndex < this.elements.length) {
@@ -46,7 +46,7 @@ export class VirtualDOMElementArray implements Iterable<IVirtualDOMElement> {
     /**
      * Возвращает элемент по данному индексу
      * @param index
-     * @returns {IVirtualDOMElement}
+     * @returns {SimpleVirtualDOMElement}
      */
     public item(index: number) {
         return this.elements[index];

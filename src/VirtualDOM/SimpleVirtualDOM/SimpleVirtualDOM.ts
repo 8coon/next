@@ -1,6 +1,5 @@
 import {JSWorksInternal} from '../../Common/InternalDecorator';
 import {JSWorksService} from '../../Service/ServiceDecorator';
-import {IVirtualDOMElement} from '../IVirtualDOMElement';
 import {HTMLParserService} from '../../Parser/HTML/HTMLParserService';
 import {IDOMParsed} from '../../Parser/HTML/IDOMParsed';
 import {SimpleVirtualDOMElement} from './SimpleVirtualDOMElement';
@@ -11,8 +10,8 @@ import {SimpleVirtualDOMElementExt} from './SimpleVirtualDOMElementExt';
 
 
 export type Selector = (IAbstractVirtualDOMElement) => boolean |   // tslint:disable-line
-    IVirtualDOMElement |
-    IVirtualDOMElement[];
+    SimpleVirtualDOMElement |
+    SimpleVirtualDOMElement[];
 
 declare const CSSauron: any;
 
@@ -76,9 +75,9 @@ export class SimpleVirtualDOM implements VirtualDOM {
     /**
      * Создаёт элемент виртуального DOM по образу реального
      * @param element
-     * @returns {IVirtualDOMElement}
+     * @returns {SimpleVirtualDOMElement}
      */
-    public createFromDOM(element: HTMLElement): IVirtualDOMElement {
+    public createFromDOM(element: HTMLElement): SimpleVirtualDOMElement {
         const data = this.hTMLParser.parseDOM(element);
         return this.createElement(data);
     }
@@ -87,9 +86,9 @@ export class SimpleVirtualDOM implements VirtualDOM {
     /**
      * Создаёт текстовый узел виртуального DOM
      * @param text
-     * @returns {IVirtualDOMElement}
+     * @returns {SimpleVirtualDOMElement}
      */
-    public createTextElement(text: string): IVirtualDOMElement {
+    public createTextElement(text: string): SimpleVirtualDOMElement {
         const data = {
             tagName: undefined,
             id: undefined,
@@ -108,7 +107,7 @@ export class SimpleVirtualDOM implements VirtualDOM {
      * @param data IDOMParsed либо tagName элемента
      * @returns {SimpleVirtualDOMElement}
      */
-    public createElement(data: IDOMParsed | string = 'DIV'): IVirtualDOMElement {
+    public createElement(data: IDOMParsed | string = 'DIV'): SimpleVirtualDOMElement {
         let element = new SimpleVirtualDOMElement(SimpleVirtualDOM.NextHash());
 
         if (typeof data === 'string') {

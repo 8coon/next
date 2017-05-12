@@ -1,4 +1,4 @@
-import {IVirtualDOMElement} from '../VirtualDOM/IVirtualDOMElement';
+import {SimpleVirtualDOMElement} from '../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
 
 
 /**
@@ -7,6 +7,6 @@ import {IVirtualDOMElement} from '../VirtualDOM/IVirtualDOMElement';
 export interface IViewParsed {
 
     id: string;
-    template: IVirtualDOMElement;
+    template: SimpleVirtualDOMElement;
 
 }

@@ -160,6 +160,10 @@ export class ComponentHolder {
         if (component.emitEvent) {
             component.emitEvent({ type: EventType.CREATE, data: component });
         }
+
+        if (component.controller.onCreate) {
+            component.controller.onCreate();
+        }
     }
 
 

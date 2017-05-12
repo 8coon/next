@@ -7,7 +7,6 @@ import {EventType} from '../../EventManager/EventType';
 import {ViewHolder} from '../../View/ViewHolder';
 import {View} from '../../View/View';
 import {UnresolvableViewInheritanceError} from '../../Error/UnresolvableViewInheritanceError';
-import {IVirtualDOMElement} from '../../VirtualDOM/IVirtualDOMElement';
 import {DuplicateViewParamError} from '../../Error/DuplicateViewParamError';
 import {UnresolvableViewIncludeError} from '../../Error/UnresolvableViewIncludeError';
 import {AttributeNotFoundError} from '../../Error/AttributeNotFoundError';
@@ -76,7 +75,7 @@ export class AppViewElement extends SimpleVirtualDOMElementExt {
         AppViewElement.resolveCircular(viewHolder,
 
             (viewName: string, view: View, rendered: object, render: renderCallback): void => {
-                const includes: IVirtualDOMElement[] = view.DOMRoot.querySelectorAll(
+                const includes: SimpleVirtualDOMElement[] = view.DOMRoot.querySelectorAll(
                     ViewConfig.VIEW_INCLUDE_TAG);
 
                 const includeCount: number = includes.length;
