@@ -10,6 +10,13 @@ const serializeDocument = require('jsdom').serializeDocument;
 const rmdir = require('rmdir');
 
 
+const oldReadFileSync = fs.readFileSync;
+
+fs.readFileSync = (path, enc) => {
+    return oldReadFileSync(path.replace(/\.\//g, `${__dirname}/`), enc);
+};
+
+
 const parseArg = (name, defValue) => {
     let val = undefined;
 
