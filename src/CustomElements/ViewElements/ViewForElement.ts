@@ -168,7 +168,10 @@ export class ViewForElement extends AbstractListeningElement {
         const collection: CollectionProperty | any[] = this.execStatement(this.getAttribute('in'));
 
         if (!(collection instanceof CollectionProperty || collection instanceof Array)) {
-            throw new CannotIterateOverNonCollectionError(this.getAttribute('in'));
+            console.error(new CannotIterateOverNonCollectionError(this.getAttribute('in')));
+
+            return;
+            // throw new CannotIterateOverNonCollectionError(this.getAttribute('in'));
         }
 
         ViewForElement.iterateCollection(this, this.template, collection, this.hash, this.view);
