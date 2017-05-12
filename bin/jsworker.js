@@ -13,7 +13,7 @@ const rmdir = require('rmdir');
 const oldReadFileSync = fs.readFileSync;
 
 fs.readFileSync = (path, enc) => {
-    return oldReadFileSync(path.replace(/\.\//g, `${__dirname}/`), enc);
+    return oldReadFileSync(path.replace(/\.\//g, `${__dirname}/../`), enc);
 };
 
 
