@@ -73,8 +73,8 @@ export class Route implements IEventEmitter {
                 root.appendChild(page.view.DOMRoot.rendered);
             }
 
-            if (page.onNavigate) {
-                page.onNavigate(pathVariables);
+            if (page.controller.onNavigate) {
+                page.controller.onNavigate(pathVariables);
             }
         }
     }

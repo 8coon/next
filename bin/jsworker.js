@@ -492,6 +492,7 @@ switch (process.argv[2]) {
             } break; */
 
             case 'component': {
+                // generateComponent(path, name, withRoute, className, viewExtends, viewTemplate, controllertemplate, templateFile)
                 // ToDo: component generator
             } break;
 

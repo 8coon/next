@@ -138,6 +138,7 @@ export class ComponentHolder {
         component.type = componentProto.__type__;
 
         component.controller.component = component;
+        component.controller.view = view;
         component.controller.applicationContext = JSWorks.applicationContext;
 
         switch (componentProto.__type__) {
