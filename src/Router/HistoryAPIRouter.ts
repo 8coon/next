@@ -33,7 +33,8 @@ export class HistoryAPIRouter extends Router {
             const path =  window.location.href.split('/', 4)[3];
             const state = this.pathChange(path);
 
-            console.log('navigating to', state);
+            console.log(path, state);
+
             state.route.fire(state.pathVariables);
 
             window.history.replaceState({name: state.route.name, pathVariables: state.pathVariables},
