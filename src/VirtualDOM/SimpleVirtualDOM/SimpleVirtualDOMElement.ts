@@ -179,8 +179,7 @@ export class SimpleVirtualDOMElement {
 
         Object.keys(this.handlers).forEach((type) => {
             this.handlers[type].forEach((handler) => {
-                element.addEventListener(type, this.handlers[handler].callback,
-                    this.handlers[handler].useCapture);
+                element.addEventListener(type, handler.callback, handler.useCapture);
             });
         });
 
