@@ -30,7 +30,7 @@ export class HistoryAPIRouter extends Router {
         });
 
         EventManager.subscribe(this, JSWorks.applicationContext, EventType.ApplicationLoaded, (event) => {
-            const path =  window.location.href.split('/', 4)[3];
+            const path =  window.location.href.split('/', 4).slice(3).join('/');
             const state = this.pathChange(path);
 
             console.log(path, state);
