@@ -202,8 +202,8 @@ export declare class SimpleVirtualDOMElement {
     execAttributeStatements(): void;
     protected emitMutilationEvent(data: IEvent): void;
     protected customCloneNode(node: SimpleVirtualDOMElement): void;
-    private renderHandlers();
-    private mergeAttributes();
-    private appendChildren();
-    private mergeChildren();
+    protected renderHandlers(): void;
+    protected mergeAttributes(): void;
+    protected appendChildren(): void;
+    protected mergeChildren(): void;
 }

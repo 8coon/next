@@ -841,7 +841,7 @@ export class SimpleVirtualDOMElement {
     protected customCloneNode(node: SimpleVirtualDOMElement): void {}  // tslint:disable-line
 
 
-    private renderHandlers() {
+    protected renderHandlers() {
         this.rendered[this.HANDLERS_KEY] = this.rendered[this.HANDLERS_KEY] || [];
 
         this.rendered[this.HANDLERS_KEY].forEach((handler) => {
@@ -868,7 +868,7 @@ export class SimpleVirtualDOMElement {
     }
 
 
-    private mergeAttributes() {
+    protected mergeAttributes() {
         if (this.id !== (<HTMLElement> this.rendered).id) {
             (<HTMLElement> this.rendered).id = this.id;
         }
@@ -906,7 +906,7 @@ export class SimpleVirtualDOMElement {
     }
 
 
-    private appendChildren() {
+    protected appendChildren() {
         this._children.forEach((child, index) => {
             child.render();
             this.rendered.appendChild(child.rendered);
@@ -914,7 +914,7 @@ export class SimpleVirtualDOMElement {
     }
 
 
-    private mergeChildren() {
+    protected mergeChildren() {
         if (this.rendered.childNodes.length === 0 && this._children.length > 0) {
             this.appendChildren();
             return;
