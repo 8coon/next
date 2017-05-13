@@ -156,6 +156,25 @@ export class SimpleVirtualDOMElement {
 
 
     /**
+     * Получить список классов
+     * @returns {string[]}
+     */
+    public get classList(): string[] {
+        return Object.keys(this.classes);
+    }
+
+
+    /**
+     * Узнать, есть ли у этого элемента данный класс
+     * @param name
+     * @returns {any}
+     */
+    public hasClass(name: string): boolean {
+        return this.classes[name] === true;
+    }
+
+
+    /**
      * Создаёт полную копию этого узла со всеми вложенными узлами.
      * @returns {SimpleVirtualDOMElement}
      */

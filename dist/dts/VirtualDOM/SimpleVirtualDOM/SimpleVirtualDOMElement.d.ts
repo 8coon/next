@@ -56,6 +56,17 @@ export declare class SimpleVirtualDOMElement {
      */
     customUpdate(): void;
     /**
+     * Получить список классов
+     * @returns {string[]}
+     */
+    readonly classList: string[];
+    /**
+     * Узнать, есть ли у этого элемента данный класс
+     * @param name
+     * @returns {any}
+     */
+    hasClass(name: string): boolean;
+    /**
      * Создаёт полную копию этого узла со всеми вложенными узлами.
      * @returns {SimpleVirtualDOMElement}
      */
