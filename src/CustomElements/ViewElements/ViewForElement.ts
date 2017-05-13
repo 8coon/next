@@ -29,7 +29,11 @@ export class ViewForElement extends AbstractListeningElement {
         const virtualDOM: SimpleVirtualDOM = appContext.serviceHolder.getServiceByName('SimpleVirtualDOM');
 
         if (!template) {
-            template = <SimpleVirtualDOMElement> virtualDOM.createElement(ViewConfig.VIEW_ITEM);
+            if (root.hasAttribute('no-wrap')) {
+                template = <SimpleVirtualDOMElement> virtualDOM.createTextElement('');
+            } else {
+                template = <SimpleVirtualDOMElement> virtualDOM.createElement(ViewConfig.VIEW_ITEM);
+            }
             template.ready = false;
 
             (<any> root)._children.forEach((child) => {
