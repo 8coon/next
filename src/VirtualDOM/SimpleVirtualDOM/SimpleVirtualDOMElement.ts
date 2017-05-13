@@ -175,6 +175,25 @@ export class SimpleVirtualDOMElement {
 
 
     /**
+     * Удаляет всех слушателей
+     * @param type
+     */
+    public removeEventListeners(type?: string): void {
+        if (type !== undefined) {
+            Object.keys(this.handlers).forEach((eventType: string) => {
+                this.removeEventListeners(eventType);
+            });
+
+            return;
+        }
+
+        (this.handlers[type] || []).forEach((handler: object) => {
+            this.removeEventListener(type, handler['callback']);
+        });
+    }
+
+
+    /**
      * Создаёт полную копию этого узла со всеми вложенными узлами.
      * @returns {SimpleVirtualDOMElement}
      */

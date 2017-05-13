@@ -67,6 +67,11 @@ export declare class SimpleVirtualDOMElement {
      */
     hasClass(name: string): boolean;
     /**
+     * Удаляет всех слушателей
+     * @param type
+     */
+    removeEventListeners(type?: string): void;
+    /**
      * Создаёт полную копию этого узла со всеми вложенными узлами.
      * @returns {SimpleVirtualDOMElement}
      */
