@@ -76,6 +76,7 @@ export class SimpleVirtualDOMElement {
     protected selectorCache: object = {};
     protected _hash: any;
     protected _ready: boolean = true;
+    protected realAttributes: object;
 
     protected readonly HASH_KEY: string = '__jsworks_hash__';
     protected readonly HANDLERS_KEY: string = '__jsworks_handlers__';
@@ -751,6 +752,65 @@ export class SimpleVirtualDOMElement {
 
         this._children.forEach((child) => {
             child.propagateView(view);
+        });
+    }
+
+
+    /**
+     * Выполняет выражение в области видимости View
+     * @param statement
+     * @param scope
+     */
+    public execStatement(statement: string, scope = (this.view || {})['component']): any {
+        if (!this.view || !this.view.component) {
+            return;
+        }
+
+        const variables = Object.keys(this.view.component.variables);
+        const values = [];
+
+        variables.forEach((varName) => {
+            values.push(this.view.component.variables[varName]);
+        });
+
+        values.push(scope);
+        variables.push('$');
+
+        const condFunc = new Function(variables.join(','), `return ${statement};`);
+
+        try {
+            return condFunc.call({}, ...values);
+        } catch (e) {
+            console.error(`Error in statement "${statement}": ${e}`);
+
+            return undefined;
+        }
+    }
+
+
+    /**
+     * Выполнить выражения, находящиеся в значениях атрибутов в ${}
+     */
+    public execAttributeStatements(): void {
+        if (!this.realAttributes) {
+            this.realAttributes = {};
+
+            Object.keys(this.attributes).forEach((attrName: string) => {
+                this.realAttributes[attrName] = this.getAttribute(attrName);
+            });
+        }
+
+        Object.keys(this.realAttributes).forEach((attrName: string) => {
+            const value: string = this.realAttributes[attrName];
+
+            const newValue = String(value).replace(/\${(.*?)}/g, (statement: string) => {
+                statement = statement.slice(2, -1);
+                return this.execStatement(statement);
+            });
+
+            if (value !== newValue) {
+                this.setAttribute(attrName, newValue);
+            }
         });
     }
 

@@ -102,6 +102,8 @@ export class ViewForElement extends AbstractListeningElement {
         node['__for_value__'] = value;
         root['__view__'].component.variables[varName] = value;
 
+        node.execAttributeStatements();
+
         node.ready = true;
         node.customUpdate();
         node.ready = false;

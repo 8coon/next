@@ -40,6 +40,7 @@ export declare class SimpleVirtualDOMElement {
     protected selectorCache: object;
     protected _hash: any;
     protected _ready: boolean;
+    protected realAttributes: object;
     protected readonly HASH_KEY: string;
     protected readonly HANDLERS_KEY: string;
     constructor(hash: any);
@@ -189,6 +190,16 @@ export declare class SimpleVirtualDOMElement {
      * @param view
      */
     propagateView(view: View): void;
+    /**
+     * Выполняет выражение в области видимости View
+     * @param statement
+     * @param scope
+     */
+    execStatement(statement: string, scope?: any): any;
+    /**
+     * Выполнить выражения, находящиеся в значениях атрибутов в ${}
+     */
+    execAttributeStatements(): void;
     protected emitMutilationEvent(data: IEvent): void;
     protected customCloneNode(node: SimpleVirtualDOMElement): void;
     private renderHandlers();
