@@ -812,6 +812,10 @@ export class SimpleVirtualDOMElement {
                 this.setAttribute(attrName, newValue);
             }
         });
+
+        this._children.forEach((child: SimpleVirtualDOMElement) => {
+            child.execAttributeStatements();
+        });
     }
 
 
