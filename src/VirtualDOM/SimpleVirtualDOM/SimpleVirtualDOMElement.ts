@@ -371,6 +371,10 @@ export class SimpleVirtualDOMElement {
             const expressions: string[] = (<string> value || '').split(';');
 
             expressions.forEach((expression: string) => {
+                if (expression === undefined || !expression.includes(':')) {
+                    return;
+                }
+
                 const css: string[] = expression.split(':');
 
                 css[0] = css[0].trim();
@@ -796,6 +800,10 @@ export class SimpleVirtualDOMElement {
             this.realAttributes = {};
 
             Object.keys(this.attributes).forEach((attrName: string) => {
+                if (attrName === undefined) {
+                    return;
+                }
+
                 this.realAttributes[attrName] = this.getAttribute(attrName);
             });
         }
@@ -870,7 +878,7 @@ export class SimpleVirtualDOMElement {
         }
 
         Object.keys(this.attributes).forEach((attr: string) => {
-            if (attr === 'id' || attr === 'class') {
+            if (attr === 'id' || attr === 'class' || attr === undefined || attr === 'undefined') {
                 return;
             }
 
