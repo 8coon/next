@@ -179,7 +179,7 @@ export class SimpleVirtualDOMElement {
      * @param type
      */
     public removeEventListeners(type?: string): void {
-        if (type !== undefined) {
+        if (type === undefined) {
             Object.keys(this.handlers).forEach((eventType: string) => {
                 this.removeEventListeners(eventType);
             });
