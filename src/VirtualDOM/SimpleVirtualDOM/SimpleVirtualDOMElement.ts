@@ -783,7 +783,7 @@ export class SimpleVirtualDOMElement {
         const condFunc = new Function(variables.join(','), `return ${statement};`);
 
         try {
-            return condFunc.call({}, ...values);
+            return condFunc.call(this, ...values);
         } catch (e) {
             console.error(`Error in statement "${statement}": ${e}`);
 
