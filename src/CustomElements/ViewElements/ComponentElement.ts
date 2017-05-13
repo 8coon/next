@@ -53,8 +53,8 @@ export class ComponentElement extends SimpleVirtualDOMElementExt {
                 this.component[attrName] = this.attributes[attrName];
             });
 
-            if (this.component.onDOMInsert) {
-                this.component.onDOMInsert();
+            if (this.component.controller.onDOMInsert) {
+                this.component.controller.onDOMInsert();
             }
 
             EventManager.subscribe(this, this.component, EventType.PostUpdate, (ev2) => {
