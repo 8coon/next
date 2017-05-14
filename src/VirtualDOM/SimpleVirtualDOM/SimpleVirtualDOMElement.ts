@@ -429,6 +429,14 @@ export class SimpleVirtualDOMElement {
             return;
         }
 
+        if (name.toLowerCase() === 'class') {
+            this.classes = {};
+
+            (value || '').split(' ').forEach((className: string) => {
+                this.classes[className.toLowerCase()] = true;
+            });
+        }
+
         this.attributes[name] = value;
         this.emitMutilationEvent({ type: EventType.DOMPropertyChange, data: this });
     }
