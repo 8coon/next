@@ -30,6 +30,18 @@ export class ComponentElement extends SimpleVirtualDOMElementExt {
 
 
     /**
+     * Дублирование компонента при дублировании ноды
+     * @param node
+     */
+    public customCloneNode(node: ComponentElement): void {
+        const context: ApplicationContext = JSWorks.applicationContext;
+        const newName: string = context.componentHolder.duplicateComponent(this.component.proto);
+
+        node.component = context.componentHolder.getComponent(newName);
+    }
+
+
+    /**
      * Проинициализировать этот элемент компонентом
      */
     public init(): void {

@@ -6,6 +6,11 @@ export declare class ComponentElement extends SimpleVirtualDOMElementExt {
      */
     component: any;
     /**
+     * Дублирование компонента при дублировании ноды
+     * @param node
+     */
+    customCloneNode(node: ComponentElement): void;
+    /**
      * Проинициализировать этот элемент компонентом
      */
     init(): void;

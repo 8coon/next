@@ -73,6 +73,7 @@ export class ComponentHolder {
         component.variables = {};
         component.id = name;
         component.fields = (__JSWorks_component_fields__[componentProto.name] || []).map((nm) => { return nm; } );
+        component.proto = componentProto;
 
 
         component.setVariable = (cname: string, value: any) => {
