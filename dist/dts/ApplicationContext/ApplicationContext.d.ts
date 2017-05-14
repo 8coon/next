@@ -68,6 +68,15 @@ export declare class ApplicationContext implements IEventEmitter {
      * @returns {RouteHolder}
      */
     readonly routeHolder: RouteHolder;
+    /**
+     * Получить текущую открытую страницу
+     * @returns {Object}
+     */
+    /**
+     * Задать текущую страницу
+     * @param value
+     */
+    currentPage: object;
     private _serviceHolder;
     private _viewHolder;
     private _controllerHolder;
@@ -78,6 +87,7 @@ export declare class ApplicationContext implements IEventEmitter {
     private _customElementHolder;
     private _modelHolder;
     private _loaded;
+    private _currentPage;
     /**
      *
      * @param services

@@ -73,6 +73,8 @@ export class Route implements IEventEmitter {
                 root.appendChild(page.view.DOMRoot.rendered);
             }
 
+            JSWorks.applicationContext.currentPage = page;
+
             if (page.controller.onNavigate) {
                 page.controller.onNavigate(pathVariables);
             }

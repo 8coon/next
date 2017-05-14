@@ -131,6 +131,24 @@ export class ApplicationContext implements IEventEmitter {
     }
 
 
+    /**
+     * Получить текущую открытую страницу
+     * @returns {Object}
+     */
+    public get currentPage(): object {
+        return this._currentPage;
+    }
+
+
+    /**
+     * Задать текущую страницу
+     * @param value
+     */
+    public set currentPage(value: object) {
+        this._currentPage = value;
+    }
+
+
     private _serviceHolder: ServiceHolder;
     private _viewHolder: ViewHolder;
     private _controllerHolder: ControllerHolder;
@@ -141,6 +159,7 @@ export class ApplicationContext implements IEventEmitter {
     private _customElementHolder: CustomElementHolder;
     private _modelHolder: ModelHolder;
     private _loaded: boolean = false;
+    private _currentPage: object;
 
 
     /**
