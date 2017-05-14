@@ -45,7 +45,7 @@ export declare class ViewForElement extends AbstractListeningElement {
      */
     customClear(): void;
     /**
-     * <view-for variable="person" in="$.persons">
+     * <view-for variable="person" in="$.persons" limit="-1" offset="0">
      *     <div class="name">
      *         <view-eval value="person.name"></view-eval>
      *         <view-eval value="person.age"></view-eval>

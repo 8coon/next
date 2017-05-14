@@ -67,20 +67,50 @@ export class ViewForElement extends AbstractListeningElement {
 
         root['__view__'] = view;
 
-        (<any[]> values).forEach((value, index) => {
-            if (!(<any> root)._children[index]) {
-                root.appendChild(template.cloneNode());
+        let offset: number = 0;
+        let limit: number = values.length;
 
-            } else if (
-                ((<any> root)._children[index]['__for_value__'] !== undefined) &&
-                ((<any> root)._children[index]['__for_value__'] === value)
-            ) {
-                return;
-            }
+        if (root.hasAttribute('offset')) {
+            offset = parseInt(root.getAttribute('offset'), 10);
+        }
 
-            varName = varName || root.getAttribute('variable');
-            ViewForElement.propagateValue(root, (<any> root)._children[index], varName, value);
-        });
+        if (root.hasAttribute('limit')) {
+            limit = parseInt(root.getAttribute('offset'), 10);
+        }
+
+        if (limit < 0) {
+            limit = 0;
+        }
+
+        if (offset < 0) {
+            offset = 0;
+        }
+
+        if (limit >= values.length) {
+            limit = values.length;
+        }
+
+        for (let i = offset; i < limit; i++) {
+            const value = values[i];
+            const index = i - offset;
+
+            const body = () => {
+                if (!(<any> root)._children[index]) {
+                    root.appendChild(template.cloneNode());
+
+                } else if (
+                    ((<any> root)._children[index]['__for_value__'] !== undefined) &&
+                    ((<any> root)._children[index]['__for_value__'] === value)
+                ) {
+                    return;
+                }
+
+                varName = varName || root.getAttribute('variable');
+                ViewForElement.propagateValue(root, (<any> root)._children[index], varName, value);
+            };
+
+            body();
+        }
 
         if (collection.length < (<any> root)._children.length) {
             while (collection.length !== (<any> root)._children.length) {
@@ -161,7 +191,7 @@ export class ViewForElement extends AbstractListeningElement {
 
 
     /**
-     * <view-for variable="person" in="$.persons">
+     * <view-for variable="person" in="$.persons" limit="-1" offset="0">
      *     <div class="name">
      *         <view-eval value="person.name"></view-eval>
      *         <view-eval value="person.age"></view-eval>
