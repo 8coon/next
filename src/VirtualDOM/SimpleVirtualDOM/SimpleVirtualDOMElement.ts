@@ -494,7 +494,7 @@ export class SimpleVirtualDOMElement {
         }
 
         if (this.classes[name]) {
-            this.classes[name] = undefined;
+            delete this.classes[name];
             this.setAttribute('class', Object.keys(this.classes).join(' '));
         }
     }
