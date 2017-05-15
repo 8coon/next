@@ -5,3 +5,7 @@ view-case, view-for, view-item, view-eval, app-main, view-component, form-for {
     display: block;
 }
 
+link-to {
+    display: inline;
+}
+

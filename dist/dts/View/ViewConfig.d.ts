@@ -89,4 +89,9 @@ export declare class ViewConfig {
      * @type {string}
      */
     static readonly FORM_MESSAGES_TAG: string;
+    /**
+     * Тэг, указывающий на ссылку на роут
+     * @type {string}
+     */
+    static readonly LINK_TO_TAG: string;
 }

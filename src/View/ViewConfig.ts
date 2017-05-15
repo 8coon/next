@@ -129,4 +129,11 @@ export class ViewConfig {
      */
     public static readonly FORM_MESSAGES_TAG = 'FORM-MESSAGES';
 
+
+    /**
+     * Тэг, указывающий на ссылку на роут
+     * @type {string}
+     */
+    public static readonly LINK_TO_TAG = 'LINK-TO';
+
 }

@@ -131,4 +131,6 @@
 
     </form-for>
 
+    <link-to route="ProfileRoute" args="{id: 123}">Профиль</link-to>
+
 </app-view>

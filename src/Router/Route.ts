@@ -92,7 +92,12 @@ export class Route implements IEventEmitter {
 
         if (args) {
             Object.keys(args).forEach((pathVar) => {
-                const regexp = new RegExp(pathVar);
+                let regexp = new RegExp(pathVar);
+
+                if (pathVar.charAt(0) !== ':') {
+                    regexp = new RegExp(`:${pathVar}`);
+                }
+
                 path = path.replace(regexp, args[pathVar]);
             });
         }
