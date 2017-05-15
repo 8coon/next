@@ -52,7 +52,8 @@ export class LinkToElement extends SimpleVirtualDOMElementExt {
         if (!this.rendered['_linkPatched']) {
             this.rendered.addEventListener('click', (event) => {
                 event.preventDefault();
-                route.fire(args);
+
+                JSWorks.applicationContext.router.navigate(route, args);
             });
         }
 
