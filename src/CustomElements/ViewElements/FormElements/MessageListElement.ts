@@ -21,6 +21,10 @@ export abstract class MessageListElement extends SimpleVirtualDOMElementExt {
      * @returns {any}
      */
     public static formatPromiseResult(result, status, array = true) {
+        if (result === undefined && array) {
+            return [];
+        }
+
         if (result instanceof Array) {
             return result.map((message) => {
                 return MessageListElement.formatPromiseResult(message, status, false);
