@@ -7,17 +7,19 @@ export declare class NetworkService {
      * @param url
      * @param method
      * @param data
+     * @param headers
      * @returns {HTTPResponse}
      */
-    fetch(url: string, method?: HTTPMethod, data?: any): HTTPResponse;
+    fetch(url: string, method?: HTTPMethod, data?: any, headers?: object): HTTPResponse;
     /**
      * Совершает асинхронный запрос и возвращает объект Promise. В случае успешного выполнения
      * Promise будет разрешён с помощью экземпляра класса HTTPResponse.
      * @param url
      * @param method
      * @param data
+     * @param headers
      * @returns {undefined}
      */
-    fetchAsync(url: string, method?: HTTPMethod, data?: any): Promise<HTTPResponse>;
-    private xmlHTTPRequest(url, method, async, data, callback, error);
+    fetchAsync(url: string, method?: HTTPMethod, data?: any, headers?: object): Promise<HTTPResponse>;
+    private xmlHTTPRequest(url, method, async, data, callback, error, headers?);
 }

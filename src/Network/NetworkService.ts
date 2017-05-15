@@ -16,9 +16,11 @@ export class NetworkService {
      * @param url
      * @param method
      * @param data
+     * @param headers
      * @returns {HTTPResponse}
      */
-    public fetch(url: string, method: HTTPMethod = HTTPMethod.GET, data?: any): HTTPResponse {
+    public fetch(url: string, method: HTTPMethod = HTTPMethod.GET, data?: any,
+                 headers: object = {}): HTTPResponse {
         let result: HTTPResponse;
         let err: HTTPError;
 
@@ -26,7 +28,7 @@ export class NetworkService {
             result = response;
         }, (error: HTTPError) => {
             err = error;
-        });
+        }, headers);
 
         if (err) {
             throw err;
@@ -42,26 +44,33 @@ export class NetworkService {
      * @param url
      * @param method
      * @param data
+     * @param headers
      * @returns {undefined}
      */
-    public fetchAsync(url: string, method: HTTPMethod = HTTPMethod.GET, data?: any): Promise<HTTPResponse> {
+    public fetchAsync(url: string, method: HTTPMethod = HTTPMethod.GET, data?: any,
+            headers: object = {}): Promise<HTTPResponse> {
         return new Promise<HTTPResponse>((resolve, reject) => {
             this.xmlHTTPRequest(url, method, true, data, (response: HTTPResponse) => {
                 resolve(response);
             }, (error: HTTPError) => {
                 reject(error);
-            });
+            }, headers);
         });
     }
 
 
     private xmlHTTPRequest(url: string, method: HTTPMethod, async: boolean, data: any,
                            callback: (response: HTTPResponse) => void,
-                           error: (error: HTTPError) => void): void {
+                           error: (error: HTTPError) => void,
+                           headers: object = {}): void {
         const xhr = new XMLHttpRequest();
 
         xhr.open(method, url, async);
         xhr.withCredentials = async;
+
+        Object.keys(headers).forEach((headerName: string) => {
+            xhr.setRequestHeader(headerName, headers[headerName]);
+        });
 
         xhr.onreadystatechange = (event: ProgressEvent) => {
             if (xhr.readyState === 4) {

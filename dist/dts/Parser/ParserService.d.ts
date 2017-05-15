@@ -20,22 +20,25 @@ export declare abstract class ParserService {
      * @param url
      * @param method
      * @param data
+     * @param headers
      * @returns {undefined}
      */
-    parseURL(url: string, method?: HTTPMethod, data?: any): object;
+    parseURL(url: string, method?: HTTPMethod, data?: any, headers?: object): object;
     /**
      * Загружает данные по удалённому адресу асинхронно и вызывает callback.
      * @param url
      * @param callback
      * @param method
      * @param data
+     * @param headers
      */
-    parseURLCallback(url: string, callback: (parsed: object) => void, method?: HTTPMethod, data?: any): void;
+    parseURLCallback(url: string, callback: (parsed: object) => void, method?: HTTPMethod, data?: any, headers?: object): void;
     /**
      * Возвращает Promise, который разрешается данными, загруженными с сервера.
      * @param url
      * @param method
      * @param data
+     * @param headers
      */
-    parseURLAsync(url: string, method?: HTTPMethod, data?: any): Promise<object>;
+    parseURLAsync(url: string, method?: HTTPMethod, data?: any, headers?: object): Promise<object>;
 }

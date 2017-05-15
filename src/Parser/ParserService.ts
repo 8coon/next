@@ -30,10 +30,12 @@ export abstract class ParserService {
      * @param url
      * @param method
      * @param data
+     * @param headers
      * @returns {undefined}
      */
-    public parseURL(url: string, method: HTTPMethod = HTTPMethod.GET, data?: any): object {
-        return this.parseString(this.network.fetch(url, method, data).data);
+    public parseURL(url: string, method: HTTPMethod = HTTPMethod.GET, data?: any,
+            headers: object = {}): object {
+        return this.parseString(this.network.fetch(url, method, data, headers).data);
     }
 
 
@@ -43,10 +45,12 @@ export abstract class ParserService {
      * @param callback
      * @param method
      * @param data
+     * @param headers
      */
     public parseURLCallback(url: string, callback: (parsed: object) => void,
-                            method: HTTPMethod = HTTPMethod.GET, data?: any): void {
-        this.network.fetchAsync(url, method, data).then((response: HTTPResponse) => {
+                            method: HTTPMethod = HTTPMethod.GET, data?: any,
+                            headers: object = {}): void {
+        this.network.fetchAsync(url, method, data, headers).then((response: HTTPResponse) => {
             callback(this.parseString(response.data));
         });
     }
@@ -57,12 +61,14 @@ export abstract class ParserService {
      * @param url
      * @param method
      * @param data
+     * @param headers
      */
-    public parseURLAsync(url: string, method: HTTPMethod = HTTPMethod.GET, data?: any): Promise<object> {
+    public parseURLAsync(url: string, method: HTTPMethod = HTTPMethod.GET, data?: any,
+            headers: object = {}): Promise<object> {
         return new Promise((resolve, reject) => {
             this.parseURLCallback(url, (parsed: object) => {
                 resolve(parsed);
-            }, method, data);
+            }, method, data, headers);
         });
     }
 
