@@ -1,5 +1,6 @@
 import { HTTPMethod } from '../Network/HTTPMethod';
 import { NetworkService } from '../Network/NetworkService';
+import { HTTPError } from '../Error/HTTPError';
 export declare abstract class ParserService {
     /**
      * Network Service
@@ -31,8 +32,9 @@ export declare abstract class ParserService {
      * @param method
      * @param data
      * @param headers
+     * @param errorCallback
      */
-    parseURLCallback(url: string, callback: (parsed: object) => void, method?: HTTPMethod, data?: any, headers?: object): void;
+    parseURLCallback(url: string, callback: (parsed: object) => void, method?: HTTPMethod, data?: any, headers?: object, errorCallback?: (error: HTTPError) => void): void;
     /**
      * Возвращает Promise, который разрешается данными, загруженными с сервера.
      * @param url

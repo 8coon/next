@@ -1,6 +1,7 @@
 import {HTTPMethod} from '../Network/HTTPMethod';
 import {NetworkService} from '../Network/NetworkService';
 import {HTTPResponse} from '../Network/HTTPResponse';
+import {HTTPError} from '../Error/HTTPError';
 
 
 export abstract class ParserService {
@@ -46,12 +47,19 @@ export abstract class ParserService {
      * @param method
      * @param data
      * @param headers
+     * @param errorCallback
      */
     public parseURLCallback(url: string, callback: (parsed: object) => void,
                             method: HTTPMethod = HTTPMethod.GET, data?: any,
-                            headers: object = {}): void {
-        this.network.fetchAsync(url, method, data, headers).then((response: HTTPResponse) => {
-            callback(this.parseString(response.data));
+                            headers: object = {},
+                            errorCallback?: (error: HTTPError) => void ): void {
+        this.network.fetchAsync(url, method, data, headers)
+            .then((response: HTTPResponse) => {
+                callback(this.parseString(response.data));
+            }).catch((error: HTTPError) => {
+                if (errorCallback) {
+                    errorCallback(error);
+                }
         });
     }
 
@@ -68,7 +76,9 @@ export abstract class ParserService {
         return new Promise((resolve, reject) => {
             this.parseURLCallback(url, (parsed: object) => {
                 resolve(parsed);
-            }, method, data, headers);
+            }, method, data, headers, (error: HTTPError) => {
+                reject(error);
+            });
         });
     }
 
