@@ -6,22 +6,22 @@ import {JSONParserService} from '../Parser/JSON/JSONParserService';
  * Интерфейс модели
  */
 export interface IModel {
-    modelMetadata: IModelMetadata;
-    proto: object;
-    jsonParser: JSONParserService;
+    modelMetadata?: IModelMetadata;
+    proto?: object;
+    jsonParser?: JSONParserService;
 
 
     /**
      * Произвольный запрос большого числа записей.
      * @param params
      */
-    query(params?: object): Promise<IModel[]>;
+    query?(params?: object): Promise<IModel[]>;
 
 
     /**
      * Создание новой записи на сервере.
      */
-    create(): Promise<IModel>;
+    create?(): Promise<IModel>;
 
 
     /**
@@ -30,25 +30,25 @@ export interface IModel {
      * ключа текущей записи.
      * @param pk
      */
-    read(pk?: any): Promise<IModel>;
+    read?(pk?: any): Promise<IModel>;
 
 
     /**
      * Обновение данных уже существующей записи на сервере.
      */
-    update(): Promise<IModel>;
+    update?(): Promise<IModel>;
 
 
     /**
      * Удаление данной записи с сервера.
      */
-    ['delete'](): Promise<IModel>;
+    ['delete']?(): Promise<IModel>;
 
 
     /**
      * То же самое, что delete()
      */
-    remove(): Promise<IModel>;
+    remove?(): Promise<IModel>;
 
 
     /**
@@ -58,41 +58,41 @@ export interface IModel {
      * на сервер не выполняется, и данный метод возвращает разрешённый промис с текущей
      * записью.
      */
-    save(): Promise<IModel>;
+    save?(): Promise<IModel>;
 
 
     /**
      * То же, что и save(), однако отправляет запрос на сервер в любом случае, независимо
      * от того, были ли изменения текущей записи или нет.
      */
-    persist(): Promise<IModel>;
+    persist?(): Promise<IModel>;
 
 
     /**
      * Создаёт новый экземпляр класса записи и присваивает его полям значения из словаря data.
      * @param data
      */
-    from(data?: object): IModel;
+    from?(data?: object): IModel;
 
 
     /**
      * Возвращает словарь значений всех полей данной записи.
      */
-    gist(): object;
+    gist?(): object;
 
 
     /**
      * Присваивает полям текущей записи данные из словаря fields.
      * @param fields
      */
-    apply(fields?: object): void;
+    apply?(fields?: object): void;
 
 
     /**
      * Возвращает true, если в записи есть несохранённые на сервере изменения.
      */
-    isDirty(): boolean;
+    isDirty?(): boolean;
 
 
-    setDirty(value?: boolean): void;
+    setDirty?(value?: boolean): void;
 }
