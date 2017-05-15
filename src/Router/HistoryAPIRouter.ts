@@ -63,6 +63,10 @@ export class HistoryAPIRouter extends Router {
                 .then( () => interceptorHolder.triggerByType(InterceptorType.RouteAfterNavigateInterceptor, {}))
                 .catch( (rejected) => console.error(rejected) );
         } catch (err) {
+            route.fire(pathVariables);
+            const state = {name: route.name, path: path, pathVariables: pathVariables};
+            window.history.pushState(state, route.name, this.baseUrl + path);
+
             return Promise.resolve();
         }
     }
