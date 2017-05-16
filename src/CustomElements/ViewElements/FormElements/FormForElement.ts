@@ -229,6 +229,10 @@ export class FormForElement extends MessageListElement {
      * @returns {Promise<any>}
      */
     public submit(force: boolean = false): Promise<any> {
+        if (!this.model) {
+            this.model = JSWorks.applicationContext.modelHolder.getModel(this.getAttribute('model')).from();
+        }
+
         if (!(force || this.canSubmit())) {
             return Promise.reject('Form invalid!');
         }
