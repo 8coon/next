@@ -235,7 +235,7 @@ export class FormForElement extends MessageListElement {
 
         this.fields.forEach((field: FormFieldElement) => {
             if (!field.hasAttribute('for')) {
-                return Promise.reject('Form empty!');
+                return;
             }
 
             const name = field.getAttribute('for');
