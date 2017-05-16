@@ -185,13 +185,19 @@ export class FormForElement extends MessageListElement {
             form.addEventListener('submit', (event) => {
                 event.preventDefault();
 
+                const fireInterceptors = (result, success: boolean = true) => {
+                    JSWorks.applicationContext.interceptorHolder.triggerByType(
+                        InterceptorType.FormAfterSubmitInterceptor,
+                        { form: this, result, success });
+                };
+
+
                 const submit = () => {
-                    this.submit().then(() => {
+                    this.submit().then((result) => {
                         try {
-                            JSWorks.applicationContext.interceptorHolder.triggerByType(
-                                InterceptorType.FormAfterSubmitInterceptor, { form: this });
+                            fireInterceptors(result);
                         } catch (err) {
-                            // Do nothing
+                            fireInterceptors(err, false);
                         }
                     });
                 };
