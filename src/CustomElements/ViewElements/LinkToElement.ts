@@ -33,6 +33,7 @@ export class LinkToElement extends SimpleVirtualDOMElementExt {
     public render(): void {
         if (!this.rendered) {
             this.rendered = document.createElement('A');
+            this.customUpdate();
             this.mergeChildren();
         }
 
