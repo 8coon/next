@@ -107,11 +107,11 @@ export class FormFieldElement extends MessageListElement {
         this.clearing = true;
         const attrName: string = this.input.getAttribute('form-bind-attribute');
 
-        if (attrName.toLowerCase() === 'value') {
-            (<any> this.input.rendered).value = '';
-        } else {
-            (<HTMLElement> this.input.rendered).setAttribute(attrName, '');
-        }
+        // if (attrName.toLowerCase() === 'value') {
+        (<any> this.input.rendered).value = '';
+        // } else {
+        //     (<HTMLElement> this.input.rendered).setAttribute(attrName, '');
+        // }
 
         this.clearing = false;
     }
@@ -145,11 +145,11 @@ export class FormFieldElement extends MessageListElement {
 
             valueElem.setAttribute(attrName, value);
         } else {
-            if (attrName.toLowerCase() === 'value') {
-                value = (<any> valueElem.rendered).value;
-            } else {
-                value = (<HTMLElement> valueElem.rendered).getAttribute(attrName);
-            }
+            // if (attrName.toLowerCase() === 'value') {
+            value = (<any> valueElem.rendered).value;
+            // } else {
+            //     value = (<HTMLElement> valueElem.rendered).getAttribute(attrName);
+            // }
         }
 
         (<any> valueElem).attributes[attrName] = value;
