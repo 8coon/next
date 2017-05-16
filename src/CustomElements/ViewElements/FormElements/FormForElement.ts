@@ -188,17 +188,15 @@ export class FormForElement extends MessageListElement {
                 const fireInterceptors = (result, success: boolean = true) => {
                     JSWorks.applicationContext.interceptorHolder.triggerByType(
                         InterceptorType.FormAfterSubmitInterceptor,
-                        { form: this, result, success });
+                            { form: this, result, success });
                 };
 
 
                 const submit = () => {
                     this.submit().then((result) => {
-                        try {
-                            fireInterceptors(result);
-                        } catch (err) {
-                            fireInterceptors(err, false);
-                        }
+                        fireInterceptors(result);
+                    }).catch((err) => {
+                        fireInterceptors(err, false);
                     });
                 };
 
@@ -232,12 +230,12 @@ export class FormForElement extends MessageListElement {
      */
     public submit(force: boolean = false): Promise<any> {
         if (!(force || this.canSubmit())) {
-            return Promise.resolve();
+            return Promise.reject('Form invalid!');
         }
 
         this.fields.forEach((field: FormFieldElement) => {
             if (!field.hasAttribute('for')) {
-                return Promise.resolve();
+                return Promise.reject('Form empty!');
             }
 
             const name = field.getAttribute('for');
@@ -245,7 +243,7 @@ export class FormForElement extends MessageListElement {
         });
 
         if (this.onSubmit && !this.onSubmit(this)) {
-            return Promise.resolve();
+            return Promise.reject('Form submission aborted by onSubmit callback!');
         }
 
         if (this.submitInterceptors.length > 0) {
