@@ -250,9 +250,12 @@ export class FormForElement extends MessageListElement {
             return JSWorks.applicationContext.interceptorHolder.trigger(this.submitInterceptors, { form: this });
         }
 
+        this.enabled = false;
+
         return this.submitCallback(this)
             .then((result) => {
                 this.model = result;
+                this.enabled = true;
 
                 if (this.onSuccess && !this.onSuccess(this, result)) {
                     return;
@@ -266,6 +269,8 @@ export class FormForElement extends MessageListElement {
                 this.updateMessagesCollection();
             })
             .catch((err) => {
+                this.enabled = true;
+
                 if (this.onError && !this.onError(this, err)) {
                     return;
                 }
