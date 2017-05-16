@@ -104,7 +104,7 @@ export class FormFieldElement extends MessageListElement {
      * Сбросить значение
      */
     public clear(): void {
-        this.clearing = false;
+        this.clearing = true;
         const attrName: string = this.input.getAttribute('form-bind-attribute');
 
         if (attrName.toLowerCase() === 'value') {
@@ -113,7 +113,7 @@ export class FormFieldElement extends MessageListElement {
             (<HTMLElement> this.input.rendered).setAttribute(attrName, '');
         }
 
-        this.clearing = true;
+        this.clearing = false;
     }
 
 
