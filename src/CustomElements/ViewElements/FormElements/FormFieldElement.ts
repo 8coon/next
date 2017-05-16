@@ -108,7 +108,7 @@ export class FormFieldElement extends MessageListElement {
         const attrName: string = this.input.getAttribute('form-bind-attribute');
 
         if (attrName.toLowerCase() === 'value') {
-            (<any> this.input.rendered).value = undefined;
+            (<any> this.input.rendered).value = '';
         } else {
             (<HTMLElement> this.input.rendered).setAttribute(attrName, '');
         }
