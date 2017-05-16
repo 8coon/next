@@ -31,8 +31,6 @@ export class LinkToElement extends SimpleVirtualDOMElementExt {
      * Рендер ноды
      */
     public render(): void {
-        this.customUpdate();
-
         if (!this.rendered) {
             this.rendered = document.createElement('A');
             this.mergeChildren();
@@ -60,6 +58,15 @@ export class LinkToElement extends SimpleVirtualDOMElementExt {
         }
 
         this.rendered['_linkPatched'] = true;
+    }
+
+
+    /**
+     * См. SimpleVirtualDOMElement.customUpdate()
+     */
+    public customUpdate(): void {
+        this.rendered = undefined;
+        this.render();
     }
 
 }

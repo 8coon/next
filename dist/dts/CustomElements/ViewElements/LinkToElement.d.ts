@@ -9,4 +9,8 @@ export declare class LinkToElement extends SimpleVirtualDOMElementExt {
      * Рендер ноды
      */
     render(): void;
+    /**
+     * См. SimpleVirtualDOMElement.customUpdate()
+     */
+    customUpdate(): void;
 }
