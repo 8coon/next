@@ -57,8 +57,6 @@ export class InterceptorHolder {
     public triggerByType(interceptorType: InterceptorType, args: object): Promise<any> {
         if (!this._interceptors[interceptorType]) {
             // throw new InterceptorNotFoundError(interceptorType.toString());
-
-            console.log(new InterceptorNotFoundError(interceptorType.toString()));
             return Promise.resolve();
         }
 

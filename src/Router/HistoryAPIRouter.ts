@@ -24,7 +24,8 @@ export class HistoryAPIRouter extends Router {
             if (event.state && event.state.name) {
                 const route: Route = JSWorks.applicationContext.routeHolder.getRoute(String(event.state.name));
 
-                route.fire(event.state.pathVariables);
+                // route.fire(event.state.pathVariables);
+                this.navigate(route, event.state.pathVariables);
                 return;
             }
         });
