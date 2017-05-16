@@ -58,6 +58,7 @@ export class FormFieldElement extends MessageListElement {
     private listening: boolean = false;
     private _value: any;
     private customValue: boolean = false;
+    private clearing: boolean = false;
 
 
     /**
@@ -96,6 +97,23 @@ export class FormFieldElement extends MessageListElement {
             this.installListener();
             this.listening = true;
         }
+    }
+
+
+    /**
+     * Сбросить значение
+     */
+    public clear(): void {
+        this.clearing = false;
+        const attrName: string = this.input.getAttribute('form-bind-attribute');
+
+        if (attrName.toLowerCase() === 'value') {
+            (<any> this.input.rendered).value = undefined;
+        } else {
+            (<HTMLElement> this.input.rendered).setAttribute(attrName, '');
+        }
+
+        this.clearing = true;
     }
 
 
@@ -177,7 +195,9 @@ export class FormFieldElement extends MessageListElement {
 
     private installListener(): void {
         this.input.addEventListener('change', (event) => {
-            this.changeEvent();
+            if (!this.clearing) {
+                this.changeEvent();
+            }
         });
     }
 

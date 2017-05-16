@@ -26,6 +26,7 @@ export declare class FormFieldElement extends MessageListElement {
     private listening;
     private _value;
     private customValue;
+    private clearing;
     /**
      * Фабрика FormFieldElement
      * @returns {FormFieldElement}
@@ -40,6 +41,10 @@ export declare class FormFieldElement extends MessageListElement {
      * @param view
      */
     propagateView(view: View): void;
+    /**
+     * Сбросить значение
+     */
+    clear(): void;
     protected updateMessagesCollection(): void;
     protected changeEvent(): void;
     private installListener();

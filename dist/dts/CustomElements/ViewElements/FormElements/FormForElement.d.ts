@@ -93,4 +93,8 @@ export declare class FormForElement extends MessageListElement {
      * Отметить результат валидации поля
      */
     validateField(): void;
+    /**
+     * Сбрасывает состояние формы
+     */
+    clear(): void;
 }

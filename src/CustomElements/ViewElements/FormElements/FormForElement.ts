@@ -308,4 +308,17 @@ export class FormForElement extends MessageListElement {
     }
 
 
+    /**
+     * Сбрасывает состояние формы
+     */
+    public clear(): void {
+        this.model = JSWorks.applicationContext.modelHolder.getModel(this.getAttribute('model')).from();
+        this.enabled = true;
+
+        this.fields.forEach((field: FormFieldElement) => {
+            field.clear();
+        });
+    }
+
+
 }
