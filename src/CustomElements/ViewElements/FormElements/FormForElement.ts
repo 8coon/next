@@ -9,6 +9,7 @@ import {IModel} from '../../../Model/IModel';
 import {IInterceptor} from '../../../Interceptor/IInterceptor';
 import {SimpleVirtualDOMElement} from '../../../VirtualDOM/SimpleVirtualDOM/SimpleVirtualDOMElement';
 import {View} from '../../../View/View';
+import {InterceptorType} from '../../../Interceptor/InterceptorType';
 
 
 declare const JSWorks: any;
@@ -69,7 +70,37 @@ export class FormForElement extends MessageListElement {
     public onError: UserSubmittedCallback;
 
 
+    /**
+     * Может ли форма быть отправлена
+     * @returns {boolean}
+     */
+    public get enabled(): boolean {
+        return this._enabled;
+    }
+
+
+    /**
+     * Может ли форма быть отправлена
+     * @param value
+     */
+    public set enabled(value: boolean) {
+        const button: SimpleVirtualDOMElement = this.getSubmitButton();
+        this._enabled = value;
+
+        if (!button) {
+            return;
+        }
+
+        if (this.canSubmit()) {
+            button.removeAttribute('disabled');
+        } else {
+            button.setAttribute('disabled', 'true');
+        }
+    }
+
+
     private validated: number = 0;
+    private _enabled: boolean = true;
 
 
     /**
@@ -153,7 +184,26 @@ export class FormForElement extends MessageListElement {
 
             form.addEventListener('submit', (event) => {
                 event.preventDefault();
-                this.submit();
+
+                const submit = () => {
+                    this.submit().then(() => {
+                        try {
+                            JSWorks.applicationContext.interceptorHolder.triggerByType(
+                                InterceptorType.FormAfterSubmitInterceptor, { form: this });
+                        } catch (err) {
+                            // Do nothing
+                        }
+                    });
+                };
+
+                try {
+                    JSWorks.applicationContext.interceptorHolder.triggerByType(
+                            InterceptorType.FormBeforeSubmitInterceptor, { form: this }).then(() => {
+                        submit();
+                    });
+                } catch (err) {
+                    submit();
+                }
             });
         }
     }
@@ -164,7 +214,7 @@ export class FormForElement extends MessageListElement {
      * @returns {boolean}
      */
     public canSubmit(): boolean {
-        return this.fields.every((field) => {
+        return this._enabled && this.fields.every((field) => {
             return !(!field.lastValidationResult || !field.lastValidationResult.success);
         });
     }
@@ -174,14 +224,14 @@ export class FormForElement extends MessageListElement {
      * Отправить форму
      * @returns {Promise<any>}
      */
-    public submit(force: boolean = false): void {
+    public submit(force: boolean = false): Promise<any> {
         if (!(force || this.canSubmit())) {
-            return;
+            return Promise.resolve();
         }
 
         this.fields.forEach((field: FormFieldElement) => {
             if (!field.hasAttribute('for')) {
-                return;
+                return Promise.resolve();
             }
 
             const name = field.getAttribute('for');
@@ -189,14 +239,14 @@ export class FormForElement extends MessageListElement {
         });
 
         if (this.onSubmit && !this.onSubmit(this)) {
-            return;
+            return Promise.resolve();
         }
 
         if (this.submitInterceptors.length > 0) {
             return JSWorks.applicationContext.interceptorHolder.trigger(this.submitInterceptors, { form: this });
         }
 
-        this.submitCallback(this)
+        return this.submitCallback(this)
             .then((result) => {
                 this.model = result;
 

@@ -39,7 +39,17 @@ export declare class FormForElement extends MessageListElement {
      * Callback получения ошибки от сервера
      */
     onError: UserSubmittedCallback;
+    /**
+     * Может ли форма быть отправлена
+     * @returns {boolean}
+     */
+    /**
+     * Может ли форма быть отправлена
+     * @param value
+     */
+    enabled: boolean;
     private validated;
+    private _enabled;
     /**
      * Обработчик отправки формы
      */
@@ -78,7 +88,7 @@ export declare class FormForElement extends MessageListElement {
      * Отправить форму
      * @returns {Promise<any>}
      */
-    submit(force?: boolean): void;
+    submit(force?: boolean): Promise<any>;
     /**
      * Отметить результат валидации поля
      */
