@@ -35,7 +35,8 @@ export class HistoryAPIRouter extends Router {
             const state = this.pathChange(path);
 
             // console.log(window.location.href, window.location.href.split('/', 4), path, state);
-            state.route.fire(state.pathVariables);
+            // state.route.fire(state.pathVariables);
+            this.navigate(state.route, state.pathVariables);
 
             window.history.replaceState({name: state.route.name, pathVariables: state.pathVariables},
                 state.route.name, this.baseUrl + state.route.getPath(state.pathVariables));
