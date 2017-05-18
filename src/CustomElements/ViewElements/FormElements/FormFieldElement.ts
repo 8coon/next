@@ -199,6 +199,22 @@ export class FormFieldElement extends MessageListElement {
                 this.changeEvent();
             }
         });
+
+        if (JSWorks.config['timerFormFieldUpdates']) {
+            this.input.addEventListener('keypress', () => {
+                window.setTimeout(() => {
+                    if (!this.clearing) {
+                        this.changeEvent();
+                    }
+                }, 2000);
+            });
+        }
+
+        window.setTimeout(() => {
+            if (!this.hasAttribute('validates') && !this.clearing) {
+                this.changeEvent();
+            }
+        }, 5);
     }
 
 
