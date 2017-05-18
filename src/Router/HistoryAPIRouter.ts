@@ -64,6 +64,10 @@ export class HistoryAPIRouter extends Router {
             }, 2);
         };
 
+        window.setTimeout(() => {
+            showBody();
+        }, 10);
+
         try {
             return interceptorHolder.triggerByType(
                     InterceptorType.RouteBeforeNavigateInterceptor,
@@ -87,7 +91,10 @@ export class HistoryAPIRouter extends Router {
                             nextPage: JSWorks.applicationContext.componentHolder.getPage(route.pageName),
                         },
                     ))
-                .catch( (rejected) => console.error(rejected) );
+                .catch( (rejected) => {
+                    console.error(rejected);
+                    showBody();
+                } );
         } catch (err) {
             route.fire(pathVariables);
             const state = {name: route.name, path: path, pathVariables: pathVariables};
