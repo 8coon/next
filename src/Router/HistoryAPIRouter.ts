@@ -54,7 +54,7 @@ export class HistoryAPIRouter extends Router {
         const interceptorHolder = JSWorks.applicationContext.interceptorHolder;
         const bodyDisplay: string = document.body.style.display;
 
-        if (JSWorks.applicationContext.hidePageOnNavigating) {
+        if (JSWorks.config['hidePageOnNavigating']) {
             document.body.style.display = 'none';
         }
 

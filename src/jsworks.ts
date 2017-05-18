@@ -50,6 +50,7 @@ export class JSWorksLib {
     public ModelQueryMethod = JSWorksModelQueryMethod;
 
     public applicationContext: ApplicationContext;
+    public config: object = {};
 
 
     constructor() {

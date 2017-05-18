@@ -51,6 +51,7 @@ export declare class JSWorksLib {
     ModelDeleteMethod: typeof JSWorksModelDeleteMethod;
     ModelQueryMethod: typeof JSWorksModelQueryMethod;
     applicationContext: ApplicationContext;
+    config: object;
     constructor();
     registerServices(): ServiceHolder;
 }
