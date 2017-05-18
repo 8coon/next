@@ -144,12 +144,9 @@ export class FormFieldElement extends MessageListElement {
             this._value = undefined;
 
             valueElem.setAttribute(attrName, value);
+            // (<any> valueElem.rendered || {})[attrName] = value;
         } else {
-            // if (attrName.toLowerCase() === 'value') {
-            value = (<any> valueElem.rendered).value;
-            // } else {
-            //     value = (<HTMLElement> valueElem.rendered).getAttribute(attrName);
-            // }
+            value = (<any> valueElem.rendered)[attrName];
         }
 
         (<any> valueElem).attributes[attrName] = value;
