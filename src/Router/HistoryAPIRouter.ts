@@ -52,6 +52,17 @@ export class HistoryAPIRouter extends Router {
     public navigate(route: Route, pathVariables?: object): Promise<any> {
         const path = route.getPath(pathVariables);
         const interceptorHolder = JSWorks.applicationContext.interceptorHolder;
+        const bodyDisplay: string = document.body.style.display;
+
+        if (JSWorks.applicationContext.hidePageOnNavigating) {
+            document.body.style.display = 'none';
+        }
+
+        const showBody = () => {
+            window.setTimeout(() => {
+                document.body.style.display = bodyDisplay;
+            }, 2);
+        };
 
         try {
             return interceptorHolder.triggerByType(
@@ -65,6 +76,7 @@ export class HistoryAPIRouter extends Router {
                     route.fire(pathVariables);
                     const state = {name: route.name, path: path, pathVariables: pathVariables};
                     window.history.pushState(state, route.name, this.baseUrl + path);
+                    showBody();
 
                     return Promise.resolve();
                 })
@@ -80,6 +92,7 @@ export class HistoryAPIRouter extends Router {
             route.fire(pathVariables);
             const state = {name: route.name, path: path, pathVariables: pathVariables};
             window.history.pushState(state, route.name, this.baseUrl + path);
+            showBody();
 
             return Promise.resolve();
         }

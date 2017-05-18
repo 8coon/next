@@ -149,6 +149,13 @@ export class ApplicationContext implements IEventEmitter {
     }
 
 
+    /**
+     * Скрывать содержимое DOM на время навигации.
+     * @type {boolean}
+     */
+    public hidePageOnNavigating: boolean = false;
+
+
     private _serviceHolder: ServiceHolder;
     private _viewHolder: ViewHolder;
     private _controllerHolder: ControllerHolder;

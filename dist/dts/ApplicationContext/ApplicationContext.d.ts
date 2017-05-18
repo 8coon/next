@@ -77,6 +77,11 @@ export declare class ApplicationContext implements IEventEmitter {
      * @param value
      */
     currentPage: object;
+    /**
+     * Скрывать содержимое DOM на время навигации.
+     * @type {boolean}
+     */
+    hidePageOnNavigating: boolean;
     private _serviceHolder;
     private _viewHolder;
     private _controllerHolder;
