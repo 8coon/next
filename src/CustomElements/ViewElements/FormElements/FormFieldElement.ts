@@ -202,10 +202,18 @@ export class FormFieldElement extends MessageListElement {
 
         if (JSWorks.config['timerFormFieldUpdates']) {
             this.input.addEventListener('keypress', () => {
+                if (this.input['_queued']) {
+                    return;
+                }
+
+                this.input['_queued'] = true;
+
                 window.setTimeout(() => {
                     if (!this.clearing) {
                         this.changeEvent();
                     }
+
+                    this.input['_queued'] = false;
                 }, 2000);
             });
         }
