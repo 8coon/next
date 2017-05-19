@@ -6,6 +6,7 @@ export declare class HistoryAPIRouter extends Router {
      * активировать роут и добавить новую запись в историю
      * @param route
      * @param pathVariables
+     * @param replace
      */
-    navigate(route: Route, pathVariables?: object): Promise<any>;
+    navigate(route: Route, pathVariables?: object, replace?: boolean): Promise<any>;
 }

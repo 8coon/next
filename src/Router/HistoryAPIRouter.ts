@@ -24,8 +24,7 @@ export class HistoryAPIRouter extends Router {
             if (event.state && event.state.name) {
                 const route: Route = JSWorks.applicationContext.routeHolder.getRoute(String(event.state.name));
 
-                // route.fire(event.state.pathVariables);
-                this.navigate(route, event.state.pathVariables);
+                this.navigate(route, event.state.pathVariables, true);
                 return;
             }
         });
@@ -34,9 +33,7 @@ export class HistoryAPIRouter extends Router {
             const path = window.location.href.split('/').slice(3).join('/');
             const state = this.pathChange(path);
 
-            // console.log(window.location.href, window.location.href.split('/', 4), path, state);
-            // state.route.fire(state.pathVariables);
-            this.navigate(state.route, state.pathVariables);
+            this.navigate(state.route, state.pathVariables, true);
 
             window.history.replaceState({name: state.route.name, pathVariables: state.pathVariables},
                 state.route.name, this.baseUrl + state.route.getPath(state.pathVariables));
@@ -48,8 +45,9 @@ export class HistoryAPIRouter extends Router {
      * активировать роут и добавить новую запись в историю
      * @param route
      * @param pathVariables
+     * @param replace
      */
-    public navigate(route: Route, pathVariables?: object): Promise<any> {
+    public navigate(route: Route, pathVariables?: object, replace: boolean = false): Promise<any> {
         const path = route.getPath(pathVariables);
         const interceptorHolder = JSWorks.applicationContext.interceptorHolder;
         const bodyDisplay: string = document.body.style.display;
@@ -79,9 +77,12 @@ export class HistoryAPIRouter extends Router {
                 .then( () => {
                     route.fire(pathVariables);
                     const state = {name: route.name, path: path, pathVariables: pathVariables};
-                    window.history.pushState(state, route.name, this.baseUrl + path);
-                    showBody();
 
+                    if (!replace) {
+                        window.history.pushState(state, route.name, this.baseUrl + path);
+                    }
+
+                    showBody();
                     return Promise.resolve();
                 })
                 .then( () => interceptorHolder.triggerByType(
@@ -98,9 +99,12 @@ export class HistoryAPIRouter extends Router {
         } catch (err) {
             route.fire(pathVariables);
             const state = {name: route.name, path: path, pathVariables: pathVariables};
-            window.history.pushState(state, route.name, this.baseUrl + path);
-            showBody();
 
+            if (!replace) {
+                window.history.pushState(state, route.name, this.baseUrl + path);
+            }
+
+            showBody();
             return Promise.resolve();
         }
     }
