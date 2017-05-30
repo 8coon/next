@@ -1,6 +1,8 @@
 import { Router } from './Router';
 import { Route } from './Route';
 export declare class HistoryAPIRouter extends Router {
+    private navigating;
+    private navigatingQueue;
     constructor(baseUrl: string);
     /**
      * активировать роут и добавить новую запись в историю

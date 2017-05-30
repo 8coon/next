@@ -10,8 +10,22 @@ import {JSWorksLib} from '../jsworks';
 declare const JSWorks: JSWorksLib;
 
 
+/**
+ * Элемент очереди отложенных переходов
+ */
+interface INavigatingQueueElement {
+    route: Route;
+    pathVariables: object;
+    replace: boolean;
+}
+
+
 @JSWorksInternal
 export class HistoryAPIRouter extends Router {
+
+    private navigating: boolean = false;
+    private navigatingQueue: INavigatingQueueElement[] = [];
+
 
     constructor(baseUrl: string) {
         super(baseUrl);
@@ -48,6 +62,12 @@ export class HistoryAPIRouter extends Router {
      * @param replace
      */
     public navigate(route: Route, pathVariables?: object, replace: boolean = false): Promise<any> {
+        if (this.navigating) {
+            this.navigatingQueue.push({route, pathVariables, replace});
+            return;
+        }
+
+        this.navigating = true;
         const path = route.getPath(pathVariables);
         const interceptorHolder = JSWorks.applicationContext.interceptorHolder;
         const bodyDisplay: string = document.body.style.display;
@@ -56,15 +76,29 @@ export class HistoryAPIRouter extends Router {
             document.body.style.display = 'none';
         }
 
-        const showBody = () => {
-            window.setTimeout(() => {
-                document.body.style.display = bodyDisplay;
-            }, 2);
-        };
+        const endNavigation = () => {
+            this.navigating = false;
 
-        window.setTimeout(() => {
-            showBody();
-        }, 10);
+            new Promise<any>((resolve, reject) => {
+                const promises: Promise<any>[] = [];  // tslint:disable-line
+
+                this.navigatingQueue.forEach((element: INavigatingQueueElement) => {
+                    promises.push(this.navigate(element.route, element.pathVariables, element.replace));
+                });
+
+                this.navigatingQueue = [];
+                return Promise.all(promises);
+            }).then(() => {
+                this.navigating = true;
+
+                if (JSWorks.config['hidePageOnNavigating']) {
+                    document.body.style.display = bodyDisplay;
+                }
+            }).catch((error) => {
+                this.navigating = true;
+                throw error;
+            });
+        };
 
         try {
             const prevPage = JSWorks.applicationContext.currentPage;
@@ -84,7 +118,7 @@ export class HistoryAPIRouter extends Router {
                         window.history.pushState(state, route.name, this.baseUrl + path);
                     }
 
-                    showBody();
+                    endNavigation();
                     return Promise.resolve();
                 })
                 .then( () => interceptorHolder.triggerByType(
@@ -94,9 +128,10 @@ export class HistoryAPIRouter extends Router {
                             nextPage: JSWorks.applicationContext.currentPage,
                         },
                     ))
+                .then( () => this.navigating = false )
                 .catch( (rejected) => {
                     console.error(rejected);
-                    showBody();
+                    endNavigation();
                 } );
         } catch (err) {
             route.fire(pathVariables);
@@ -106,7 +141,7 @@ export class HistoryAPIRouter extends Router {
                 window.history.pushState(state, route.name, this.baseUrl + path);
             }
 
-            showBody();
+            endNavigation();
             return Promise.resolve();
         }
     }
