@@ -67,10 +67,12 @@ export class HistoryAPIRouter extends Router {
         }, 10);
 
         try {
+            const prevPage = JSWorks.applicationContext.currentPage;
+
             return interceptorHolder.triggerByType(
                     InterceptorType.RouteBeforeNavigateInterceptor,
                     {
-                        prevPage: JSWorks.applicationContext.currentPage,
+                        prevPage: prevPage,
                         nextPage: JSWorks.applicationContext.componentHolder.getPage(route.pageName),
                     },
                 )
@@ -88,8 +90,8 @@ export class HistoryAPIRouter extends Router {
                 .then( () => interceptorHolder.triggerByType(
                         InterceptorType.RouteAfterNavigateInterceptor,
                         {
-                            prevPage: JSWorks.applicationContext.currentPage,
-                            nextPage: JSWorks.applicationContext.componentHolder.getPage(route.pageName),
+                            prevPage: prevPage,
+                            nextPage: JSWorks.applicationContext.currentPage,
                         },
                     ))
                 .catch( (rejected) => {
