@@ -63,7 +63,9 @@ export class HistoryAPIRouter extends Router {
      */
     public navigate(route: Route, pathVariables?: object, replace: boolean = false): Promise<any> {
         if (this.navigating) {
-            this.navigatingQueue.push({route, pathVariables, replace});
+            console.log(`Cannot navigate to ${route.name + ' (' + route.path + ')'} while still` +
+                ' navigating to previous route.');
+            // this.navigatingQueue.push({route, pathVariables, replace});
             return;
         }
 
@@ -79,15 +81,30 @@ export class HistoryAPIRouter extends Router {
         const endNavigation = () => {
             this.navigating = false;
 
-            new Promise<any>((resolve, reject) => {
-                const promises: Promise<any>[] = [];  // tslint:disable-line
-
-                this.navigatingQueue.forEach((element: INavigatingQueueElement) => {
-                    promises.push(this.navigate(element.route, element.pathVariables, element.replace));
+            /*new Promise<any>((resolve) => {
+                let resolve3 = undefined;
+                let lastPromise: Promise<any> = new Promise<any>((resolve4) => {
+                    resolve3 = resolve4;
                 });
 
-                this.navigatingQueue = [];
-                return Promise.all(promises);
+                this.navigatingQueue.forEach((element: INavigatingQueueElement) => {
+                    lastPromise = lastPromise.then(() => {
+                        return this.navigate(element.route, element.pathVariables, element.replace)
+                            .then(() => {
+                                return new Promise<any>((resolve2) => {
+                                    window.setTimeout(() => {
+                                        resolve2();
+                                    }, 2);
+                                });
+                        });
+                    });
+                });
+
+                lastPromise.then(() => {
+                    resolve();
+                });
+
+                resolve3();
             }).then(() => {
                 this.navigating = true;
 
@@ -97,7 +114,7 @@ export class HistoryAPIRouter extends Router {
             }).catch((error) => {
                 this.navigating = true;
                 throw error;
-            });
+            });*/
         };
 
         try {
