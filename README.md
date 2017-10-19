@@ -3,12 +3,11 @@ MVC-фреймворк для фронтенд-разработки + шабло
 
 ## Как это выглядит?
 ### Component
-Компонент -- это основная единица приложения. Компонент связывает представление и контроллер.
+Компонент &mdash; это основная единица приложения. Компонент связывает представление и контроллер.
 
+```ts
 @JSWorks.%{CLASS}%({ view: '%{NAME}%View', controller: '%{NAME}%Controller' })
 export class %{NAME}%%{CLASS}% {
-
-
     @JSWorks.ComponentProperty()
     public testA: string;
 
@@ -19,9 +18,8 @@ export class %{NAME}%%{CLASS}% {
 
     @JSWorks.ComponentProperty({ mapping: '#h2@innerHTML' })
     public testC: string;
-
-
 }
+```
 
 ### View
 View -- это шаблон на основе HTML. Шаблон компилируется в VirtualDOM при изменении свойств компонента, VirtualDOM потом вырендеривается в страницу.
